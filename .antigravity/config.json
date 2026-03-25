@@ -1,0 +1,16 @@
+{
+  "project": "Xóm Gà POPPY (OmniPOS)",
+  "version": "V43",
+  "integration": "Antigravity Kit Enterprise",
+  "agent_id": "antigravity-01",
+  "features": [
+    "recursive_inventory_management",
+    "debt_automation_sync",
+    "responsive_accounting_suite",
+    "mcp_notebooklm_sync"
+  ],
+  "directories": {
+    "workflows": ".agents/workflows",
+    "data_snapshots": "LATEST_DATA_SNAPSHOT.json"
+  }
+}

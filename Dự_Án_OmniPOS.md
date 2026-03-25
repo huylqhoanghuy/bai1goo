@@ -53,4 +53,11 @@ Dự án được viết bằng **React.js 18 + Vite**, dùng thư viện CSS Th
   - `Dashboard.jsx` & `Finance.jsx`: Cung cấp thông số phân tích biểu đồ Tài Chính.
 
 ---
-*Tài liệu tự động được sinh ra bởi AI Assistant. Lưu trữ tại máy tính người dùng phục vụ cho việc đối chiếu và lên kế hoạch phát triển phiên bản V4.*
+## 🤖 5. ANTIGRAVITY KIT INTEGRATION (Trạng thái: Đã tích hợp)
+Dự án đã được cấu hình chuẩn **Antigravity Kit Enterprise**, cho phép các AI Agent tự vận hành và hỗ trợ kinh doanh:
+- **Hệ thống Workflows (`.agents/workflows/`):** Chứa các kịch bản tự động hóa cho Kiểm toán tài chính (Accounting Audit) và Tối ưu kho (Inventory Management).
+- **Cấu hình Agent (`.antigravity/`):** Định danh và phân quyền cho trợ lý ảo truy cập sâu vào dữ liệu hạch toán.
+- **Dữ liệu AI-Ready:** Tự động tạo Snapshot và Snapshot Sync để đảm bảo AI luôn có dữ liệu mới nhất.
+
+---
+*Tài liệu tự động được sinh ra bởi AI Assistant (Antigravity).*
