@@ -9,7 +9,8 @@ import {
   Bell, 
   Store,
   Coffee,
-  Tags
+  Tags,
+  Settings as SettingsIcon
 } from 'lucide-react';
 import './App.css';
 
@@ -21,6 +22,7 @@ import Finance from './pages/Finance';
 import Products from './pages/Products';
 import Categories from './pages/Categories';
 import Channels from './pages/Channels';
+import Settings from './pages/Settings';
 
 const SidebarMenu = () => {
   const location = useLocation();
@@ -33,6 +35,7 @@ const SidebarMenu = () => {
     { path: '/channels', name: 'Kênh Bán (Phí Sàn)', icon: <Store size={20} /> },
     { path: '/inventory', name: 'Kho & Vật Tư', icon: <Package size={20} /> },
     { path: '/finance', name: 'Tài Chính', icon: <Wallet size={20} /> },
+    { path: '/settings', name: 'Cài Đặt', icon: <SettingsIcon size={20} /> },
   ];
 
   return (
@@ -58,7 +61,7 @@ function App() {
         <aside className="sidebar">
           <div className="sidebar-header">
             <Store size={26} />
-            <span>OmniPOS</span>
+            <span style={{ fontSize: '1rem' }}>Xóm Gà POPPY</span>
           </div>
           <SidebarMenu />
         </aside>
@@ -89,6 +92,7 @@ function App() {
               <Route path="/channels" element={<Channels />} />
               <Route path="/inventory" element={<Inventory />} />
               <Route path="/finance" element={<Finance />} />
+              <Route path="/settings" element={<Settings />} />
             </Routes>
           </main>
         </div>

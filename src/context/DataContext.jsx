@@ -42,13 +42,20 @@ const initialState = {
   ],
   purchaseOrders: [],
   posOrders: [],
-  transactions: []
+  transactions: [],
+  settings: {
+    theme: 'dark',
+    syncMode: 'auto'
+  }
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'HYDRATE_STATE':
       return { ...state, ...action.payload };
+
+    case 'UPDATE_SETTINGS':
+      return { ...state, settings: { ...state.settings, ...action.payload } };
 
     // Categories
     case 'ADD_CATEGORY': return { ...state, categories: [...state.categories, { ...action.payload, id: generateId('CAT-') }] };
@@ -286,7 +293,11 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('omnipos_gaumuoi_v3', JSON.stringify(state));
 
+    // Apply Theme
+    document.documentElement.setAttribute('data-theme', state.settings?.theme || 'dark');
+
     if (loading) return;
+    if (state.settings?.syncMode === 'manual') return; // Do not auto-sync if manual
 
     const syncToFirebase = async () => {
       try {
