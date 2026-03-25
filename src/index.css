@@ -4,32 +4,57 @@
 :root {
   --font-family: 'Inter', sans-serif;
   
-  /* Color Palette - Premium Dark Theme (Default) */
-  --bg-color: #0d1117;
-  --surface-color: rgba(22, 27, 34, 0.6);
-  --surface-border: rgba(255, 255, 255, 0.08);
+  /* Fluid Typography */
+  --font-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
+  --font-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);
+  --font-base: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
+  --font-lg: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
+  --font-xl: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  --font-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
   
-  --primary: #f97316; /* Orange brand */
-  --primary-hover: #ea580c;
-  --secondary: #3b82f6;
-  
-  --text-primary: #f0f6fc;
-  --text-secondary: #8b949e;
-  
-  --success: #2ea043;
-  --danger: #da3633;
-  --warning: #e3b341;
+  /* Brand Identity Palette - Derived from Logo */
+  --poppy-orange: #f59e0b;  /* Warm Amber/Orange from Logo Circle */
+  --poppy-red: #ef4444;     /* Red from Chicken Comb */
+  --poppy-navy: #0f172a;    /* Navy/Black from Glasses & Outlines */
+  --poppy-cream: #fffaf0;   /* Creamy white from Feathers */
 
-  --sidebar-width: 260px;
-  --header-height: 64px;
+  /* Dark Theme Tokens */
+  --bg-color: #0d1117;
+  --surface-color: rgba(22, 27, 34, 0.8);
+  --surface-variant: rgba(0, 0, 0, 0.2); /* Subtle dark for dark mode */
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --primary: var(--poppy-orange);
+  --primary-hover: #d97706;
+  --success: #10b981;
+  --danger: var(--poppy-red);
+  --warning: #f59e0b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+
+  /* Layout Constants */
+  --sidebar-width: 280px;
+  --header-height: 70px;
+  --mobile-nav-height: 60px;
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  /* Premium Effects */
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 12px 24px rgba(0,0,0,0.15);
+  --shadow-premium: 0 10px 40px -10px rgba(0,0,0,0.3);
+  --glass-blur: 24px;
 }
 
 :root[data-theme='light'] {
-  --bg-color: #f1f5f9;
-  --surface-color: rgba(255, 255, 255, 0.8);
-  --surface-border: rgba(0, 0, 0, 0.1);
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
+  --bg-color: #fdfaf6; /* Soft cream background like the logo interior */
+  --surface-color: rgba(255, 255, 255, 0.95);
+  --surface-variant: rgba(15, 23, 42, 0.05); /* Soft gray/navy for light mode */
+  --surface-border: rgba(15, 23, 42, 0.1);
+  --text-primary: var(--poppy-navy); /* High contrast navy text */
+  --text-secondary: #64748b;
+  --primary: #ea580c; /* Deeper orange for readability */
 }
 
 * {
@@ -50,10 +75,104 @@ body {
 /* Glassmorphism helpers */
 .glass-panel {
   background: var(--surface-color);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--surface-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.glass-panel:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Table Styles */
+.table-responsive {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--surface-border);
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table th {
+  background: var(--surface-variant);
+  padding: 16px;
+  font-size: var(--font-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--surface-border);
+  font-size: var(--font-sm);
+  vertical-align: middle;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.hover-row:hover {
+  background: var(--surface-variant) !important;
+  cursor: pointer;
+}
+
+/* Page Specific Layouts */
+.accounting-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.stats-horizontal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .stats-horizontal-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .accounting-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 16px;
+  }
+
+  .journal-tabs {
+    padding-bottom: 8px;
+  }
+}
+
+/* Responsive Table Utils */
+.mobile-hide {
+  @media (max-width: 640px) {
+    display: none !important;
+  }
+}
+
+.desktop-only {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
 }
 
 /* Base styles / Utils */
@@ -63,12 +182,33 @@ body {
   justify-content: center;
   gap: 8px;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
   font-family: inherit;
+}
+
+.divider-solid {
+  height: 1px;
+  background: var(--surface-border);
+  margin: 16px 0;
+  width: 100%;
+}
+
+.divider-dashed {
+  height: 0;
+  border-top: 1px dashed var(--surface-border);
+  margin: 16px 0;
+  width: 100%;
+}
+
+.brand-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  margin: 24px 0;
+  opacity: 0.5;
 }
 .btn-primary {
   background-color: var(--primary);

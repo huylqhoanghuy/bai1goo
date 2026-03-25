@@ -33,7 +33,16 @@
 - Toàn bộ thay đổi của Cấu hình mã sẽ tự động Build (Nặn khuôn biên dịch) bằng con bot GitHub Actions, và ngay lập tức trang web Online chính thức (`https://(...).github.io/bai1goo/`) được Update lên với Version mới nhất. Không phải thao tác môi trường khó nhọc.
 
 
-## 📂 2. CẤU TRÚC CODE CHÍNH (ARCHITECTURE)
+### 📊 3. HỆ THỐNG QUẢN TRỊ TÀI CHÍNH & CÔNG NỢ (Finance & Debt Suite) - Mới [V34-V39]
+- **Sổ Quỹ Nhật Ký Chung:** Ghi lại mọi biến động dòng tiền (Thu/Chi/Chuyển ví). Hỗ trợ In phiếu Thu/Chi chuyên nghiệp.
+- **Quản Lý Công Nợ Thông Minh:** 
+    - Tự động quét và cảnh báo các khoản nợ Nhà cung cấp (Payable) và nợ từ các Sàn/Khách hàng (Receivable).
+    - **Liên thông dữ liệu:** Thanh toán nợ trực tiếp từ Sổ quỹ sẽ tự động cập nhật trạng thái đơn hàng bên POS và Nhập kho.
+- **Bộ Lọc Đa Năng:** Tìm kiếm và lọc dữ liệu theo Ngày, Đối tác, Kênh bán hoặc Loại hình thu chi một cách đồng bộ.
+- **Giao Diện Thích Ứng (Responsive):** Toàn bộ module kế toán được tối ưu cho cả máy tính và điện thoại, đảm bảo quản lý dòng tiền mọi lúc mọi nơi.
+- **Báo cáo P&L (Lợi nhuận):** Tự động tính toán Doanh thu - Giá vốn - Chi phí vận hành để đưa ra con số Lãi ròng thực tế.
+
+## 📂 4. CẤU TRÚC CODE CHÍNH (ARCHITECTURE)
 Dự án được viết bằng **React.js 18 + Vite**, dùng thư viện CSS Thuần (`index.css` / `App.css`) với thiết kế Giao diện trong mờ (Glassmorphism). 
 
 - `App.jsx` & `main.jsx`: Xương sống của bộ định tuyến, bao bọc dự án bằng `DataProvider` và gắn bộ Sidebar hiển thị Menu.

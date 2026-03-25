@@ -136,14 +136,14 @@ const POS = () => {
   };
 
   const InputStyle = { 
-    background: 'rgba(0,0,0,0.3)', 
+    background: 'var(--surface-variant)', 
     border: '1px solid var(--surface-border)', 
-    color: 'white', 
+    color: 'var(--text-primary)', 
     padding: '8px 12px', 
-    borderRadius: '8px', 
+    borderRadius: 'var(--radius-sm)', 
     width: '100%', 
     outline: 'none',
-    fontSize: '0.9rem'
+    fontSize: 'var(--font-sm)'
   };
 
   return (
@@ -153,7 +153,7 @@ const POS = () => {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '20px', overflow: 'hidden' }}>
         
         <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(0,0,0,0.2)', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--surface-variant)', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
             <Search size={20} color="var(--text-secondary)" />
             <input 
               type="text" 
@@ -177,7 +177,7 @@ const POS = () => {
           </div>
         </div>
 
-        <div style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px', paddingRight: '4px' }}>
+        <div className="product-scroll-area" style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(150px, 45%, 210px), 1fr))', gap: 'clamp(12px, 2vw, 20px)', paddingRight: '4px' }}>
           {filteredProducts.map(product => {
             const port = getProductMaxCapacity(product.recipe);
             const isOutOfStock = port !== 'Unlimited' && port <= 0;
@@ -198,7 +198,7 @@ const POS = () => {
                 onMouseOver={e => !isOutOfStock && (e.currentTarget.style.transform = 'translateY(-4px)')}
                 onMouseOut={e => !isOutOfStock && (e.currentTarget.style.transform = 'translateY(0)')}
               >
-                <div style={{ position: 'relative', width: '100%', height: '140px', backgroundColor: 'rgba(0,0,0,0.2)' }}>
+                <div style={{ position: 'relative', width: '100%', height: '140px', backgroundColor: 'var(--surface-variant)' }}>
                    {product.image && <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                    
                    {/* BADGE TÌNH TRẠNG KHO TRỰC TIẾP LÊN MÓN */}
@@ -229,7 +229,7 @@ const POS = () => {
       </div>
 
       {/* Cột phải: Giỏ hàng */}
-      <div className="glass-panel pos-cart" style={{ width: '380px', display: 'flex', flexDirection: 'column', overflow: 'hidden', flexShrink: 0 }}>
+      <div className="glass-panel pos-cart" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', flexShrink: 0 }}>
         <div style={{ padding: '20px', borderBottom: '1px solid var(--surface-border)' }}>
           <h3 style={{ margin: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             Đơn Kinh Doanh Đang Lên
@@ -261,7 +261,7 @@ const POS = () => {
           )}
         </div>
 
-        <div style={{ padding: '20px', borderTop: '1px solid var(--surface-border)', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ padding: '20px', borderTop: '1px solid var(--surface-border)', background: 'var(--surface-variant)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           
           {/* Customer Info Section */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
@@ -274,6 +274,7 @@ const POS = () => {
               <input style={InputStyle} placeholder="09xxx..." value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} />
             </div>
           </div>
+          <div className="divider-dashed" style={{ margin: '8px 0' }}></div>
 
           {/* Order Code Section */}
           <div>
@@ -283,6 +284,8 @@ const POS = () => {
               <button className="btn btn-ghost" onClick={generateOrderCode} style={{ padding: '8px', fontSize: '0.7rem' }}>Auto</button>
             </div>
           </div>
+
+          <div className="divider-dashed"></div>
 
           {/* Extra Fee Section */}
           <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '12px', border: '1px dashed var(--surface-border)' }}>
@@ -296,9 +299,9 @@ const POS = () => {
           <div style={{ borderTop: '1px solid var(--surface-border)', paddingTop: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
               <span style={{ color: 'var(--text-secondary)' }}>Kênh chốt đơn:</span>
-              <select style={{ background:'rgba(0,0,0,0.5)', color:'white', border:'1px solid var(--surface-border)', padding:'6px', borderRadius:'4px', outline:'none', maxWidth: '200px' }} 
-                      value={selectedChannelId} onChange={e => setSelectedChannelId(e.target.value)}>
-                 {state.salesChannels?.map(ch => <option key={ch.id} value={ch.id}>{ch.name} (-{ch.discountRate}%)</option>)}
+              <select style={{ background:'var(--surface-variant)', color:'var(--text-primary)', border:'1px solid var(--surface-border)', padding:'6px', borderRadius:'4px', outline:'none', maxWidth: '200px' }} 
+                       value={selectedChannelId} onChange={e => setSelectedChannelId(e.target.value)}>
+                 {state.salesChannels?.map(ch => <option key={ch.id} value={ch.id} style={{color: 'black'}}>{ch.name} (-{ch.discountRate}%)</option>)}
               </select>
             </div>
             

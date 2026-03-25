@@ -106,7 +106,16 @@ const Products = () => {
       return null;
   }
 
-  const InputStyle = { background: 'rgba(0,0,0,0.3)', border: '1px solid var(--surface-border)', color: 'white', padding: '10px', borderRadius: '8px', width: '100%', outline: 'none' };
+  const InputStyle = { 
+    background: 'var(--surface-variant)', 
+    border: '1px solid var(--surface-border)', 
+    color: 'var(--text-primary)', 
+    padding: '12px 16px', 
+    borderRadius: 'var(--radius-sm)', 
+    width: '100%', 
+    outline: 'none',
+    transition: 'border-color 0.2s'
+  };
   
   const calculatedCost = calculateTotalCost(form.recipe);
   const maxPortions = calculateMaxPortions(form.recipe);
@@ -253,12 +262,12 @@ const Products = () => {
                           
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                             <input type="number" step="0.01" value={r.qty} onChange={(e) => updateRecipeQty(i, e.target.value)} 
-                                   style={{ width: '70px', padding: '6px', textAlign: 'center', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--surface-border)', color: 'white', borderRadius: '4px' }}/>
-                            <select value={r.unitMode} onChange={(e) => updateRecipeUnitMode(i, e.target.value)} style={{ padding: '6px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--surface-border)', color: 'white', borderRadius: '4px' }}>
-                                <option value="base">{node.baseUnit}</option>
-                                {node.type === 'ingredient' && node.buyUnit && <option value="buy">{node.buyUnit}</option>}
-                                <option value="divide">Chia (1/X)</option>
-                            </select>
+                                    style={{ width: '80px', padding: '8px', textAlign: 'center', background: 'var(--surface-variant)', border: '1px solid var(--surface-border)', color: 'var(--text-primary)', borderRadius: '6px' }}/>
+                             <select value={r.unitMode} onChange={(e) => updateRecipeUnitMode(i, e.target.value)} style={{ padding: '8px', background: 'var(--surface-variant)', border: '1px solid var(--surface-border)', color: 'var(--text-primary)', borderRadius: '6px' }}>
+                                 <option value="base">{node.baseUnit}</option>
+                                 {node.type === 'ingredient' && node.buyUnit && <option value="buy">{node.buyUnit}</option>}
+                                 <option value="divide">Chia (1/X)</option>
+                             </select>
                             
                             <button type="button" className="btn btn-ghost" style={{ padding: '8px', color: 'var(--danger)' }} onClick={() => removeRecipeItem(i)}><Trash2 size={18} /></button>
                           </div>
@@ -360,17 +369,17 @@ const Products = () => {
 
       {/* Main Screen: Grid Cards */}
       <div className="glass-panel" style={{ flex: 1, padding: '24px', overflowY: 'auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '24px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(0,0,0,0.2)', padding: '8px 16px', borderRadius: '8px', minWidth: '300px', border: '1px solid var(--surface-border)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--surface-variant)', padding: '10px 18px', borderRadius: 'var(--radius-md)', minWidth: '320px', border: '1px solid var(--surface-border)' }}>
               <Search size={18} color="var(--text-secondary)" />
               <input 
                 placeholder="Bộ lọc Món Toàn Hệ Thống..." 
                 value={search} onChange={e => setSearch(e.target.value)}
-                style={{ background: 'transparent', border: 'none', color: 'white', outline: 'none', width: '100%' }}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', outline: 'none', width: '100%', fontSize: 'var(--font-base)' }}
               />
             </div>
             
-            <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} style={{ background:'rgba(0,0,0,0.3)', color:'white', border:'1px solid var(--surface-border)', padding:'9px 16px', borderRadius:'8px', outline:'none' }}>
+            <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} style={{ background:'var(--surface-variant)', color:'var(--text-primary)', border:'1px solid var(--surface-border)', padding:'10px 18px', borderRadius:'var(--radius-md)', outline:'none', fontSize: 'var(--font-base)' }}>
                <option value="all">-- Tất cả Danh Mục POS --</option>
                {state.categories.filter(c => c.type === 'menu').map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
             </select>
@@ -417,14 +426,14 @@ const Products = () => {
                         </div>
                       </div>
                       
-                      <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px', background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem' }}>
-                          <span style={{ color: 'var(--text-secondary)' }}>Vốn Cấu Thành Gộp Lưới:</span>
-                          <span style={{ color: 'var(--warning)', fontWeight: 600 }}>{Math.round(cost).toLocaleString('vi-VN')} đ/{p.unit||'Suất'}</span>
+                      <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px', background: 'var(--surface-variant)', padding: '16px', borderRadius: '12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--font-sm)' }}>
+                          <span style={{ color: 'var(--text-secondary)' }}>Vốn Cấu Thành:</span>
+                          <span style={{ color: 'var(--warning)', fontWeight: 600 }}>{Math.round(cost).toLocaleString('vi-VN')} đ</span>
                         </div>
-                        <div style={{ width: '100%', height: '1px', background: 'var(--surface-border)' }}/>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem' }}>
-                          <span style={{ color: 'var(--text-secondary)' }}>Giá Lên Đơn (POS):</span>
+                        <div style={{ width: '100%', height: '1px', background: 'var(--surface-border)', opacity: 0.3 }}/>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--font-lg)' }}>
+                          <span style={{ color: 'var(--text-secondary)' }}>Giá POS:</span>
                           <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{p.price.toLocaleString('vi-VN')} đ</span>
                         </div>
                       </div>
