@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
+import { db } from '../firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const DataContext = createContext();
 
@@ -45,6 +47,9 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'HYDRATE_STATE':
+      return { ...state, ...action.payload };
+
     // Categories
     case 'ADD_CATEGORY': return { ...state, categories: [...state.categories, { ...action.payload, id: generateId('CAT-') }] };
     case 'UPDATE_CATEGORY': return { ...state, categories: state.categories.map(c => c.id === action.payload.id ? action.payload : c) };
@@ -250,9 +255,65 @@ export const DataProvider = ({ children }) => {
     }
   });
 
+  const [loading, setLoading] = useState(true);
+
+  // Fetch from Firebase on initial load
+  useEffect(() => {
+    const fetchFromFirebase = async () => {
+      try {
+        const keys = Object.keys(initialState);
+        const newState = {};
+        for (const key of keys) {
+          const docRef = doc(db, 'store_data', key);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            newState[key] = docSnap.data().data;
+          }
+        }
+        if (Object.keys(newState).length > 0) {
+           dispatch({ type: 'HYDRATE_STATE', payload: newState });
+        }
+      } catch (error) {
+        console.error("Firebase fetch error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFromFirebase();
+  }, []);
+
+  // Sync back to Firebase when state changes
   useEffect(() => {
     localStorage.setItem('omnipos_gaumuoi_v3', JSON.stringify(state));
-  }, [state]);
+
+    if (loading) return;
+
+    const syncToFirebase = async () => {
+      try {
+        const keys = Object.keys(state);
+        for (const key of keys) {
+           await setDoc(doc(db, 'store_data', key), { data: state[key] });
+        }
+      } catch (err) {
+        console.error("Firebase sync error:", err);
+      }
+    };
+    
+    // Debounce 2.5s
+    const handler = setTimeout(() => {
+      syncToFirebase();
+    }, 2500);
+
+    return () => clearTimeout(handler);
+  }, [state, loading]);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', height: '100vh', width: '100vw', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-color)', color: 'var(--primary)' }}>
+        <h2>Đang đồng bộ dữ liệu với Đám Mây...</h2>
+      </div>
+    );
+  }
 
   return <DataContext.Provider value={{ state, dispatch }}>{children}</DataContext.Provider>;
 };
