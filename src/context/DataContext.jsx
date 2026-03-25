@@ -180,7 +180,12 @@ const reducer = (state, action) => {
     // POS & Transactions (WITH SUB-RECIPE RECURSION)
     case 'ADD_POS_ORDER': {
       const order = action.payload; // Contains channelName, discountRate, total, netAmount
-      const newOrder = { id: generateId('DH-'), ...order, date: new Date().toISOString() };
+      const newOrder = { 
+        id: generateId('DH-'), 
+        ...order, 
+        date: new Date().toISOString(),
+        status: order.status || 'Pending' // Default to Pending (Chờ ship)
+      };
       
       let updatedIngredients = [...state.ingredients];
       
@@ -231,9 +236,87 @@ const reducer = (state, action) => {
 
     case 'UPDATE_ORDER_STATUS': {
       const { orderId, status } = action.payload;
+      const order = state.posOrders.find(o => o.id === orderId);
+      if (!order || order.status === status) return state;
+
+      let updatedIngredients = [...state.ingredients];
+
+      // LOGIC HOÀN KHO KHI HUỶ / TRỪ KHO KHI PHỤC HỒI
+      const adjustInventory = (recipe, quantityMultiplier, isDeduct) => {
+        if (!recipe) return;
+        recipe.forEach(recItem => {
+          const subProduct = state.products.find(p => p.id === recItem.ingredientId);
+          if (subProduct) {
+            const subQty = recItem.unitMode === 'divide' ? (1 / recItem.qty) : recItem.qty;
+            adjustInventory(subProduct.recipe, quantityMultiplier * subQty, isDeduct);
+          } else {
+            const ingIndex = updatedIngredients.findIndex(i => i.id === recItem.ingredientId);
+            if (ingIndex !== -1) {
+              const ing = updatedIngredients[ingIndex];
+              let baseQty = recItem.qty;
+              if (recItem.unitMode === 'buy') baseQty = recItem.qty * (ing.conversionRate || 1);
+              if (recItem.unitMode === 'divide') baseQty = 1 / recItem.qty;
+              
+              const change = baseQty * quantityMultiplier;
+              updatedIngredients[ingIndex] = { 
+                ...ing, 
+                stock: isDeduct ? Math.max(0, ing.stock - change) : (ing.stock + change) 
+              };
+            }
+          }
+        });
+      };
+
+      // Nếu chuyển sang trạng thái Cancelled -> Hoàn kho
+      if (status === 'Cancelled') {
+        order.items.forEach(item => adjustInventory(item.product.recipe, item.quantity, false));
+      } 
+      // Nếu từ Cancelled chuyển về status khác -> Trừ kho lại
+      else if (order.status === 'Cancelled') {
+        order.items.forEach(item => adjustInventory(item.product.recipe, item.quantity, true));
+      }
+
       return {
         ...state,
-        posOrders: (state.posOrders || []).map(o => o.id === orderId ? { ...o, status } : o)
+        ingredients: updatedIngredients,
+        posOrders: state.posOrders.map(o => o.id === orderId ? { ...o, status } : o)
+      };
+    }
+
+    case 'DELETE_POS_ORDER': {
+      const orderId = action.payload;
+      const order = state.posOrders.find(o => o.id === orderId);
+      if (!order) return state;
+
+      let updatedIngredients = [...state.ingredients];
+      // Nếu đơn chưa bị huỷ (vẫn đang chiếm kho) thì phải hoàn kho trước khi xóa
+      if (order.status !== 'Cancelled') {
+        const adjustInventory = (recipe, quantityMultiplier) => {
+          if (!recipe) return;
+          recipe.forEach(recItem => {
+            const subProduct = state.products.find(p => p.id === recItem.ingredientId);
+            if (subProduct) {
+              const subQty = recItem.unitMode === 'divide' ? (1 / recItem.qty) : recItem.qty;
+              adjustInventory(subProduct.recipe, quantityMultiplier * subQty);
+            } else {
+              const ingIndex = updatedIngredients.findIndex(i => i.id === recItem.ingredientId);
+              if (ingIndex !== -1) {
+                const ing = updatedIngredients[ingIndex];
+                let baseQty = recItem.qty;
+                if (recItem.unitMode === 'buy') baseQty = recItem.qty * (ing.conversionRate || 1);
+                if (recItem.unitMode === 'divide') baseQty = 1 / recItem.qty;
+                updatedIngredients[ingIndex] = { ...ing, stock: ing.stock + (baseQty * quantityMultiplier) };
+              }
+            }
+          });
+        };
+        order.items.forEach(item => adjustInventory(item.product.recipe, item.quantity));
+      }
+
+      return {
+        ...state,
+        ingredients: updatedIngredients,
+        posOrders: state.posOrders.filter(o => o.id !== orderId)
       };
     }
 

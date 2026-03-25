@@ -10,7 +10,8 @@ import {
   Store,
   Coffee,
   Tags,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  ClipboardList
 } from 'lucide-react';
 import './App.css';
 
@@ -22,6 +23,7 @@ import Finance from './pages/Finance';
 import Products from './pages/Products';
 import Categories from './pages/Categories';
 import Channels from './pages/Channels';
+import Orders from './pages/Orders';
 import Settings from './pages/Settings';
 
 import logoPoppy from './assets/logo_poppy.png';
@@ -31,6 +33,7 @@ const SidebarMenu = () => {
   const menuItems = [
     { path: '/', name: 'Tổng Quan', icon: <LayoutDashboard size={20} /> },
     { path: '/pos', name: 'Bán Hàng', icon: <ShoppingCart size={20} /> },
+    { path: '/orders', name: 'Danh Sách Đơn', icon: <ClipboardList size={20} /> },
     { path: '/kds', name: 'Nhà Bếp', icon: <ChefHat size={20} /> },
     { path: '/products', name: 'Thực Đơn', icon: <Coffee size={20} /> },
     { path: '/categories', name: 'Danh Mục Nhóm', icon: <Tags size={20} /> },
@@ -88,6 +91,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/pos" element={<POS />} />
+              <Route path="/orders" element={<Orders />} />
               <Route path="/kds" element={<KDS />} />
               <Route path="/products" element={<Products />} />
               <Route path="/categories" element={<Categories />} />
