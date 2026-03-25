@@ -23,7 +23,11 @@ const initialState = {
     { id: 'NL1', name: 'Gà Ta Làm Sạch', category: 'Gia vị tẩm ướp', unit: 'Con', buyUnit: 'Lồng', conversionRate: 15, stock: 120, cost: 75000 },
     { id: 'NL2', name: 'Túi Tráng Bạc', category: 'Đồ Nhựa Hộp Túi', unit: 'Cái', buyUnit: 'Kg', conversionRate: 100, stock: 500, cost: 300 },
     { id: 'NL3', name: 'Chai Nước Chấm Khối', category: 'Gia vị tẩm ướp', unit: 'Chai', buyUnit: 'Thùng', conversionRate: 20, stock: 50, cost: 20000 },
-    { id: 'NL4', name: 'Hộp Nhựa Chấm Con', category: 'Đồ Nhựa Hộp Túi', unit: 'Cái', buyUnit: 'Cây', conversionRate: 50, stock: 400, cost: 500 }
+    { id: 'NL4', name: 'Hộp Nhựa Chấm Con', category: 'Đồ Nhựa Hộp Túi', unit: 'Cái', buyUnit: 'Cây', conversionRate: 50, stock: 400, cost: 500 },
+    { id: 'NL5', name: 'Xôi Ruốc Heo', category: 'Combo Đóng Hộp', unit: 'Suất', stock: 100, cost: 12000 },
+    { id: 'NL6', name: 'Tai Heo Ủ Muối', category: 'Gà Nguyên Con', unit: 'Cái', stock: 50, cost: 45000 },
+    { id: 'NL7', name: 'Gà Ủ Xi Dầu (Gốc)', category: 'Gà Nguyên Con', unit: 'Con', stock: 30, cost: 85000 },
+    { id: 'NL8', name: 'Chân Gà Rút Xương', category: 'Combo Đóng Hộp', unit: 'Phần', stock: 60, cost: 55000 }
   ],
   products: [
     { id: 'P1', name: 'Nước Chấm Cốc Nhỏ (Thành phẩm)', category: 'Gia vị tẩm ướp', price: 0, image: '', recipe: [
@@ -34,6 +38,58 @@ const initialState = {
       { ingredientId: 'NL1', qty: 1, unitMode: 'base' },
       { ingredientId: 'NL2', qty: 1, unitMode: 'base' },
       { ingredientId: 'P1', qty: 2, unitMode: 'base' } // Đệ quy: 2 phần nước chấm
+    ]},
+    { id: 'CB1', name: 'Gà Ủ Muối 1/2 Con + Xôi Ruốc Heo', category: 'Combo Đóng Hộp', price: 108900, recipe: [
+      { ingredientId: 'NL1', qty: 0.5, unitMode: 'base' },
+      { ingredientId: 'NL5', qty: 1, unitMode: 'base' },
+      { ingredientId: 'NL2', qty: 1, unitMode: 'base' }
+    ]},
+    { id: 'CB2', name: 'Gà Ủ Muối Nguyên Con + Xôi Ruốc Heo', category: 'Combo Đóng Hộp', price: 185800, recipe: [
+      { ingredientId: 'NL1', qty: 1, unitMode: 'base' },
+      { ingredientId: 'NL5', qty: 1, unitMode: 'base' },
+      { ingredientId: 'NL2', qty: 1, unitMode: 'base' }
+    ]},
+    { id: 'CB3', name: 'Set Gà Ủ Muối 1/2 Con + Tai Heo Ủ Muối + Xôi Ruốc Nóng', category: 'Combo Đóng Hộp', price: 193000, recipe: [
+      { ingredientId: 'NL1', qty: 0.5, unitMode: 'base' },
+      { ingredientId: 'NL6', qty: 1, unitMode: 'base' },
+      { ingredientId: 'NL5', qty: 1, unitMode: 'base' },
+      { ingredientId: 'NL2', qty: 1, unitMode: 'base' }
+    ]},
+    { id: 'CB4', name: 'Gà Ủ Muối Nguyên Con + Tai Heo Ủ Muối', category: 'Combo Đóng Hộp', price: 240800, recipe: [
+      { ingredientId: 'NL1', qty: 1, unitMode: 'base' },
+      { ingredientId: 'NL6', qty: 1, unitMode: 'base' },
+      { ingredientId: 'NL2', qty: 1, unitMode: 'base' }
+    ]},
+    { id: 'CB5', name: 'Gà Ủ Xi Dầu 1/2 Con + Xôi Ruốc Heo', category: 'Combo Đóng Hộp', price: 109000, recipe: [
+      { ingredientId: 'NL7', qty: 0.5, unitMode: 'base' },
+      { ingredientId: 'NL5', qty: 1, unitMode: 'base' },
+      { ingredientId: 'NL2', qty: 1, unitMode: 'base' }
+    ]},
+    { id: 'CB6', name: 'Gà Ủ Xi Dầu 1/2 Con + Gà Ủ Muối 1/2 Con + Xôi Ruốc Nóng', category: 'Combo Đóng Hộp', price: 186000, recipe: [
+      { ingredientId: 'NL7', qty: 0.5, unitMode: 'base' },
+      { ingredientId: 'NL1', qty: 0.5, unitMode: 'base' },
+      { ingredientId: 'NL5', qty: 1, unitMode: 'base' },
+      { ingredientId: 'NL2', qty: 1, unitMode: 'base' }
+    ]},
+    { id: 'CB7', name: 'Gà Ủ Xi Dầu 1/2 con + Gà Ủ Muối 1/2 Con', category: 'Combo Đóng Hộp', price: 157000, recipe: [
+      { ingredientId: 'NL7', qty: 0.5, unitMode: 'base' },
+      { ingredientId: 'NL1', qty: 0.5, unitMode: 'base' },
+      { ingredientId: 'NL2', qty: 1, unitMode: 'base' }
+    ]},
+    { id: 'CB8', name: 'Gà Ủ Muối Nguyên Con + Chân Gà Rút Xương', category: 'Combo Đóng Hộp', price: 237800, recipe: [
+      { ingredientId: 'NL1', qty: 1, unitMode: 'base' },
+      { ingredientId: 'NL8', qty: 1, unitMode: 'base' },
+      { ingredientId: 'NL2', qty: 1, unitMode: 'base' }
+    ]},
+    { id: 'CB9', name: 'Gà Ủ Muối 1/2 con + Tai Heo Ủ Muối', category: 'Combo Đóng Hộp', price: 164000, recipe: [
+      { ingredientId: 'NL1', qty: 0.5, unitMode: 'base' },
+      { ingredientId: 'NL6', qty: 1, unitMode: 'base' },
+      { ingredientId: 'NL2', qty: 1, unitMode: 'base' }
+    ]},
+    { id: 'CB10', name: 'Gà Ủ Muối 1/2 Con + Chân Gà Ủ Muối Rút Xương', category: 'Combo Đóng Hộp', price: 160900, recipe: [
+      { ingredientId: 'NL1', qty: 0.5, unitMode: 'base' },
+      { ingredientId: 'NL8', qty: 1, unitMode: 'base' },
+      { ingredientId: 'NL2', qty: 1, unitMode: 'base' }
     ]}
   ],
   suppliers: [
@@ -343,7 +399,21 @@ export const DataProvider = ({ children }) => {
     try {
       const local = localStorage.getItem('omnipos_gaumuoi_v3');
       const parsed = local ? JSON.parse(local) : initial;
-      return { ...initial, ...parsed };
+      // TRƯỜNG HỢP AUTO-IMPORT: Nếu thiếu Combo thì merge thêm từ initial vào parsed
+      const mergedProducts = [...(parsed.products || [])];
+      initial.products.forEach(p => {
+         if (!mergedProducts.find(mp => mp.name === p.name)) {
+            mergedProducts.push(p);
+         }
+      });
+      const mergedIngredients = [...(parsed.ingredients || [])];
+      initial.ingredients.forEach(i => {
+         if (!mergedIngredients.find(mi => mi.name === i.name)) {
+            mergedIngredients.push(i);
+         }
+      });
+
+      return { ...initial, ...parsed, products: mergedProducts, ingredients: mergedIngredients };
     } catch {
       return initial;
     }
