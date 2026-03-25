@@ -12,6 +12,7 @@ const Products = () => {
 
   const [viewingProduct, setViewingProduct] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
 
   // Recursive Helper for Cost
   const getRecipeItemCost = (r) => {
@@ -128,9 +129,15 @@ const Products = () => {
             Hỗ trợ nhúng Thực Đơn Phụ (Ví dụ: Nước Sốt 10 hộp) vào Thực Đơn Chính (Combo Gà) đệ quy tính Năng Lực chuẩn xác.
           </p>
         </div>
-        <button className="btn btn-primary" onClick={() => { setForm({ id: '', name: '', unit: '', category: '', price: '', image: '', recipe: [] }); setShowForm(true); }}>
-          <Plus size={18} /> Chế Biến Món Mới
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '4px' }}>
+             <button className={`btn ${viewMode === 'grid' ? 'btn-primary' : 'btn-ghost'}`} onClick={() => setViewMode('grid')} style={{ padding: '6px 12px' }}>Lưới Thẻ</button>
+             <button className={`btn ${viewMode === 'list' ? 'btn-primary' : 'btn-ghost'}`} onClick={() => setViewMode('list')} style={{ padding: '6px 12px' }}>Bảng Liệt Kê</button>
+          </div>
+          <button className="btn btn-primary" onClick={() => { setForm({ id: '', name: '', unit: '', category: '', price: '', image: '', recipe: [] }); setShowForm(true); }}>
+            <Plus size={18} /> Chế Biến Món Mới
+          </button>
+        </div>
       </div>
 
       {showForm && (
@@ -350,63 +357,130 @@ const Products = () => {
             <input 
               placeholder="Bộ lọc Món Toàn Hệ Thống..." 
               value={search} onChange={e => setSearch(e.target.value)}
-              style={{ background: 'transparent', border: 'none', color: 'white', outline: 'none', width: '100%' }}
             />
           </div>
+          
+          {viewMode === 'grid' ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+              {state.products.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).map(p => {
+                const cost = calculateTotalCost(p.recipe);
+                const port = calculateMaxPortions(p.recipe);
+                return (
+                  <div key={p.id} className="product-card-hover" style={{ position: 'relative', display: 'flex', flexDirection: 'column', padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+                      {/* Tooltip on Hover */}
+                      <div className="tooltip-content" style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', background: 'var(--bg-color)', border: '1px solid var(--primary)', borderRadius: '8px', padding: '12px', zIndex: 50, opacity: 0, pointerEvents: 'none', transition: 'opacity 0.2s', boxShadow: '0 8px 16px rgba(0,0,0,0.5)' }}>
+                         <p style={{ margin: 0, marginBottom: '8px', color: 'var(--primary)', fontWeight: 'bold', fontSize: '0.85rem' }}>Định Mức Nguyên Liệu:</p>
+                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            {p.recipe.map((r, i) => {
+                               const node = getEntityDisplayDetails(r.ingredientId);
+                               return <span key={i} style={{ fontSize: '0.8rem' }}>• {node?.name}: <strong>{r.qty} {r.unitMode === 'divide' ? '1/x' : (r.unitMode === 'buy' ? node?.buyUnit : node?.baseUnit)}</strong></span>;
+                            })}
+                         </div>
+                      </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-          {state.products.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).map(p => {
-             const cost = calculateTotalCost(p.recipe);
-             const port = calculateMaxPortions(p.recipe);
-             return (
-               <div key={p.id} style={{ display: 'flex', flexDirection: 'column', padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div>
-                      <h4 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text-primary)', marginBottom: '4px' }}>{p.name}</h4>
-                      <span style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                        {p.category} | Đo Năng Lực: ({p.unit || 'Suất'})
-                      </span>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                       <span style={{ background: port > 5 ? 'rgba(46, 160, 67, 0.2)' : 'rgba(218, 54, 51, 0.2)', color: port > 5 ? 'var(--success)' : 'var(--danger)', padding: '6px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold' }}>
-                         Max Thực: {port} {p.unit || 'suất'}
-                       </span>
-                    </div>
-                  </div>
-                  
-                  <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px', background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem' }}>
-                      <span style={{ color: 'var(--text-secondary)' }}>Vốn Cấu Thành Gộp Lưới:</span>
-                      <span style={{ color: 'var(--warning)', fontWeight: 600 }}>{Math.round(cost).toLocaleString('vi-VN')} đ/{p.unit||'Suất'}</span>
-                    </div>
-                    <div style={{ width: '100%', height: '1px', background: 'var(--surface-border)' }}/>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem' }}>
-                      <span style={{ color: 'var(--text-secondary)' }}>Giá Lên Đơn (POS):</span>
-                      <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{p.price.toLocaleString('vi-VN')} đ</span>
-                    </div>
-                  </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                          <h4 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text-primary)', marginBottom: '4px' }}>{p.name}</h4>
+                          <span style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                            {p.category} | Đo Năng Lực: ({p.unit || 'Suất'})
+                          </span>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <span style={{ background: port > 5 ? 'rgba(46, 160, 67, 0.2)' : 'rgba(218, 54, 51, 0.2)', color: port > 5 ? 'var(--success)' : 'var(--danger)', padding: '6px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                            Max Thực: {port} {p.unit || 'suất'}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px', background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem' }}>
+                          <span style={{ color: 'var(--text-secondary)' }}>Vốn Cấu Thành Gộp Lưới:</span>
+                          <span style={{ color: 'var(--warning)', fontWeight: 600 }}>{Math.round(cost).toLocaleString('vi-VN')} đ/{p.unit||'Suất'}</span>
+                        </div>
+                        <div style={{ width: '100%', height: '1px', background: 'var(--surface-border)' }}/>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem' }}>
+                          <span style={{ color: 'var(--text-secondary)' }}>Giá Lên Đơn (POS):</span>
+                          <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{p.price.toLocaleString('vi-VN')} đ</span>
+                        </div>
+                      </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '20px' }}>
-                     <button className="btn btn-ghost" style={{ padding: '8px', background: 'rgba(59, 130, 246, 0.1)', color: 'var(--secondary)' }} onClick={() => { setViewingProduct(p); setShowDetail(true); }} title="Xem chi tiết & Biểu đồ">
-                       <Eye size={18}/>
-                     </button>
-                     <button className="btn btn-ghost" style={{ padding: '8px', background: 'rgba(46, 160, 67, 0.1)', color: 'var(--success)' }} onClick={() => duplicateProduct(p)} title="Nhân bản">
-                       <Copy size={18}/>
-                     </button>
-                     <button className="btn btn-ghost" style={{ padding: '8px', background: 'rgba(255,255,255,0.05)' }} onClick={() => { setForm(JSON.parse(JSON.stringify(p))); setShowForm(true); }} title="Sửa Recipe">
-                       <Edit size={18}/>
-                     </button>
-                     <button className="btn btn-ghost" style={{ padding: '8px', color: 'white', background: 'rgba(218, 54, 51, 0.2)', border: '1px solid rgba(218, 54, 51, 0.3)' }} onClick={() => deleteProduct(p.id)} title="Xóa Món">
-                       <Trash2 size={18}/>
-                     </button>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '20px' }}>
+                        <button className="btn btn-ghost" style={{ padding: '8px', background: 'rgba(59, 130, 246, 0.1)', color: 'var(--secondary)' }} onClick={() => { setViewingProduct(p); setShowDetail(true); }} title="Xem chi tiết & Biểu đồ">
+                          <Eye size={18}/>
+                        </button>
+                        <button className="btn btn-ghost" style={{ padding: '8px', background: 'rgba(46, 160, 67, 0.1)', color: 'var(--success)' }} onClick={() => duplicateProduct(p)} title="Nhân bản">
+                          <Copy size={18}/>
+                        </button>
+                        <button className="btn btn-ghost" style={{ padding: '8px', background: 'rgba(255,255,255,0.05)' }} onClick={() => { setForm(JSON.parse(JSON.stringify(p))); setShowForm(true); }} title="Sửa Recipe">
+                          <Edit size={18}/>
+                        </button>
+                        <button className="btn btn-ghost" style={{ padding: '8px', color: 'white', background: 'rgba(218, 54, 51, 0.2)', border: '1px solid rgba(218, 54, 51, 0.3)' }} onClick={() => deleteProduct(p.id)} title="Xóa Món">
+                          <Trash2 size={18}/>
+                        </button>
+                      </div>
                   </div>
-               </div>
-             )
-          })}
+                )
+              })}
+            </div>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                  <thead>
+                     <tr style={{ borderBottom: '1px solid var(--surface-border)', color: 'var(--text-secondary)' }}>
+                        <th style={{ padding: '12px' }}>Tên Sản Phẩm POS</th>
+                        <th style={{ padding: '12px' }}>Bảng Kê Nguyên Liệu (Recipe)</th>
+                        <th style={{ padding: '12px' }}>Vốn Gộp</th>
+                        <th style={{ padding: '12px' }}>Giá Bán</th>
+                        <th style={{ padding: '12px', textAlign: 'right' }}>Thao Tác</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     {state.products.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).map(p => {
+                        const cost = calculateTotalCost(p.recipe);
+                        return (
+                           <tr key={p.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                              <td style={{ padding: '12px' }}>
+                                 <strong style={{ fontSize: '1rem' }}>{p.name}</strong>
+                                 <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{p.category}</div>
+                              </td>
+                              <td style={{ padding: '12px' }}>
+                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                    {p.recipe.map((r, i) => {
+                                       const node = getEntityDisplayDetails(r.ingredientId);
+                                       return (
+                                          <span key={i} style={{ padding: '2px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', fontSize: '0.8rem' }}>
+                                             {node?.name}: <strong>{r.qty}</strong>
+                                          </span>
+                                       )
+                                    })}
+                                 </div>
+                              </td>
+                              <td style={{ padding: '12px', color: 'var(--warning)', fontWeight: 600 }}>{Math.round(cost).toLocaleString('vi-VN')} đ</td>
+                              <td style={{ padding: '12px', color: 'var(--primary)', fontWeight: 'bold' }}>{p.price.toLocaleString('vi-VN')} đ</td>
+                              <td style={{ padding: '12px', textAlign: 'right' }}>
+                                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+                                    <button className="btn btn-ghost" onClick={() => duplicateProduct(p)} title="Nhân bản"><Copy size={16}/></button>
+                                    <button className="btn btn-ghost" onClick={() => { setForm(JSON.parse(JSON.stringify(p))); setShowForm(true); }} title="Sửa"><Edit size={16}/></button>
+                                    <button className="btn btn-ghost" style={{ color: 'var(--danger)' }} onClick={() => deleteProduct(p.id)} title="Xóa"><Trash2 size={16}/></button>
+                                 </div>
+                              </td>
+                           </tr>
+                        )
+                     })}
+                  </tbody>
+               </table>
+            </div>
+          )}
         </div>
+        <style>{`
+          .product-card-hover:hover .tooltip-content {
+             opacity: 1 !important;
+             pointer-events: auto !important;
+             transform: translateY(-5px);
+          }
+        `}</style>
       </div>
-    </div>
-  );
+    );
 };
 
 export default Products;
