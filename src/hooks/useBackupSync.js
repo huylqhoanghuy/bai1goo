@@ -180,7 +180,7 @@ export const useBackupSync = () => {
 
         if (isConfirmed) {
           await StorageService.saveAll(importedState);
-          showToast('Khôi phục toàn bộ hệ thống từ file Backup thành công! Vui lòng đợi...');
+          const cloudResult = await syncToCloud(); if(cloudResult.success){showToast('Khôi phục Bản cứng và Đám Mây Mẹ thành công! Vui lòng đợi tải lại...');}else{showToast('Lỗi hệ thống: '+cloudResult.message, 'error');}
           setTimeout(() => { window.location.reload(); }, 1500);
         }
       } catch {
