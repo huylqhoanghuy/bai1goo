@@ -878,9 +878,24 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  // Sync locally instantly, Auto debounce to Cloud
+  const isMountedRef = useRef(false);
+  const hasSuccessfullyHydrated = useRef(false);
   useEffect(() => {
-    if (state._skipSave) return; // Ngăn chặn đè dữ liệu của CHS khi chỉ hiện Toast
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+      return; 
+    }
+    if (state._skipSave) {
+      hasSuccessfullyHydrated.current = true;
+      return; // Ngăn chặn đè dữ liệu của CHS khi chỉ hiện Toast
+    }
+    
+    // Tuyệt đối không cho phép đẩy dữ liệu rỗng (của Initial State ảo) lên Cloud nếu chưa từng Hydrate thành công!
+    if (!hasSuccessfullyHydrated.current) {
+       console.warn("[CloudSync] Đã chặn một cú đẩy dữ liệu rỗng lên Firebase (Tránh thảm họa Wipe Data)!");
+       return;
+    }
+
     const stateToSave = { ...state };
     delete stateToSave.toast; // Không lưu toast
     delete stateToSave._skipSave;
