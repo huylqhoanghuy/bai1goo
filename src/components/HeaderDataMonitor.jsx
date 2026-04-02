@@ -9,7 +9,6 @@ export default function HeaderDataMonitor() {
   const { settings } = useSettings();
   const [localSizeKB, setLocalSizeKB] = useState(0);
 
-  // Chỉ hiển thị cho ADMIN
   if (user?.role !== 'ADMIN') return null;
 
   useEffect(() => {
@@ -25,7 +24,8 @@ export default function HeaderDataMonitor() {
   }, [settings?.lastCloudSyncTime, settings?.lastWebhookSync]);
 
   const cloudSize = settings?.lastCloudSyncSize ? (settings.lastCloudSyncSize / 1024).toFixed(1) : 0;
-  const webhookSize = settings?.lastWebhookSyncSize ? (settings.lastWebhookSyncSize / 1024).toFixed(1) : 0;
+  const webhookSizeObj = settings?.lastWebhookSyncSize;
+  const webhookSize = webhookSizeObj ? (webhookSizeObj / 1024).toFixed(1) : 0;
 
   const isCloudSynced = cloudSize && Math.abs(parseFloat(localSizeKB) - parseFloat(cloudSize)) < 10;
   
@@ -33,40 +33,39 @@ export default function HeaderDataMonitor() {
     <div className="hide-on-mobile" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--surface-color)', border: '1px solid var(--surface-border)', padding: '4px', borderRadius: '12px', fontSize: '12px', fontWeight: 600 }}>
        <style>
          {`
-           @keyframes pulseData {
+           @keyframes pulseDataFast {
              0%, 100% { opacity: 1; transform: scale(1); }
-             50% { opacity: 0.7; transform: scale(0.95); }
+             50% { opacity: 0.2; transform: scale(0.9); }
            }
-           @keyframes floatCloud {
-             0%, 100% { transform: translateY(0px) scale(1.05); }
-             50% { transform: translateY(-2px) scale(1); }
+           @keyframes floatCloudSoft {
+             0%, 100% { transform: translateY(0px) scale(1); }
+             50% { transform: translateY(-3px) scale(1.1); }
            }
-           @keyframes flashZap {
-             0%, 100% { opacity: 1; transform: rotate(0deg) scale(1); filter: drop-shadow(0 0 2px rgba(250, 204, 21, 0.5)); }
-             10% { opacity: 0.5; filter: drop-shadow(0 0 0px transparent); }
-             20% { opacity: 1; filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.8)); transform: rotate(5deg) scale(1.1); }
-             30% { opacity: 0.8; transform: rotate(0deg) scale(1); }
+           @keyframes flashZapStrong {
+             0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 0px transparent); }
+             5%, 15% { opacity: 0.1; }
+             10%, 20% { opacity: 1; transform: scale(1.3) rotate(15deg); filter: drop-shadow(0 0 6px #F59E0B); }
+             25% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 0px transparent); }
            }
-           .anim-data { animation: pulseData 3s ease-in-out infinite; }
-           .anim-cloud { animation: floatCloud 4s ease-in-out infinite; }
-           .anim-zap { animation: flashZap 5s infinite; }
+           .wrapper-anim-data { display: inline-flex; transform-origin: center; animation: pulseDataFast 1.5s ease-in-out infinite; }
+           .wrapper-anim-cloud { display: inline-flex; transform-origin: center; animation: floatCloudSoft 3s ease-in-out infinite; }
+           .wrapper-anim-zap { display: inline-flex; transform-origin: center; animation: flashZapStrong 4s ease-out infinite; color: #EAB308 !important; }
          `}
        </style>
        
-       {/* Máy bộ: Đổi thành Database cho dễ hiểu đĩa quay/nhấp nháy */}
        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 8px', borderRadius: '8px', background: '#F8FAFC', color: '#475569' }} title="Dung lượng trạm Máy Bộ (Local)">
-         <Database size={14} className="anim-data" color="#64748B" /> {localSizeKB} KB
+         <span className="wrapper-anim-data"><Database size={14} color="#64748B" /></span> {localSizeKB} KB
        </div>
 
-       {/* Đám mây Firebase: Thêm hiệu ứng trôi nổi nhẹ */}
        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 8px', borderRadius: '8px', background: isCloudSynced ? '#F0FDF4' : '#F0F9FF', color: isCloudSynced ? '#15803D' : '#0369A1' }} title="Dung lượng trên Đám Mây Firebase">
-         <Cloud size={14} className="anim-cloud" color={isCloudSynced ? "#15803D" : "#0284C7"} /> 
+         <span className="wrapper-anim-cloud"><Cloud size={14} color={isCloudSynced ? "#15803D" : "#0284C7"} /></span> 
          {cloudSize ? `${cloudSize} KB` : 'Đang đo...'}
        </div>
 
-       {/* Kho lưu trữ 3 (Webhook): Tia sét chớp loé */}
        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 8px', borderRadius: '8px', background: '#FEFCE8', color: '#B45309' }} title="Dung lượng Đám Mây 2 (Dropbox/Make)">
-         <Zap size={14} className={webhookSize ? "anim-zap" : ""} color={webhookSize ? "#EAB308" : "#94A3B8"} /> 
+         <span className={webhookSize !== 0 ? "wrapper-anim-zap" : "wrapper-anim-zap"} style={{ color: '#EAB308' }}>
+            <Zap size={14} fill={webhookSize !== 0 ? "#FDE047" : "transparent"} />
+         </span> 
          {webhookSize ? `${webhookSize} KB` : 'Off'}
        </div>
     </div>
