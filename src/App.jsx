@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
+import packageJson from '../package.json';
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -375,6 +376,9 @@ const AppContent = () => {
           <button className="mobile-close" onClick={() => setIsMobileMenuOpen(false)}><X size={20} /></button>
         </div>
         <SidebarMenu onNavItemClick={() => setIsMobileMenuOpen(false)} />
+        <div style={{ padding: '16px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))', marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center', fontSize: '11px', color: 'rgba(255,255,255,0.3)', lineHeight: '1.6' }}>
+          Hệ thống <strong>{packageJson.name?.toUpperCase()}</strong> <br/> Phiên bản v{packageJson.version}
+        </div>
       </aside>
 
           <div className="main-wrapper">
