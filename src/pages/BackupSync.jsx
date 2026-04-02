@@ -104,9 +104,35 @@ export default function BackupSync() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
 
+        {/* Chế độ Developer Mode - Kéo Dữ Liệu Thực Tế */}
+        {import.meta.env.DEV && (
+          <div style={{ padding: 'clamp(16px, 3vw, 20px)', border: '2px solid #059669', borderRadius: '16px', background: '#ECFDF5', display: 'flex', flexDirection: 'column', gap: '20px', boxShadow: '0 10px 25px rgba(16, 185, 129, 0.15)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px dashed #6EE7B7', paddingBottom: '16px' }}>
+              <div style={{ padding: '8px', background: '#059669', borderRadius: '8px' }}>
+                 <Database size={24} color="white" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#065F46', margin: 0, padding: '4px' }}>Developer Mode: Lấy Dữ Liệu Thực Tế (Prod)</h3>
+                <p style={{ fontSize: '13px', color: '#047857', margin: '4px 0 0 0', paddingLeft: '4px' }}>Chức năng này chỉ xuất hiện khi chạy bằng Dev Server. Dùng để lấy toàn bộ dữ liệu đang chạy thực tế trên Online về máy mổ xẻ.</p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <button className="btn btn-outline" onClick={actions.handlePullProdCloud} disabled={syncing} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '24px 32px', borderColor: '#059669', color: '#059669', background: 'white', borderRadius: '12px', width: '100%', maxWidth: '400px', boxShadow: '0 4px 6px rgba(16, 185, 129, 0.1)' }}>
+                <DownloadCloud size={32} />
+                <span style={{ fontWeight: 800, fontSize: '16px' }}>{syncing ? 'Đang Clone Dữ Liệu...' : 'Kéo Dữ Liệu Từ Online Về Máy (Ghi đè Local)'}</span>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Đồng Bộ Đám Mây API */}
-        <div style={{ padding: 'clamp(16px, 3vw, 20px)', border: '1px solid #BAE6FD', borderRadius: '16px', background: '#F0F9FF' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 16 }}>
+        <div style={{ padding: 'clamp(16px, 3vw, 20px)', border: '1px solid #BAE6FD', borderRadius: '16px', background: '#F0F9FF', position: 'relative', overflow: 'hidden' }}>
+          {import.meta.env.DEV && (
+             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', padding: '6px', background: '#EF4444', color: 'white', textAlign: 'center', fontSize: '12px', fontWeight: 700, letterSpacing: '1px', zIndex: 10 }}>
+               CẢNH BÁO MÔI TRƯỜNG DEV: BỘ ĐỒNG BỘ NÀY ĐANG TRỎ VÀO [store_data_dev]. KHÔNG ẢNH HƯỞNG ĐẾN DATA ONLINE!
+             </div>
+          )}
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginTop: import.meta.env.DEV ? '24px' : '0' }}>
             <div style={{ flex: '1 1 200px', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Cloud size={24} color="#0284C7" />
               <input
@@ -162,9 +188,14 @@ export default function BackupSync() {
         </div>
         
         {/* Tự Động Hóa Đám Mây Webhook */}
-        <div style={{ padding: 'clamp(16px, 3vw, 20px)', border: '1px solid #FEF08A', borderRadius: '16px', background: '#FEFCE8', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ padding: 'clamp(16px, 3vw, 20px)', border: '1px solid #FEF08A', borderRadius: '16px', background: '#FEFCE8', display: 'flex', flexDirection: 'column', gap: '20px', position: 'relative', overflow: 'hidden' }}>
+          {import.meta.env.DEV && (
+             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', padding: '6px', background: '#EF4444', color: 'white', textAlign: 'center', fontSize: '12px', fontWeight: 700, letterSpacing: '1px', zIndex: 10 }}>
+               CẢNH BÁO MÔI TRƯỜNG DEV: LUỒNG WEBHOOK BỊ KHÓA ĐỂ TRÁNH ĐẨY DATA NHÁP LÊN KHO CHÍNH!
+             </div>
+          )}
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px dashed #FDE047', paddingBottom: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px dashed #FDE047', paddingBottom: '16px', marginTop: import.meta.env.DEV ? '24px' : '0' }}>
             <div style={{ padding: '8px', background: '#FEF9C3', borderRadius: '8px' }}>
                <Zap size={24} color="#D97706" />
             </div>
@@ -234,6 +265,8 @@ export default function BackupSync() {
              </button>
           </div>
         </div>
+
+
 
         {/* Khôi phục & Sao lưu File Nội Bộ */}
         <div style={{ padding: 'clamp(16px, 3vw, 20px)', border: '1px solid #FECDD3', borderRadius: '16px', background: '#FFF1F2', display: 'flex', flexDirection: 'column', gap: '20px' }}>

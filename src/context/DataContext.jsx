@@ -905,8 +905,15 @@ export const DataProvider = ({ children }) => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', height: '100vh', width: '100vw', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-color)', color: 'var(--primary)' }}>
-        <h2>Đang lấy dữ liệu từ Đám Mây Mới Nhất...</h2>
+      <div style={{ padding: '60px', textAlign: 'center', fontFamily: 'system-ui, sans-serif', height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--surface-color)' }}>
+        <div style={{ width: '80px', height: '80px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
+           <div className="spinner" style={{ width: '36px', height: '36px', borderWidth: '3.5px', borderTopColor: 'var(--primary)', animation: 'spin 1.2s linear infinite' }}></div>
+        </div>
+        <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '12px' }}>Đang nạp hệ thống lõi...</h2>
+        <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '14px', maxWidth: '320px' }}>
+          Đang kết nối siêu tốc và đồng bộ hóa bảo mật.<br/>
+          Vui lòng đợi trong giây lát...
+        </p>
       </div>
     );
   }

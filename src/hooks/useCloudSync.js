@@ -18,5 +18,12 @@ export const useCloudSync = () => {
     return result;
   };
 
-  return { syncToCloud, pullFromCloud, syncing };
+  const pullFromProdCloud = async () => {
+    setSyncing(true);
+    const result = await CloudSyncService.pullFromProdCloud();
+    setSyncing(false);
+    return result;
+  };
+
+  return { syncToCloud, pullFromCloud, pullFromProdCloud, syncing };
 };

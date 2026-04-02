@@ -191,6 +191,48 @@ export const CloudSyncService = {
     }
   },
 
+  pullFromProdCloud: async () => {
+    try {
+      console.log("[Dev Mode] Bắt đầu tải hệ thống nền thực tế từ Production Cloud...");
+      const targetKeys = [
+        'categories', 'salesChannels', 'ingredients', 'products', 
+        'suppliers', 'purchaseOrders', 'posOrders', 'accounts', 
+        'financeCategories', 'transactions', 'settings', 'users'
+      ];
+      
+      const newState = {};
+      for (const key of targetKeys) {
+        // LUÔN LUÔN CHỈ ĐỊNH RÕ RÀNG 'store_data' (Production DB)
+        const docRef = doc(db, 'store_data', key);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          newState[key] = docSnap.data().data;
+        }
+      }
+      
+      if (Object.keys(newState).length > 0) {
+        const currentState = await StorageService.getAll();
+        const mergedState = { ...currentState, ...newState };
+        
+        // Reset local-only properties to ensure 100% identical size with Prod for visual consistency
+        mergedState.notifications = [];
+        
+        // Ghi xuống Local
+        await StorageService.saveAll(mergedState, false); 
+        
+        // Cực Trọng Yếu: Ép đẩy thẳng lên DEV Firebase bỏ qua Debounce để lần F5 không bị Data gốc từ DEV đè lại!
+        await CloudSyncService.syncToCloud();
+
+        return { success: true, message: 'Đã sao chép toàn bộ bộ nhớ từ Production Đám mây thành công!', newState: mergedState };
+      } else {
+        return { success: false, message: 'Không tìm thấy dữ liệu trên Production server.' };
+      }
+    } catch (err) {
+      console.error("Firebase pull from Prod error:", err);
+      return { success: false, message: 'Lỗi đồng bộ cấu hình Mây. Có thể do đứt kết nối mạng.' };
+    }
+  },
+
   debouncedSyncToCloud: () => {
     if (debounceTimer) {
       clearTimeout(debounceTimer);

@@ -9,7 +9,7 @@ export const useBackupSync = () => {
   const { dispatch } = useData();
   const { confirm } = useConfirm();
   const { settings, updateSettings } = useSettings();
-  const { syncToCloud, pullFromCloud, syncing } = useCloudSync();
+  const { syncToCloud, pullFromCloud, pullFromProdCloud, syncing } = useCloudSync();
 
   const [localBackupInt, setLocalBackupInt] = useState('none');
   const [localCloudInt, setLocalCloudInt] = useState('none');
@@ -94,6 +94,36 @@ export const useBackupSync = () => {
     await updateSettings(payload);
     dispatch({ type: 'UPDATE_SETTINGS', payload });
     showToast(`Đã lưu URL Webhook Cloud (Google Drive/Dropbox)!`);
+  };
+
+  const handlePullProdCloud = async () => {
+    if (!import.meta.env.DEV) {
+       showToast('Chức năng này chỉ khả dụng trên môi trường Local Development!', 'error');
+       return;
+    }
+
+    const { confirmed, value } = await confirm({
+      title: 'KÉO DỮ LIỆU TỪ PRODUCTION',
+      message: 'HÀNH ĐỘNG NGUY HIỂM: Thao tác này sẽ tải dữ liệu thực tế đang chạy trên LIVE xuống máy tính này, ghi đè toàn bộ dữ liệu Dev Local hiện tại.\n\nVui lòng nhập mã PIN (1004) để xác nhận quyền:',
+      type: 'danger',
+      confirmText: 'CHẤP NHẬN ĐỒNG BỘ PROD',
+      withInput: true
+    });
+
+    if (confirmed) {
+       if (value !== '1004') {
+          showToast('Mã PIN không chính xác! Đã huỷ thao tác.', 'error');
+          return;
+       }
+       showToast('Đang tải dữ liệu từ DB Production [store_data]...', 'success');
+       const result = await pullFromProdCloud();
+       if (result.success) {
+          showToast('Đã sao chép DB Prod. Hệ thống sẽ khởi động lại!', 'success');
+          setTimeout(() => window.location.reload(), 1500);
+       } else {
+          showToast(result.message, 'error');
+       }
+    }
   };
 
   const testWebhook = async () => {
@@ -225,6 +255,7 @@ export const useBackupSync = () => {
       testWebhook,
       manualSync,
       handlePullCloud,
+      handlePullProdCloud,
       handleBackup,
       handleRestoreClick,
       handleFileChange
