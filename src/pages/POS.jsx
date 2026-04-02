@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Search, Plus, Minus, Trash2, CreditCard, Flame } from 'lucide-react';
+import { Search, Plus, Minus, Trash2, CreditCard, Flame, Image as ImageIcon } from 'lucide-react';
 import { useInventoryEngine } from '../hooks/useInventoryEngine';
 import { useProducts } from '../hooks/useProducts';
 import { useCategories } from '../hooks/useCategories';
@@ -236,31 +236,45 @@ const POS = () => {
                 onMouseUp={e => !isOutOfStock && (e.currentTarget.style.transform = 'scale(1)')}
                 onMouseLeave={e => !isOutOfStock && (e.currentTarget.style.transform = 'scale(1)')}
               >
-                <div style={{ position: 'relative', width: '100%', height: '140px', backgroundColor: 'var(--bg-color)', borderBottom: '1px solid var(--surface-border)' }}>
+                <div style={{ position: 'relative', width: '100%', height: '110px', backgroundColor: 'var(--bg-color)', borderBottom: '1px solid var(--surface-border)' }}>
                    {product.image ? (
                      <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                    ) : (
-                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>No Image</div>
+                     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', background: 'var(--surface-variant)' }}>
+                       <ImageIcon size={26} opacity={0.4} style={{ marginBottom: '4px' }} />
+                       <span style={{ fontSize: '11px', fontWeight: 500, opacity: 0.6 }}>Chưa có ảnh</span>
+                     </div>
                    )}
                    
                    {/* BADGE TÌNH TRẠNG KHO TRỰC TIẾP LÊN MÓN */}
-                   <div style={{ position: 'absolute', top: 10, right: 10 }}>
+                   <div style={{ position: 'absolute', top: 8, right: 8 }}>
                      {port === Infinity ? null : (
-                       <span style={{ background: port > 5 ? '#16A34A' : '#DC2626', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 800, boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-                          {port <= 0 ? `HẾT (${info.limitingName})` : `CÒN: ${port}`}
+                       <span style={{ background: port > 5 ? '#16A34A' : '#DC2626', color: 'white', padding: '4px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 800, boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                          {port <= 0 ? `HẾT HÀNG` : `CÒN: ${port}`}
                        </span>
                      )}
                    </div>
                 </div>
                 
-                <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3 }}>{product.name}</h4>
+                <div style={{ padding: '12px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div style={{ minHeight: '38px', marginBottom: '2px' }}>
+                    <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {product.name}
+                    </h4>
+                  </div>
+                  
+                  {isOutOfStock && info.limitingName && (
+                    <div style={{ fontSize: '11px', color: '#DC2626', fontWeight: 600, display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      (Thiếu: {info.limitingName})
+                    </div>
+                  )}
+
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                    <p style={{ margin: 0, fontSize: '16px', color: 'var(--primary)', fontWeight: 800 }}>
+                    <p style={{ margin: 0, fontSize: '15px', color: 'var(--primary)', fontWeight: 800 }}>
                       {product.price.toLocaleString('vi-VN')} đ
                     </p>
-                    <div style={{ background: '#FFF7ED', padding: '6px', borderRadius: '8px' }}>
-                       <Plus size={18} color="var(--primary)"/>
+                    <div style={{ background: isOutOfStock ? '#F3F4F6' : '#FFF7ED', padding: '6px', borderRadius: '10px', display: 'flex', opacity: isOutOfStock ? 0.5 : 1 }}>
+                       <Plus size={16} color={isOutOfStock ? '#9CA3AF' : 'var(--primary)'}/>
                     </div>
                   </div>
                 </div>
@@ -303,7 +317,7 @@ const POS = () => {
           )}
         </div>
 
-        <div style={{ padding: '24px', borderTop: '1px solid var(--surface-border)', background: 'var(--surface-color)', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 -4px 15px rgba(0,0,0,0.02)', zIndex: 10 }}>
+        <div style={{ padding: '20px 24px', borderTop: '1px solid var(--surface-border)', background: 'var(--surface-color)', display: 'flex', flexDirection: 'column', gap: '12px', boxShadow: '0 -4px 15px rgba(0,0,0,0.02)', zIndex: 10 }}>
           
           {/* Customer Info Section */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
