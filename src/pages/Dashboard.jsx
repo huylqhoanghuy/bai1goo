@@ -11,11 +11,12 @@ import {
   CategoryScale, LinearScale, BarElement, Title,
   PointElement, LineElement, Filler
 } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Pie, Doughnut, Bar, Line } from 'react-chartjs-2';
 
 ChartJS.register(
   ArcElement, Tooltip, Legend, CategoryScale,
-  LinearScale, BarElement, Title, PointElement, LineElement, Filler
+  LinearScale, BarElement, Title, PointElement, LineElement, Filler, ChartDataLabels
 );
 
 /* ─────────────────────────────────────────
@@ -262,7 +263,8 @@ const Dashboard = () => {
           color: '#64748b'
         }
       },
-      tooltip: chartTooltipPlugin
+      tooltip: chartTooltipPlugin,
+      datalabels: { display: false } // Default to false for UI consistency unless overridden
     }
   };
 
@@ -577,7 +579,23 @@ const Dashboard = () => {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
           <ChartPanel title="Cơ cấu chi phí nguyên vật liệu" accentColor="#dc2626" height={220}>
             {cogsData.labels.length > 0
-              ? <Doughnut data={cogsData} options={{ ...baseChartOptions, cutout: '60%' }} />
+              ? <Doughnut data={cogsData} options={{ 
+                  ...baseChartOptions, 
+                  cutout: '55%',
+                  plugins: {
+                     ...baseChartOptions.plugins,
+                     legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } },
+                     datalabels: {
+                        color: '#ffffff',
+                        font: { weight: 'bold', size: 11 },
+                        formatter: (value, ctx) => {
+                             const total = ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);
+                             const p = (value/total*100).toFixed(1);
+                             return p >= 3 ? p + '%' : '';
+                        }
+                     }
+                  }
+               }} />
               : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e1', fontSize: '13px' }}>
                   Chưa có dữ liệu định lượng
                 </div>
