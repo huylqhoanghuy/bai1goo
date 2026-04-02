@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, useState, useRef } from 'react';
 import { db } from '../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { useAutoBackup } from '../hooks/useAutoBackup';
+
 import { StorageService } from '../services/api/storage';
 import { CloudSyncService } from '../services/api/cloudSyncService';
 import { inferItemsFromPrice } from '../utils/csvParser';
@@ -218,6 +218,15 @@ const baseReducer = (state, action) => {
 
     case 'UPDATE_SETTINGS':
       return { ...state, settings: { ...state.settings, ...action.payload } };
+
+    case 'UPDATE_USER_PREFERENCES': {
+      const { userId, preferences } = action.payload;
+      const newUsers = state.users.map(u => 
+        u.id === userId ? { ...u, preferences: { ...(u.preferences || {}), ...preferences } } : u
+      );
+      // DataContext's auto-save hook will handle pushing this to localStorage and cloud
+      return { ...state, users: newUsers };
+    }
 
     case 'SHOW_TOAST':
       return { ...state, toast: { message: action.payload.message, type: action.payload.type || 'success', id: Date.now() }, _skipSave: true };
@@ -842,7 +851,7 @@ export const DataProvider = ({ children }) => {
   };
 
   // Khởi động trình tự động sao lưu Local & Cloud
-  useAutoBackup(state, rawDispatch, syncToCloud);
+  // Đã gỡ useAutoBackup() khỏi đây để đưa ra ngoài AppContent (tránh chạy nền khi quản lý đăng nhập)
 
   // Function to manually pull from Firebase
   const pullFromCloud = async () => {

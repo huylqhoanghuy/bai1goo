@@ -1,10 +1,13 @@
 import { useEffect, useRef } from 'react';
+import { useData } from '../context/DataContext';
+import { StorageService } from '../services/api/storage';
 
-export function useAutoBackup(state, dispatch, syncToCloud) {
+export function useAutoBackup() {
+  const { state, dispatch, syncToCloud } = useData();
+
   const stateRef = useRef(state);
   const syncToCloudRef = useRef(syncToCloud);
   
-  // Keep refs synchronized with the latest state
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
@@ -49,12 +52,12 @@ export function useAutoBackup(state, dispatch, syncToCloud) {
               dispatch({ type: 'UPDATE_SETTINGS', payload: { lastBackupTime: now } });
               dispatch({ 
                  type: 'SHOW_TOAST', 
-                 payload: { message: `Đã tự động tải xuống bản sao lưu định kỳ (${localInterval})! Vui lòng lưu trữ tệp cẩn thận.`, type: 'success' } 
+                 payload: { message: `Đã tự động tải File Backup JSON định kỳ (${localInterval})! Vui lòng cất giữ an toàn.`, type: 'success' } 
               });
            }
        }
 
-       // 2. Kiểm tra đẩy Đám mây tự động
+       // 2. Chức năng hẹn giờ Webhook (Auto Push Cloud)
        const cloudInterval = settings.autoCloudSyncInterval;
        if (cloudInterval && cloudInterval !== 'none' && syncToCloudRef.current) {
            const lastCloudTime = settings.lastCloudSyncTime;
@@ -75,9 +78,7 @@ export function useAutoBackup(state, dispatch, syncToCloud) {
        }
     };
 
-    // Kiểm tra sau 5 giây kể từ khi khởi động ứng dụng
     const timeout = setTimeout(checkAndBackup, 5000);
-    // Sau đó kiểm tra định kỳ mỗi 15 phút (để dò các lịch trình sắp tới hạn kịp thời)
     const timer = setInterval(checkAndBackup, 15 * 60 * 1000);
     
     return () => {

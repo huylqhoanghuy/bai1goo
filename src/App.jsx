@@ -199,9 +199,11 @@ import { ConfirmProvider } from './context/ConfirmContext';
 import GlobalToast from './components/GlobalToast';
 import LiveClock from './components/LiveClock';
 import { useAutoInventoryWarning } from './hooks/useAutoInventoryWarning';
+import { useAutoBackup } from './hooks/useAutoBackup';
 
 const AppContent = () => {
   useAutoInventoryWarning();
+  useAutoBackup();
 
   const { state, dispatch } = useData();
   const { user, logout } = useAuth();
