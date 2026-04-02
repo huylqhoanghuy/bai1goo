@@ -399,10 +399,10 @@ const AppContent = () => {
               </div>
 
               <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <HeaderDataMonitor />
                 <div className="hide-on-mobile">
                   <LiveClock />
                 </div>
+                <HeaderDataMonitor />
                 <div style={{ position: 'relative' }} ref={notifRef}>
                   <button onClick={() => setShowNotifications(!showNotifications)} style={{ 
                     display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
