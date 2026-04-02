@@ -1,3 +1,4 @@
+import HeaderDataMonitor from "./components/HeaderDataMonitor";
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import packageJson from '../package.json';
