@@ -193,6 +193,7 @@ export const useAccountingManager = () => {
   };
 
   const filteredPayables = state.purchaseOrders
+    .filter(p => !p.deleted && p.status !== 'Cancelled')
     .filter(p => p.status !== 'Paid')
     .filter(p => {
         if (debtFilters.supplierId === 'all') return true;
@@ -203,6 +204,7 @@ export const useAccountingManager = () => {
     .filter(p => matchCommonFilters(p));
 
   const filteredReceivables = state.posOrders
+    .filter(o => !o.deleted && o.status !== 'Cancelled')
     .filter(o => o.paymentStatus === 'Debt' || o.paymentStatus === 'Unpaid')
     .filter(o => {
         if (debtFilters.channelId === 'all') return true;

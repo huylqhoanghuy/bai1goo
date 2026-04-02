@@ -23,7 +23,8 @@ export const FinancialService = {
     const totalCash = state.accounts?.reduce((sum, acc) => sum + (acc.balance || 0), 0) || 0;
     
     const totalInventoryValue = state.ingredients?.reduce((sum, ing) => {
-        return sum + ((ing.stock || 0) * (ing.cost || 0)); // Note: the original used ing.quantity, but the standard in this system is ing.stock. I'll use stock.
+        if (ing.deleted) return sum;
+        return sum + ((ing.stock || 0) * (ing.cost || 0));
     }, 0) || 0;
 
     const totalAssets = totalCash + totalInventoryValue;
@@ -67,16 +68,26 @@ export const FinancialService = {
 
     const grossProfit = totalRevenue - totalCOGS;
 
+    // Chi phí từ các phiếu chi thuần (Không bao gồm Nhập kho, Thu nợ)
     const operatingExpenses = filteredTransactions.filter(t => t.type === 'Chi' && !t.note?.toLowerCase().includes('nhập kho') && !t.note?.toLowerCase().includes('nợ')).reduce((sum, t) => sum + t.amount, 0) || 0;
     
-    const ebitda = grossProfit - operatingExpenses;
+    // Chi phí hao hụt kho sinh ra từ các bút toán Hạch Toán (Hao hụt = Khấu trừ tài sản = Chi phí)
+    const inventoryLossExpenses = filteredTransactions.filter(t => t.type === 'Hạch Toán' && t.note?.includes('Khấu trừ hao hụt')).reduce((sum, t) => sum + t.amount, 0) || 0;
+    
+    // Thu nhập khác từ dư thừa kho
+    const otherIncome = filteredTransactions.filter(t => t.type === 'Hạch Toán' && t.note?.includes('Ghi nhận dư thừa')).reduce((sum, t) => sum + t.amount, 0) || 0;
+
+    const totalOPEX = operatingExpenses + inventoryLossExpenses;
+    
+    const ebitda = grossProfit - totalOPEX + otherIncome;
     const netProfit = ebitda; 
 
     // ============================================
     // 3. TÍNH TOÁN (CASH FLOW - Dòng Tiền)
     // ============================================
-    const cashInflows = filteredTransactions.filter(t => t.type === 'Thu').reduce((sum, t) => sum + t.amount, 0) || 0;
-    const cashOutflows = filteredTransactions.filter(t => t.type === 'Chi').reduce((sum, t) => sum + t.amount, 0) || 0;
+    // Dòng tiền CHỈ TÍNH tiền mặt thật, KHÔNG TÍNH Bút toán Hạch Toán (isNonCash)
+    const cashInflows = filteredTransactions.filter(t => t.type === 'Thu' && !t.isNonCash).reduce((sum, t) => sum + t.amount, 0) || 0;
+    const cashOutflows = filteredTransactions.filter(t => t.type === 'Chi' && !t.isNonCash).reduce((sum, t) => sum + t.amount, 0) || 0;
     const netCashFlow = cashInflows - cashOutflows;
 
     return {
@@ -89,7 +100,7 @@ export const FinancialService = {
       totalCOGS,
       cogsByCategory,
       grossProfit,
-      operatingExpenses,
+      operatingExpenses: totalOPEX,
       ebitda,
       netProfit,
       cashInflows,

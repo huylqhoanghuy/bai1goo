@@ -160,10 +160,10 @@ export default function AccountingUI({ manager }) {
                      <span style={{ fontSize: '10px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px', fontWeight: 600 }}>NỢ NCC (PHẢI TRẢ):</span>
                      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
                         <strong style={{ fontSize: '1.2rem', color: 'var(--danger)', lineHeight: 1 }}>
-                           {rootState.purchaseOrders.filter(p => p.status === 'Debt' || p.status === 'Pending').reduce((sum, p) => sum + (p.totalAmount || 0), 0).toLocaleString()} <small style={{fontSize:'var(--font-xs)'}}>đ</small>
+                           {rootState.purchaseOrders.filter(p => !p.deleted && p.status !== 'Cancelled' && (p.status === 'Debt' || p.status === 'Pending')).reduce((sum, p) => sum + (p.totalAmount || 0), 0).toLocaleString()} <small style={{fontSize:'var(--font-xs)'}}>đ</small>
                         </strong>
                         <span style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '2px', fontWeight: 600 }}>
-                           ({rootState.purchaseOrders.filter(p => p.status === 'Debt' || p.status === 'Pending').length} phiếu)
+                           ({rootState.purchaseOrders.filter(p => !p.deleted && p.status !== 'Cancelled' && (p.status === 'Debt' || p.status === 'Pending')).length} phiếu)
                         </span>
                      </div>
                   </div>
@@ -175,10 +175,10 @@ export default function AccountingUI({ manager }) {
                      <span style={{ fontSize: '10px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px', fontWeight: 600 }}>NỢ KHÁCH HÀNG (PHẢI THU):</span>
                      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
                         <strong style={{ fontSize: '1.2rem', color: '#B45309', lineHeight: 1 }}>
-                           {rootState.posOrders.filter(o => o.paymentStatus === 'Debt' || o.paymentStatus === 'Unpaid').reduce((sum, o) => sum + ((o.netAmount || 0) + (Number(o.extraFee) || 0)), 0).toLocaleString()} <small style={{fontSize:'var(--font-xs)'}}>đ</small>
+                           {rootState.posOrders.filter(o => !o.deleted && o.status !== 'Cancelled' && (o.paymentStatus === 'Debt' || o.paymentStatus === 'Unpaid')).reduce((sum, o) => sum + ((o.netAmount || 0) + (Number(o.extraFee) || 0)), 0).toLocaleString()} <small style={{fontSize:'var(--font-xs)'}}>đ</small>
                         </strong>
                         <span style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '2px', fontWeight: 600 }}>
-                           ({rootState.posOrders.filter(o => o.paymentStatus === 'Debt' || o.paymentStatus === 'Unpaid').length} đơn)
+                           ({rootState.posOrders.filter(o => !o.deleted && o.status !== 'Cancelled' && (o.paymentStatus === 'Debt' || o.paymentStatus === 'Unpaid')).length} đơn)
                         </span>
                      </div>
                   </div>

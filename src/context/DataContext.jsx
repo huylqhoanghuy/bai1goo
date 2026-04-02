@@ -460,6 +460,39 @@ const baseReducer = (state, action) => {
     }
     case 'UPDATE_INGREDIENT': {
       const updatedIng = action.payload;
+      const oldIng = state.ingredients.find(i => i.id === updatedIng.id);
+      
+      let newTransactions = [...state.transactions];
+      let newAccounts = [...state.accounts];
+      
+      // Bút toán hao hụt / dư thừa kho (Chỉ tạo khi số lượng stock thực sự thay đổi thủ công)
+      // Lưu ý: Các thao tác từ PO hay POS không dùng UPDATE_INGREDIENT (mà dùng ADD_POS_ORDER, etc)
+      if (oldIng && oldIng.stock !== updatedIng.stock) {
+          const stockDiff = updatedIng.stock - oldIng.stock;
+          const costDiff = stockDiff * (updatedIng.cost || oldIng.cost || 0);
+          
+          if (Math.abs(costDiff) > 1) { // Chỉ ghi lại nếu giá trị chênh lệch đáng kể (> 1 đồng)
+             const varianceTx = {
+                 id: generateId('GD-'),
+                 voucherCode: generateId('HT-'),
+                 date: new Date().toISOString(),
+                 type: 'Hạch Toán',
+                 categoryId: 'FC10', // Tạm gắn Khác, xử lý ở P&L
+                 accountId: 'ACC1', // Không tác động tiền mặt, chỉ mượn trường
+                 amount: Math.abs(costDiff),
+                 note: stockDiff < 0 
+                     ? `[KIỂM KÊ KHO] Khấu trừ hao hụt tồn kho (${Math.abs(stockDiff).toFixed(2)} ${updatedIng.buyUnit || updatedIng.unit}) - Nguyên liệu: ${updatedIng.name}`
+                     : `[KIỂM KÊ KHO] Ghi nhận dư thừa tồn kho (${Math.abs(stockDiff).toFixed(2)} ${updatedIng.buyUnit || updatedIng.unit}) - Nguyên liệu: ${updatedIng.name}`,
+                 collector: 'Hệ thống',
+                 payer: 'Kiểm kê',
+                 relatedId: updatedIng.id,
+                 isNonCash: true, // Cờ khóa dòng tiền thực
+                 stockDiffInfo: { diff: stockDiff, cost: updatedIng.cost } // Dùng cho P&L
+             };
+             newTransactions = [varianceTx, ...newTransactions];
+          }
+      }
+
       const healedProducts = (state.products || []).map(p => {
          if (!p.recipe) return p;
          let changed = false;
@@ -474,7 +507,13 @@ const baseReducer = (state, action) => {
          });
          return changed ? { ...p, recipe: newRecipe } : p;
       });
-      return { ...state, ingredients: state.ingredients.map(i => i.id === updatedIng.id ? updatedIng : i), products: healedProducts };
+      return { 
+          ...state, 
+          ingredients: state.ingredients.map(i => i.id === updatedIng.id ? updatedIng : i), 
+          products: healedProducts,
+          transactions: newTransactions,
+          accounts: newAccounts
+      };
     }
     case 'DELETE_INGREDIENT': return { ...state, ingredients: state.ingredients.map(i => i.id === action.payload ? { ...i, deleted: true, deletedAt: new Date().toISOString() } : i) };
     case 'RESTORE_INGREDIENT': return { ...state, ingredients: state.ingredients.map(i => i.id === action.payload ? { ...i, deleted: false, deletedAt: null, hiddenFromStaff: false } : i) };
