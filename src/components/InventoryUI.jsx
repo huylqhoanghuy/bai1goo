@@ -24,7 +24,7 @@ const InventoryUI = ({
   const currentListState = activeTab === 'ingredient' ? ingListState : supListState;
   
   // Forms
-  const [ingForm, setIngForm] = useState({ id: '', name: '', stock: 0, unit: '', buyUnit: '', conversionRate: 1, cost: 0, buyPrice: 0, minStock: 0, lastPurchaseDate: new Date().toISOString().split('T')[0] });
+  const [ingForm, setIngForm] = useState({ id: '', name: '', category: '', stock: 0, unit: '', buyUnit: '', conversionRate: 1, cost: 0, buyPrice: 0, minStock: 0, lastPurchaseDate: new Date().toISOString().split('T')[0] });
   const [supForm, setSupForm] = useState({ id: '', name: '', phone: '', email: '', address: '', notes: '', debt: 0 });
   
   const [expandedIngId, setExpandedIngId] = useState(null);
@@ -52,7 +52,7 @@ const InventoryUI = ({
     const payload = { ...ingForm, stock: Number(ingForm.stock), cost: Number(ingForm.cost), buyPrice: Number(ingForm.buyPrice), minStock: Number(ingForm.minStock), conversionRate: Number(ingForm.conversionRate) || 1 };
     onSaveIngredient(payload);
     currentListState.setShowForm(false);
-    setIngForm({ id: '', name: '', stock: 0, unit: '', buyUnit: '', conversionRate: 1, cost: 0, buyPrice: 0, minStock: 0, lastPurchaseDate: new Date().toISOString().split('T')[0] });
+    setIngForm({ id: '', name: '', category: '', stock: 0, unit: '', buyUnit: '', conversionRate: 1, cost: 0, buyPrice: 0, minStock: 0, lastPurchaseDate: new Date().toISOString().split('T')[0] });
   };
 
   const saveSupplier = (e) => {
@@ -91,7 +91,12 @@ const InventoryUI = ({
   const renderActiveList = () => {
     if (activeTab === 'ingredient') {
       const ingColumns = [
-        { key: 'name', label: 'Tên Nguyên Liệu/Vật Tư', sortable: true, render: val => <span style={{fontWeight: 600}}>{val}</span> },
+        { key: 'name', label: 'Tên Nguyên Liệu/Vật Tư', sortable: true, render: (val, item) => (
+             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{fontWeight: 600}}>{val}</span>
+                {item.category && <span style={{fontSize: '11px', color: 'var(--text-secondary)', background: 'var(--surface-variant)', padding: '2px 6px', borderRadius: '4px', width: 'fit-content'}}>{item.category}</span>}
+             </div>
+          )},
         { 
           key: 'stock', 
           label: 'Lượng Tồn Kho', 
@@ -212,9 +217,22 @@ const InventoryUI = ({
     if (activeTab === 'ingredient') {
       return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div>
-            <label style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom:'6px', display:'block', fontWeight: 600 }}>Tên Nguyên Liệu / Vật Tư:</label>
-            <input required className="form-input" placeholder="VD: Bò Mỹ, Cà phê hạt..." value={ingForm.name} onChange={e => setIngForm({...ingForm, name: e.target.value})} />
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 2fr) minmax(150px, 1fr)', gap: '16px' }}>
+            <div>
+              <label style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom:'6px', display:'block', fontWeight: 600 }}>Tên Nguyên Liệu / Vật Tư:</label>
+              <input required className="form-input" placeholder="VD: Gà lai chọi, Ly nhựa..." value={ingForm.name} onChange={e => setIngForm({...ingForm, name: e.target.value})} />
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom:'6px', display:'block', fontWeight: 600 }}>Nhóm Phân Loại:</label>
+              <select required className="form-input" value={ingForm.category || ''} onChange={e => setIngForm({...ingForm, category: e.target.value})}>
+                <option value="">-- Chọn nhóm phân loại --</option>
+                <option value="Thịt & Thành Phần Chính">Thịt & Thành Phần Chính</option>
+                <option value="Gia Vị & Đồ Khô">Gia Vị & Đồ Khô</option>
+                <option value="Đồ Tươi Sống">Đồ Tươi Sống</option>
+                <option value="Đồ Uống & Pha Chế">Đồ Uống & Pha Chế</option>
+                <option value="Bao Bì & Vật Tư">Bao Bì & Vật Tư</option>
+              </select>
+            </div>
           </div>
           
           <div style={{ padding: '20px', background: 'var(--surface-variant)', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
