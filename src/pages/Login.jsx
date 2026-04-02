@@ -127,7 +127,7 @@ export default function Login() {
     <div style={{
       minHeight: '100vh', width: '100vw',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'radial-gradient(ellipse at 30% 40%, #2A1000 0%, #150A00 50%, #0A0500 100%)',
+      background: 'radial-gradient(ellipse at 30% 40%, #521800 0%, #2A0D00 50%, #170700 100%)',
       overflow: 'hidden', position: 'relative',
       fontFamily: "'Inter', 'Segoe UI', sans-serif"
     }}>
@@ -145,9 +145,9 @@ export default function Login() {
       <StarCanvas />
 
       {/* Warm nebula overlays */}
-      <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '55vw', height: '55vw', background: 'radial-gradient(circle, rgba(200,60,0,0.15) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 1 }} />
-      <div style={{ position: 'absolute', bottom: '-10%', right: '-5%', width: '45vw', height: '45vw', background: 'radial-gradient(circle, rgba(255,120,0,0.12) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 1 }} />
-      <div style={{ position: 'absolute', top: '35%', right: '25%', width: '30vw', height: '30vw', background: 'radial-gradient(circle, rgba(180,40,0,0.10) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 1 }} />
+      <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '55vw', height: '55vw', background: 'radial-gradient(circle, rgba(220,70,0,0.25) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 1 }} />
+      <div style={{ position: 'absolute', bottom: '-10%', right: '-5%', width: '45vw', height: '45vw', background: 'radial-gradient(circle, rgba(255,140,0,0.22) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 1 }} />
+      <div style={{ position: 'absolute', top: '35%', right: '25%', width: '30vw', height: '30vw', background: 'radial-gradient(circle, rgba(200,60,0,0.18) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 1 }} />
 
       {/* Floating food */}
       <FloatingFood />
@@ -155,12 +155,12 @@ export default function Login() {
       {/* === MAIN CARD === */}
       <div style={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: '420px', padding: '16px', animation: 'fadeUp 0.7s cubic-bezier(0.16,1,0.3,1)' }}>
         <div style={{
-          background: 'rgba(28, 14, 5, 0.85)',
+          background: 'rgba(50, 20, 5, 0.85)',
           borderRadius: '24px',
           overflow: 'hidden',
           backdropFilter: 'blur(24px)',
           animation: 'gentleGlow 5s ease-in-out infinite',
-          border: '1px solid rgba(255, 140, 40, 0.22)'
+          border: '1px solid rgba(255, 170, 80, 0.3)'
         }}>
           {/* Top warm stripe */}
           <div style={{ height: '4px', background: 'linear-gradient(90deg, #C84800, #FF7A00, #FFB347, #FF7A00, #C84800)', backgroundSize: '200% 100%', animation: 'shimmer 3s linear infinite' }} />
@@ -242,12 +242,12 @@ export default function Login() {
                     placeholder="Nhập tên đăng nhập..." autoComplete="username"
                     style={{
                       width: '100%', height: '48px', paddingLeft: '42px', paddingRight: '16px', boxSizing: 'border-box',
-                      background: 'rgba(255,120,30,0.06)', border: '1.5px solid rgba(255,120,30,0.2)',
+                      background: 'rgba(255,255,255,0.08)', border: '1.5px solid rgba(255,255,255,0.2)',
                       borderRadius: '12px', color: '#fff', fontSize: '14px', outline: 'none',
                       fontFamily: 'inherit', transition: 'all 0.2s',
                     }}
-                    onFocus={e => { e.target.style.borderColor = 'rgba(255,140,40,0.7)'; e.target.style.background = 'rgba(255,120,30,0.1)'; e.target.style.boxShadow = '0 0 0 3px rgba(255,120,30,0.12)'; }}
-                    onBlur={e => { e.target.style.borderColor = 'rgba(255,120,30,0.2)'; e.target.style.background = 'rgba(255,120,30,0.06)'; e.target.style.boxShadow = 'none'; }}
+                    onFocus={e => { e.target.style.borderColor = 'rgba(255,160,60,0.8)'; e.target.style.background = 'rgba(255,255,255,0.15)'; e.target.style.boxShadow = '0 0 0 3px rgba(255,160,60,0.2)'; }}
+                    onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.2)'; e.target.style.background = 'rgba(255,255,255,0.08)'; e.target.style.boxShadow = 'none'; }}
                   />
                 </div>
               </div>
@@ -264,12 +264,12 @@ export default function Login() {
                     placeholder="••••••••" autoComplete="current-password"
                     style={{
                       width: '100%', height: '48px', paddingLeft: '42px', paddingRight: '46px', boxSizing: 'border-box',
-                      background: 'rgba(255,120,30,0.06)', border: '1.5px solid rgba(255,120,30,0.2)',
+                      background: 'rgba(255,255,255,0.08)', border: '1.5px solid rgba(255,255,255,0.2)',
                       borderRadius: '12px', color: '#fff', fontSize: '14px', outline: 'none',
                       fontFamily: 'inherit', transition: 'all 0.2s',
                     }}
-                    onFocus={e => { e.target.style.borderColor = 'rgba(255,140,40,0.7)'; e.target.style.background = 'rgba(255,120,30,0.1)'; e.target.style.boxShadow = '0 0 0 3px rgba(255,120,30,0.12)'; }}
-                    onBlur={e => { e.target.style.borderColor = 'rgba(255,120,30,0.2)'; e.target.style.background = 'rgba(255,120,30,0.06)'; e.target.style.boxShadow = 'none'; }}
+                    onFocus={e => { e.target.style.borderColor = 'rgba(255,160,60,0.8)'; e.target.style.background = 'rgba(255,255,255,0.15)'; e.target.style.boxShadow = '0 0 0 3px rgba(255,160,60,0.2)'; }}
+                    onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.2)'; e.target.style.background = 'rgba(255,255,255,0.08)'; e.target.style.boxShadow = 'none'; }}
                   />
                   <button type="button" onClick={() => setShowPass(!showPass)} style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '12px', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,140,40,0.5)', display: 'flex', padding: '4px' }}>
                     {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
