@@ -65,7 +65,9 @@ export const CloudSyncService = {
           }
         }
       }
-      return { success: true, message: 'Đã lưu trữ dữ liệu lên Đám mây an toàn!' };
+      
+      const payloadSize = JSON.stringify(state).length;
+      return { success: true, message: 'Đã lưu trữ dữ liệu lên Đám mây an toàn!', size: payloadSize };
     } catch (err) {
       console.error("Firebase sync error:", err);
       return { success: false, message: 'Lỗi đẩy dữ liệu. Vui lòng kiểm tra kết nối mạng.' };
@@ -110,9 +112,15 @@ export const CloudSyncService = {
       clearTimeout(debounceTimer);
     }
     // Chờ 3 giây để tránh làm quá tải Firebase khi có thao tác liên tiếp
-    debounceTimer = setTimeout(() => {
+    debounceTimer = setTimeout(async () => {
       console.log("[Real-time Core] Tự động cập nhật thao tác lên Đám Mây...");
-      CloudSyncService.syncToCloud();
+      const result = await CloudSyncService.syncToCloud();
+      if (result.success && result.size) {
+          const settings = await StorageService.getCollection('settings') || {};
+          const updatedSettings = { ...settings, lastCloudSyncSize: result.size, lastCloudSyncTime: Date.now() };
+          // Lưu ngầm không kích hoạt triggerSync
+          await StorageService.saveCollection('settings', updatedSettings, false);
+      }
     }, 2000);
   },
 

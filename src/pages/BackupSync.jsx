@@ -1,8 +1,9 @@
-import React from 'react';
-import { Database, DownloadCloud, UploadCloud, AlertTriangle, Cloud, Zap } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Database, DownloadCloud, UploadCloud, AlertTriangle, Cloud, Zap, HardDrive, BarChart2 } from 'lucide-react';
 import { useBackupSync } from '../hooks/useBackupSync';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
+import { StorageService } from '../services/api/storage';
 
 export default function BackupSync() {
   const { user } = useAuth();
@@ -28,6 +29,19 @@ export default function BackupSync() {
     handleFileChange
   } = actions;
 
+  const [localStats, setLocalStats] = useState({ sizeKB: 0, products: 0, orders: 0 });
+
+  useEffect(() => {
+    StorageService.getAll().then(data => {
+       const sizeBytes = JSON.stringify(data).length;
+       setLocalStats({
+          sizeKB: (sizeBytes / 1024).toFixed(1),
+          products: data.products?.length || 0,
+          orders: data.posOrders?.length || 0
+       });
+    });
+  }, [settings?.lastCloudSyncTime]);
+
   if (user?.role !== 'ADMIN') {
     return <Navigate to="/" />;
   }
@@ -40,11 +54,55 @@ export default function BackupSync() {
       <h2 style={{ marginBottom: 24, color: 'var(--text-primary)', fontSize: '24px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '12px' }}>
         <Database size={28} color="var(--primary)" /> Trung Tâm Đồng Bộ & Sao Lưu
       </h2>
-      <p style={{ color: 'var(--text-secondary)', fontSize: '15px', lineHeight: 1.6, marginBottom: 32 }}>
+      <p style={{ color: 'var(--text-secondary)', fontSize: '15px', lineHeight: 1.6, marginBottom: 24 }}>
         Toàn bộ dữ liệu của Xóm Gà POPPY được lưu trữ siêu tốc độ tại máy tính này. Tại đây, bạn có thể thiết lập đẩy hệ thống lên Đám Mây ngầm (Google Drive, Dropbox qua Webhook) hoặc kết xuất File cứng thủ công.
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* DASHBOARD GIÁM SÁT DUNG LƯỢNG */}
+      <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#334155', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+         <BarChart2 size={20} color="#64748b" /> Bộ Chỉ Huy Giám Sát Dữ Liệu
+      </h3>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+         {/* LOCAL */}
+         <div style={{ padding: '16px', background: '#F8FAFC', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+               <div style={{ padding: '8px', background: '#E2E8F0', borderRadius: '8px' }}><HardDrive size={18} color="#475569" /></div>
+               <div style={{ fontWeight: 600, color: '#334155' }}>Ổ Đĩa Local (Web)</div>
+            </div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#0F172A', marginBottom: '4px' }}>{localStats.sizeKB} KB</div>
+            <div style={{ fontSize: '13px', color: '#64748B' }}>Chi tiết: {localStats.orders} Đơn hàng, {localStats.products} Món ăn</div>
+         </div>
+
+         {/* FIREBASE */}
+         <div style={{ padding: '16px', background: '#F0F9FF', borderRadius: '12px', border: '1px solid #BAE6FD' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+               <div style={{ padding: '8px', background: '#E0F2FE', borderRadius: '8px' }}><Cloud size={18} color="#0284C7" /></div>
+               <div style={{ fontWeight: 600, color: '#0369A1' }}>Firebase Đám Mây</div>
+            </div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#0284C7', marginBottom: '4px' }}>
+               {settings.lastCloudSyncSize ? (settings.lastCloudSyncSize / 1024).toFixed(1) + ' KB' : 'Chưa rõ'}
+            </div>
+            <div style={{ fontSize: '13px', color: '#0ea5e9' }}>
+               Cập nhật lần cuối: {settings.lastCloudSyncTime ? new Date(settings.lastCloudSyncTime).toLocaleTimeString('vi-VN') : '--:--'}
+            </div>
+         </div>
+
+         {/* DROPBOX / WEBHkOOK */}
+         <div style={{ padding: '16px', background: '#FEFCE8', borderRadius: '12px', border: '1px solid #FEF08A' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+               <div style={{ padding: '8px', background: '#FEF9C3', borderRadius: '8px' }}><Zap size={18} color="#D97706" /></div>
+               <div style={{ fontWeight: 600, color: '#B45309' }}>Kho Lưu Trữ Độc Lập</div>
+            </div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#D97706', marginBottom: '4px' }}>
+               {settings.lastWebhookSyncSize ? (settings.lastWebhookSyncSize / 1024).toFixed(1) + ' KB' : 'Chưa rõ'}
+            </div>
+            <div style={{ fontSize: '13px', color: '#d97706' }}>
+               Chuyến hàng cuối: {settings.lastWebhookSync ? new Date(settings.lastWebhookSync).toLocaleString('vi-VN') : 'Chưa từng gửi'}
+            </div>
+         </div>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
 
         {/* Đồng Bộ Đám Mây API */}
         <div style={{ padding: 'clamp(16px, 3vw, 20px)', border: '1px solid #BAE6FD', borderRadius: '16px', background: '#F0F9FF' }}>

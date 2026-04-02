@@ -73,6 +73,9 @@ export const useBackupSync = () => {
   const manualSync = async () => {
     const result = await syncToCloud();
     showToast(result.message, result.success ? 'success' : 'error');
+    if (result.success && result.size) {
+        await updateSettings({ lastCloudSyncSize: result.size, lastCloudSyncTime: Date.now() });
+    }
   };
 
   const handlePullCloud = async () => {
@@ -115,17 +118,20 @@ export const useBackupSync = () => {
         data: entireState
       };
       
+      const payloadString = JSON.stringify(payload);
+      const payloadSize = payloadString.length;
+      
       const response = await fetch(hookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload)
+        body: payloadString
       });
       
       if (response.ok) {
         showToast('✅ Đã gửi thành công bản Backup JSON lên Webhook Cloud (Make/Zapier)!', 'success');
-        await updateSettings({ lastWebhookSync: Date.now() });
+        await updateSettings({ lastWebhookSync: Date.now(), lastWebhookSyncSize: payloadSize });
       } else {
         showToast(`Make/Zapier từ chối. HTTP Code: ${response.status}`, 'error');
       }
