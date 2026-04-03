@@ -159,28 +159,28 @@ const ProfitSimulator = () => {
                 onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
               >
                 {/* Khu vực thành phần nguyên liệu (Thay cho ảnh) */}
-                <div style={{ padding: '12px', flexShrink: 0, backgroundColor: 'var(--surface-variant)', borderBottom: '1px solid var(--surface-border)', minHeight: '100px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                   <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>ĐỊNH MỨC NGUYÊN LIỆU:</span>
+                <div className="custom-scrollbar" style={{ padding: '12px', height: '140px', flexShrink: 0, overflowY: 'auto', backgroundColor: 'var(--surface-variant)', borderBottom: '1px solid var(--surface-border)' }}>
+                   <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>ĐỊNH MỨC NGUYÊN LIỆU:</div>
                    {recipeInfo.length > 0 ? (
                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                        {recipeInfo.map((item, idx) => (
-                         <span key={idx} style={{ background: 'var(--surface-color)', border: '1px solid var(--surface-border)', borderRadius: '6px', padding: '2px 6px', fontSize: '11px', color: 'var(--text-primary)', fontWeight: 600 }}>
+                         <span key={idx} style={{ background: 'var(--surface-color)', border: '1px solid var(--surface-border)', borderRadius: '6px', padding: '4px 6px', fontSize: '11px', color: 'var(--text-primary)', fontWeight: 600 }}>
                            {item.name} <span style={{ color: 'var(--primary)', fontWeight: 800 }}>({item.qty}{item.unit})</span>
                          </span>
                        ))}
                      </div>
                    ) : (
-                     <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontStyle: 'italic', display: 'flex', alignItems: 'center', height: '100%' }}>Chưa cài đặt định mức</div>
+                     <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontStyle: 'italic', display: 'flex', alignItems: 'center', height: '100%', paddingBottom: '20px' }}>Chưa cài đặt định mức</div>
                    )}
                 </div>
                 
-                <div style={{ padding: '12px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <div style={{ minHeight: '38px', flexShrink: 0, marginBottom: '2px' }}>
+                <div style={{ padding: '12px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', minHeight: '80px', flexShrink: 0 }}>
+                  <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start' }}>
                     <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                       {product.name}
                     </h4>
                   </div>
-                  <div style={{ display: 'flex', flexShrink: 0, justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+                  <div style={{ display: 'flex', flexShrink: 0, justifyContent: 'space-between', alignItems: 'center' }}>
                     <p style={{ margin: 0, fontSize: '15px', color: 'var(--primary)', fontWeight: 800 }}>
                       {product.price.toLocaleString('vi-VN')} đ
                     </p>
