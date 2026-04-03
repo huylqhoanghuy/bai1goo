@@ -107,12 +107,12 @@ const InventoryUI = ({
              return (
                <>
                  <div>
-                   <span style={{ fontSize: '15px', fontWeight: 800, color: isLowStock ? 'var(--danger)' : 'var(--text-primary)' }}>{item.stock}</span>
+                   <span style={{ fontSize: '15px', fontWeight: 800, color: isLowStock ? 'var(--danger)' : 'var(--text-primary)' }}>{Number(item.stock).toLocaleString('vi-VN', {maximumFractionDigits:3})}</span>
                    <span style={{fontSize:'12px', color:'var(--text-secondary)', marginLeft: '4px'}}>{item.buyUnit || item.unit}</span>
                  </div>
                  {item.buyUnit && item.conversionRate > 1 && (
                    <div style={{ fontSize: '12px', color: 'var(--primary)', marginTop: '4px', fontWeight: 600, background: 'rgba(59, 130, 246, 0.1)', padding: '2px 8px', borderRadius: '12px', display: 'inline-block' }}>
-                     &asymp; {(item.stock * item.conversionRate).toLocaleString('vi-VN')} {item.unit}
+                     &asymp; {Number((item.stock * item.conversionRate)).toLocaleString('vi-VN', {maximumFractionDigits:3})} {item.unit}
                    </div>
                  )}
                </>

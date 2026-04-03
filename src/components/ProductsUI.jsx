@@ -437,7 +437,7 @@ const ProductsUI = ({ manager }) => {
           const detail = getEntityDisplayDetails(r.ingredientId);
           if (detail) {
             const cost = getRecipeItemCost(r);
-            const label = detail.name;
+            const label = detail.type === 'ingredient' ? (detail.category || 'Mặc định (Chưa phân nhóm)') : 'Bán Thành Phẩm';
             itemBreakdown[label] = (itemBreakdown[label] || 0) + cost;
           }
         });
