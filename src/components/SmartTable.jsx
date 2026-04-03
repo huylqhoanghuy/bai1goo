@@ -148,14 +148,11 @@ const SmartTable = ({
   const footerSums = useMemo(() => {
     const sums = {};
     columns.forEach(col => {
-      if (col.sum) {
-        // Cộng tổng TẤT CẢ data ĐANG FILTERED thay vì chỉ current page
-        sums[col.key] = sortedData.reduce((acc, row) => {
-           let val = row[col.key] || 0;
-           return acc + (isNaN(parseFloat(val)) ? 0 : parseFloat(val));
-        }, 0);
-      } else if (col.sumFunc) {
-         sums[col.key] = sortedData.reduce((acc, row) => acc + (col.sumFunc(row) || 0), 0);
+      if (col.sum || col.sumFunc) {
+         sums[col.key] = sortedData.reduce((acc, row) => {
+            let val = col.sumFunc ? col.sumFunc(row) : (row[col.key] || 0);
+            return acc + (isNaN(parseFloat(val)) ? 0 : parseFloat(val));
+         }, 0);
       }
     });
     return sums;

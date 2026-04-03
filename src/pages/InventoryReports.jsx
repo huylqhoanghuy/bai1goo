@@ -284,7 +284,7 @@ const InventoryReports = () => {
       } },
       { key: 'costPerBuyUnit', label: 'Đơn Giá Nhập', sortable: true, align: 'right', render: (v, item) => (
           <div>
-             <div style={{ fontWeight: 600, color: 'var(--text-secondary)', fontSize: '13px' }}>{formatMoney(v)}</div>
+             <div style={{ fontWeight: 600, color: 'var(--text-secondary)', fontSize: '13px' }}>{formatMoney(v)} đ</div>
              <div style={{ fontSize: '11px', marginTop: '4px', color: 'var(--text-secondary)' }}>/ {item.buyUnit || item.unit}</div>
           </div>
       ) },
@@ -293,7 +293,7 @@ const InventoryReports = () => {
           return (
              <div>
                  <div style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '14px' }}>
-                     {formatMoney(v)}
+                     {formatMoney(v)} đ
                  </div>
                  <div style={{ marginTop: '4px' }}>
                      <span style={{ background: 'rgba(59, 130, 246, 0.1)', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: 'var(--primary)' }}>Tỷ trọng: {pct}%</span>
@@ -376,7 +376,7 @@ const InventoryReports = () => {
            <h3 style={{ color: 'var(--primary)', margin: '0 0 12px 0', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
              GIÁ TRỊ TỒN KHO THỰC TẾ TRONG KHO
            </h3>
-           <div style={{ fontSize: '26px', fontWeight: 800, color: 'var(--text-primary)' }}>{formatMoney(reportData.totalStockValue)}</div>
+           <div style={{ fontSize: '26px', fontWeight: 800, color: 'var(--text-primary)' }}>{formatMoney(reportData.totalStockValue)} đ</div>
            <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '12px', fontWeight: 500 }}>
                (Dựa trên Số lượng * Giá vốn hiện tại). Chỉ số mang tính thời điểm.
            </div>
@@ -386,7 +386,7 @@ const InventoryReports = () => {
            <h3 style={{ color: 'var(--success)', margin: '0 0 12px 0', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
              TỔNG CHI NHẬP HÀNG KỲ NÀY
            </h3>
-           <div style={{ fontSize: '26px', fontWeight: 800, color: 'var(--success)' }}>{formatMoney(reportData.totalPurchases)}</div>
+           <div style={{ fontSize: '26px', fontWeight: 800, color: 'var(--success)' }}>{formatMoney(reportData.totalPurchases)} đ</div>
            <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '12px', fontWeight: 500 }}>
              Tổng giá trị Phiếu Nhập Kho trong kỳ.
            </div>
@@ -396,7 +396,7 @@ const InventoryReports = () => {
            <h3 style={{ color: 'var(--danger)', margin: '0 0 12px 0', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
              TỔNG VỐN TIÊU HAO LÊN MÓN (COGS)
            </h3>
-           <div style={{ fontSize: '26px', fontWeight: 800, color: 'var(--danger)' }}>{formatMoney(reportData.totalConsumption)}</div>
+           <div style={{ fontSize: '26px', fontWeight: 800, color: 'var(--danger)' }}>{formatMoney(reportData.totalConsumption)} đ</div>
            <div style={{ color: 'var(--text-secondary)', marginTop: '8px', fontSize: '12px', fontWeight: 500 }}>
              Tổng giá trị nguyên liệu đã bị xuất kho để bán.
            </div>
