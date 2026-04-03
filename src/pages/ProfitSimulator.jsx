@@ -143,7 +143,8 @@ const ProfitSimulator = () => {
                   boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                   border: '1px solid var(--surface-border)',
                   userSelect: 'none',
-                  padding: '8px'
+                  padding: '12px',
+                  flexShrink: 0
                 }}
                 onClick={() => addToCart(product)}
                 onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.98)')}
