@@ -126,7 +126,7 @@ const ProfitSimulator = () => {
           </div>
         </div>
 
-        <div className="product-scroll-area" style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(150px, 45%, 210px), 1fr))', gap: 'clamp(12px, 2vw, 20px)', paddingRight: '4px' }}>
+        <div className="product-scroll-area" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', paddingRight: '4px' }}>
           {filteredProducts.map(product => {
             return (
               <div 
@@ -135,44 +135,42 @@ const ProfitSimulator = () => {
                   cursor: 'pointer', 
                   overflow: 'hidden', 
                   transition: 'transform 0.1s', 
-                  display: 'flex', flexDirection: 'column',
+                  display: 'flex', 
+                  flexDirection: 'row',
+                  alignItems: 'center',
                   background: 'var(--surface-color)',
-                  borderRadius: '16px',
+                  borderRadius: '12px',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                   border: '1px solid var(--surface-border)',
                   userSelect: 'none',
-                  minHeight: '220px'
+                  padding: '8px'
                 }}
                 onClick={() => addToCart(product)}
-                onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.96)')}
+                onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.98)')}
                 onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
                 onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
               >
-                <div style={{ position: 'relative', width: '100%', height: '110px', flexShrink: 0, backgroundColor: 'var(--bg-color)', borderBottom: '1px solid var(--surface-border)' }}>
+                <div style={{ position: 'relative', width: '60px', height: '60px', flexShrink: 0, backgroundColor: 'var(--bg-color)', borderRadius: '8px', overflow: 'hidden' }}>
                    {product.image ? (
                      <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                    ) : (
                      <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', background: 'var(--surface-variant)' }}>
-                       <ImageIcon size={26} opacity={0.4} style={{ marginBottom: '4px' }} />
-                       <span style={{ fontSize: '11px', fontWeight: 500, opacity: 0.6 }}>Chưa có ảnh</span>
+                       <ImageIcon size={20} opacity={0.4} />
                      </div>
                    )}
                 </div>
                 
-                <div style={{ padding: '12px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <div style={{ minHeight: '38px', flexShrink: 0, marginBottom: '2px' }}>
-                    <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {product.name}
-                    </h4>
-                  </div>
-                  <div style={{ display: 'flex', flexShrink: 0, justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                    <p style={{ margin: 0, fontSize: '15px', color: 'var(--primary)', fontWeight: 800 }}>
-                      {product.price.toLocaleString('vi-VN')} đ
-                    </p>
-                    <div style={{ background: '#F0F9FF', padding: '6px', borderRadius: '10px', display: 'flex' }}>
-                       <Plus size={16} color="var(--primary)"/>
-                    </div>
-                  </div>
+                <div style={{ padding: '0 12px', flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {product.name}
+                  </h4>
+                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--primary)', fontWeight: 800 }}>
+                    {product.price.toLocaleString('vi-VN')} đ
+                  </p>
+                </div>
+
+                <div style={{ background: '#F0F9FF', padding: '8px', borderRadius: '10px', display: 'flex', marginLeft: 'auto' }}>
+                    <Plus size={18} color="var(--primary)"/>
                 </div>
               </div>
             )
