@@ -454,28 +454,64 @@ const ProductsUI = ({ manager }) => {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
-                  <h4 style={{ margin: 0, marginBottom: '16px', fontSize: '1rem' }}>Tỷ lệ % Chi phí theo Nhóm</h4>
-                  <div style={{ display: 'flex', height: '24px', borderRadius: '12px', overflow: 'hidden', background: 'rgba(255,255,255,0.1)', marginBottom: '16px' }}>
-                    {sortedCats.map(([cat, val], idx) => {
-                      const perc = (val / totalCost) * 100;
-                      const colors = ['#f97316', '#3b82f6', '#2ea043', '#e3b341', '#da3633', '#8b949e'];
-                      return <div key={cat} style={{ width: `${perc}%`, height: '100%', background: colors[idx % colors.length] }} title={`${cat}: ${perc.toFixed(1)}%`} />;
-                    })}
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-                    {sortedCats.map(([cat, val], idx) => {
-                      const perc = (val / totalCost) * 100;
-                      const colors = ['#f97316', '#3b82f6', '#2ea043', '#e3b341', '#da3633', '#8b949e'];
+                <div style={{ background: '#F8FAFC', padding: '24px', borderRadius: '12px', border: '1px solid var(--surface-border)', display: 'flex', gap: '32px', alignItems: 'center' }}>
+                  
+                  {/* CHART SIDE */}
+                  <div style={{ flexShrink: 0 }}>
+                    {(() => {
+                      const colors = ['#f97316', '#3b82f6', '#14b8a6', '#eab308', '#ef4444', '#8b5cf6'];
+                      let currentDegree = 0;
+                      const gradientStops = sortedCats.map(([cat, val], idx) => {
+                         const perc = (val / totalCost) * 100;
+                         const start = currentDegree;
+                         const end = currentDegree + perc;
+                         currentDegree = end;
+                         return `${colors[idx % colors.length]} ${start}% ${end}%`;
+                      }).join(', ');
+                      
                       return (
-                        <div key={cat} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem' }}>
-                          <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: colors[idx % colors.length] }} />
-                          <span style={{ color: 'var(--text-secondary)' }}>{cat}:</span>
-                          <span style={{ fontWeight: 600 }}>{perc.toFixed(1)}%</span>
+                        <div style={{ 
+                           width: '120px', height: '120px', 
+                           borderRadius: '50%', 
+                           background: `conic-gradient(${gradientStops})`,
+                           boxShadow: 'var(--shadow-md)',
+                           position: 'relative',
+                           display: 'flex',
+                           alignItems: 'center',
+                           justifyContent: 'center'
+                        }}>
+                           {/* DOUGHNUT HOLE */}
+                           <div style={{
+                              width: '64px', height: '64px',
+                              borderRadius: '50%',
+                              background: '#F8FAFC',
+                              boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)'
+                           }} />
                         </div>
                       );
-                    })}
+                    })()}
                   </div>
+                  
+                  {/* LEGEND SIDE */}
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                     <h4 style={{ margin: 0, marginBottom: '6px', fontSize: '15px', color: 'var(--text-primary)', fontWeight: 800 }}>Tỷ lệ Chi Phí Hóa Cơ Cấu</h4>
+                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                       {sortedCats.map(([cat, val], idx) => {
+                          const perc = (val / totalCost) * 100;
+                          const colors = ['#f97316', '#3b82f6', '#14b8a6', '#eab308', '#ef4444', '#8b5cf6'];
+                          return (
+                            <div key={cat} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px' }}>
+                              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                 <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: colors[idx % colors.length], display: 'inline-block', boxShadow: 'var(--shadow-sm)' }} />
+                                 <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{cat}</span>
+                              </div>
+                              <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{perc.toFixed(1)}%</span>
+                            </div>
+                          );
+                       })}
+                     </div>
+                  </div>
+                  
                 </div>
 
                 <div>
