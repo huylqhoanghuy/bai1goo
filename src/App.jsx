@@ -333,6 +333,7 @@ const AppContent = () => {
         
         let hoursNeeded = null;
         if (intervalStr === '1h') hoursNeeded = 1;
+        if (intervalStr === '2h') hoursNeeded = 2;
         if (intervalStr === '3h') hoursNeeded = 3;
         if (intervalStr === '4h') hoursNeeded = 4;
         if (intervalStr === '12h') hoursNeeded = 12;

@@ -240,6 +240,7 @@ export default function BackupSync() {
                 <select className="form-input" value={localCloudTime} onChange={e => setLocalCloudTime(e.target.value)} style={{ width: '180px', background: 'white' }}>
                     <option value="none">Tắt (Chỉ ấn tay)</option>
                     <option value="1h">Mỗi 1 tiếng 1 lần</option>
+                    <option value="2h">Mỗi 2 tiếng 1 lần</option>
                     <option value="3h">Mỗi 3 tiếng 1 lần</option>
                     <option value="4h">Mỗi 4 tiếng 1 lần</option>
                     <option value="12h">Mỗi 12 tiếng 1 lần</option>
