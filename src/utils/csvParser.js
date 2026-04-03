@@ -68,7 +68,7 @@ export const inferItemsFromPrice = (targetPrice, products) => {
 };
 
 // --- Universal CSV/TSV Parser ---
-export const parseCSVToOrders = (rawData, channelObj, productsList) => {
+export const parseCSVToOrders = (rawData, channelObj, productsList, targetAccountId) => {
     const exactChannelName = channelObj ? channelObj.name : 'Unknown Channel';
     let tempOrdersMap = {}; 
     const timestamp = new Date().getTime();
@@ -224,7 +224,7 @@ export const parseCSVToOrders = (rawData, channelObj, productsList) => {
                     status: 'Success',
                     paymentStatus: 'Paid',
                     paymentMethod: 'Imported',
-                    accountId: exactChannelName.toLowerCase().includes('shopee') ? 'ACC3' : (exactChannelName.toLowerCase().includes('grab') ? 'ACC4' : 'ACC1'),
+                    accountId: targetAccountId || (exactChannelName.toLowerCase().includes('shopee') ? 'ACC3' : (exactChannelName.toLowerCase().includes('grab') ? 'ACC4' : 'ACC1')),
                     isFuzzyRecognized: isFuzzy
                 };
             }

@@ -230,6 +230,9 @@ export const processAddPosOrder = (state, action) => {
   let targetAccountId = 'ACC1';
   if (newOrder.channelName === 'ShopeeFood') targetAccountId = 'ACC3';
   if (newOrder.channelName === 'GrabFood') targetAccountId = 'ACC4';
+  if (!state.accounts?.find(a => a.id === targetAccountId)) {
+      targetAccountId = state.accounts && state.accounts.length > 0 ? state.accounts[0].id : 'ACC1';
+  }
 
   const transaction = {
     id: generateId('GD-'),
@@ -278,6 +281,9 @@ export const processUpdateOrderStatus = (state, action) => {
   let targetAccountId = 'ACC1';
   if (order.channelName === 'ShopeeFood') targetAccountId = 'ACC3';
   if (order.channelName === 'GrabFood') targetAccountId = 'ACC4';
+  if (!state.accounts?.find(a => a.id === targetAccountId)) {
+      targetAccountId = state.accounts && state.accounts.length > 0 ? state.accounts[0].id : 'ACC1';
+  }
   const orderTotalMoney = (order.netAmount || 0) + (Number(order.extraFee) || 0);
 
   if (status === 'Cancelled') {
@@ -373,12 +379,17 @@ export const processConfirmImportOrders = (state, action) => {
   const timestamp = new Date().getTime();
 
   orders.forEach((ord, index) => {
+     let accId = ord.accountId;
+     if (!state.accounts?.find(a => a.id === accId)) {
+        accId = state.accounts && state.accounts.length > 0 ? state.accounts[0].id : 'ACC1';
+     }
+
      newTransactions.push({
         id: `TX-IMP-${timestamp}-${ord.id.slice(-6)}-${index}`,
         date: ord.date,
         type: 'Thu',
         amount: ord.netAmount,
-        accountId: ord.accountId,
+        accountId: accId,
         categoryId: 'FC1',
         note: `${ord.channelName} Order: ${ord.orderCode}`,
         voucherCode: `PT-${ord.id.slice(-6)}`,
@@ -397,6 +408,7 @@ export const processConfirmImportOrders = (state, action) => {
 
   return {
     ...state,
+    _skipSave: false, // Bắt buộc lưu toàn bộ state sau khi Import thành công vì đụng chạm tới 4 bảng
     ingredients: updatedIngredients,
     posOrders: [...orders, ...state.posOrders],
     transactions: [...newTransactions, ...state.transactions],

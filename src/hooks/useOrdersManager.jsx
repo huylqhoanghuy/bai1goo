@@ -6,7 +6,7 @@ import { parseCSVToOrders } from '../utils/csvParser';
 import { OrderApi } from '../services/api/orderService';
 
 export const useOrdersManager = () => {
-  const { state, dispatch } = useData();
+  const { state, dispatch, syncToCloud } = useData();
   const { posOrders } = state;
 
   const handleShowToast = (message, type) => {
@@ -61,7 +61,7 @@ export const useOrdersManager = () => {
     const matchedChannel = state.salesChannels.find(c => c.id === importConfig.channelId);
     if (!matchedChannel) return showToast('Lỗi: Kênh không khả dụng!');
 
-    const parsedArray = parseCSVToOrders(importConfig.content, matchedChannel, state.products);
+    const parsedArray = parseCSVToOrders(importConfig.content, matchedChannel, state.products, importConfig.accountId);
     if (!parsedArray || parsedArray.length === 0) {
         return showToast('Không tìm thấy dữ liệu hợp lệ trong file!');
     }
@@ -113,8 +113,13 @@ export const useOrdersManager = () => {
     });
     setPreviewOrders(null);
     setShowImportModal(false);
-    setImportConfig({ channelId: '', content: '', fileName: '' });
-    showToast(summaryNode);
+    setImportConfig({ channelId: '', content: '', fileName: '', accountId: '' });
+    
+    // Ngăn chặn React state update batching (làm ghi đè cờ _skipSave = false của action trước)
+    setTimeout(() => {
+        showToast(summaryNode);
+        if (syncToCloud) syncToCloud();
+    }, 500);
   };
 
   const handleFileUpload = (e) => {

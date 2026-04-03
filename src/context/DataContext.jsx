@@ -596,6 +596,9 @@ const baseReducer = (state, action) => {
             let newAccountId = 'ACC1';
             if (updatedOrder.channelName === 'ShopeeFood') newAccountId = 'ACC3';
             if (updatedOrder.channelName === 'GrabFood') newAccountId = 'ACC4';
+            if (!newAccounts.find(a => a.id === newAccountId)) {
+                newAccountId = newAccounts.length > 0 ? newAccounts[0].id : 'ACC1';
+            }
 
             // Hoàn trả balance cũ
             newAccounts = newAccounts.map(acc => acc.id === oldTx.accountId ? { ...acc, balance: acc.balance - oldMoney } : acc);

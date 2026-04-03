@@ -65,6 +65,10 @@ const OrdersUI = ({ manager }) => {
     { key: 'customerName', label: 'Khách Hàng', sortable: true, render: (val) => val || 'Khách vãng lai' },
     { key: 'liveChannelName', label: 'Kênh Bán', sortable: true, render: (val) => <span style={{ padding: '4px 8px', background: 'var(--surface-variant)', border: '1px solid var(--surface-border)', borderRadius: '6px', fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)' }}>{val}</span> },
     { key: 'totalAmount', label: 'Tổng (Gross)', align: 'right', sortable: true, sum: true, render: (val) => `${(val || 0).toLocaleString('vi-VN')} đ` },
+    { key: 'platformFee', label: 'Tổng Phí Sàn', align: 'right', render: (val, o) => {
+        const fee = o.discountAmount != null ? o.discountAmount : (o.totalAmount - o.netAmount);
+        return <span style={{color: '#EA580C', fontWeight:600}}>-{Math.max(0, fee).toLocaleString('vi-VN')} đ</span>;
+    } },
     { key: 'netAmount', label: 'Thực Thu (Net)', align: 'right', sortable: true, sum: true, render: (val, o) => <span style={{color:'var(--success)', fontWeight:800}}>{((val || 0) + (Number(o.extraFee) || 0)).toLocaleString('vi-VN')} đ</span> },
     { key: 'items', label: 'Chi Tiết Món', render: (val, order) => (
        <div style={{ maxWidth: '250px' }}>
@@ -208,15 +212,24 @@ const OrdersUI = ({ manager }) => {
               {!previewOrders ? (
                 <div style={{ overflowY: 'auto' }}>
                   <div style={{ background:'var(--surface-variant)', padding:'16px', borderRadius:'12px', border:'1px solid var(--surface-border)', marginBottom:'24px' }}>
-                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>Đổ dữ liệu vào Kênh Bán Hàng:</label>
-                        <select className="form-input" style={{ width: '100%', padding: '10px', borderColor: importConfig.channelId ? 'var(--surface-border)' : 'var(--danger)' }} value={importConfig.channelId} onChange={e => setImportConfig({...importConfig, channelId: e.target.value})}>
-                           <option value="">-- Chọn Kênh Khớp Lệnh --</option>
-                           {importableChannels.length === 0 && <option value="" disabled>Chưa có kênh nào được mở quyền Import. Hãy cấu hình ở mục Cài đặt Kênh Bán.</option>}
-                           {importableChannels.map(ch => (
-                              <option key={ch.id} value={ch.id}>{ch.name}</option>
-                           ))}
-                        </select>
+                     <div style={{ display: 'flex', gap: '16px' }}>
+                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>1. Từ Kênh Bán Hàng:</label>
+                            <select className="form-input" style={{ width: '100%', padding: '10px', borderColor: importConfig.channelId ? 'var(--surface-border)' : 'var(--danger)' }} value={importConfig.channelId} onChange={e => setImportConfig({...importConfig, channelId: e.target.value})}>
+                               <option value="">-- Chọn Kênh Khớp Lệnh --</option>
+                               {importableChannels.length === 0 && <option value="" disabled>Chưa có kênh nào được mở quyền Import. Hãy cấu hình ở mục Cài đặt Kênh Bán.</option>}
+                               {importableChannels.map(ch => (
+                                  <option key={ch.id} value={ch.id}>{ch.name}</option>
+                               ))}
+                            </select>
+                         </div>
+                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>2. Chảy vào Tài Khoản (Tiền về):</label>
+                            <select className="form-input" style={{ width: '100%', padding: '10px', borderColor: 'var(--surface-border)' }} value={importConfig.accountId || ''} onChange={e => setImportConfig({...importConfig, accountId: e.target.value})}>
+                               <option value="">-- Tự động theo hệ thống --</option>
+                               {state.accounts?.map(acc => <option key={acc.id} value={acc.id}>{acc.name}</option>)}
+                            </select>
+                         </div>
                      </div>
                   </div>
                   <div style={{ background:'var(--surface-variant)', padding:'16px', borderRadius:'12px', border:'1px solid var(--surface-border)', marginBottom:'24px' }}>
@@ -264,6 +277,7 @@ Mã Đơn | Tên Món | Số Lượng | Doanh Thu | Thực Thu | Ngày (Tùy ch�
                               <th style={{ padding: '12px 16px', fontSize: '13px', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 800 }}>Khách Hàng</th>
                               <th style={{ padding: '12px 16px', fontSize: '13px', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 800 }}>Sản Phẩm</th>
                               <th style={{ padding: '12px 16px', fontSize: '13px', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 800, textAlign: 'right' }}>Tổng Hàng (Gross)</th>
+                              <th style={{ padding: '12px 16px', fontSize: '13px', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 800, textAlign: 'right' }}>Phí Sàn</th>
                               <th style={{ padding: '12px 16px', fontSize: '13px', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 800, textAlign: 'right' }}>Thực Thu (Net)</th>
                            </tr>
                         </thead>
@@ -295,6 +309,9 @@ Mã Đơn | Tên Món | Số Lượng | Doanh Thu | Thực Thu | Ngày (Tùy ch�
                                  </td>
                                  <td style={{ padding: '16px', textAlign: 'right', fontWeight: 600 }}>
                                     {order.totalAmount.toLocaleString('vi-VN')} đ
+                                 </td>
+                                 <td style={{ padding: '16px', textAlign: 'right', fontWeight: 600, color: '#EA580C' }}>
+                                    -{Math.max(0, order.totalAmount - order.netAmount).toLocaleString('vi-VN')} đ
                                  </td>
                                  <td style={{ padding: '16px', textAlign: 'right', fontWeight: 800, color: 'var(--success)' }}>
                                     {order.netAmount.toLocaleString('vi-VN')} đ

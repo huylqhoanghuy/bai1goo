@@ -184,6 +184,7 @@ const Dashboard = () => {
 
   const filteredOrders = filterByPeriod(state.posOrders);
   const filteredTransactions = filterByPeriod(state.transactions);
+  const totalAccountBalance = (state.accounts || []).reduce((sum, acc) => sum + acc.balance, 0);
 
   // ── P&L ──
   const totalRevenue = filteredOrders.reduce((s, o) => s + o.netAmount, 0);
@@ -388,6 +389,7 @@ const Dashboard = () => {
         </div>
       </div>
 
+
       {/* ══════════════════════════════════
           SECTION 1 — VẬN HÀNH (CCO)
       ══════════════════════════════════ */}
@@ -425,7 +427,7 @@ const Dashboard = () => {
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr)', gap: '16px' }}>
           <ChartPanel title="Tỷ trọng kênh bán" accentColor="#ea580c" height={200}>
             {channelData.labels.length > 0
               ? <Doughnut data={channelData} options={{ 
@@ -493,6 +495,28 @@ const Dashboard = () => {
                   ))}
                 </div>
               )}
+            </div>
+          </ChartPanel>
+
+          <ChartPanel title="Tiền mặt hiện tại" accentColor="#ea580c" height={200}>
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+               <div style={{ marginBottom: '16px', background: 'var(--surface-variant)', padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
+                  <p style={{ margin: '0 0 4px 0', fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>TỔNG QUỸ THỰC TẾ</p>
+                  <h3 style={{ margin: 0, fontSize: '24px', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.5px' }}>
+                     {totalAccountBalance >= 0 ? '' : '-'}{Math.abs(totalAccountBalance).toLocaleString('vi-VN')} đ
+                  </h3>
+               </div>
+               
+               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+                  {(state.accounts || []).map(acc => (
+                     <div key={acc.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 4px', borderBottom: '1px dashed #e2e8f0' }}>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>{acc.name}</span>
+                        <span style={{ fontSize: '13px', fontWeight: 700, color: acc.balance >= 0 ? '#10b981' : '#ef4444' }}>
+                           {acc.balance.toLocaleString('vi-VN')} đ
+                        </span>
+                     </div>
+                  ))}
+               </div>
             </div>
           </ChartPanel>
         </div>

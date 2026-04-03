@@ -6,9 +6,18 @@ import { GlobalConfirm } from '../../context/ConfirmContext';
 const DB_COLLECTION = import.meta.env.DEV ? 'store_data_dev' : 'store_data';
 
 let debounceTimer = null;
+let isPendingSync = false;
+
+window.addEventListener('beforeunload', (e) => {
+  if (isPendingSync) {
+    e.preventDefault();
+    e.returnValue = 'Dữ liệu chưa kịp đồng bộ lên Đám mây. Thoát bây giờ có thể mất thao tác vừa xong!';
+  }
+});
 
 export const CloudSyncService = {
   syncToCloud: async () => {
+    isPendingSync = true;
     try {
       const state = await StorageService.getAll();
       const keys = Object.keys(state);
@@ -151,9 +160,11 @@ export const CloudSyncService = {
       }
       
       const payloadSize = JSON.stringify(state).length;
+      isPendingSync = false;
       return { success: true, message: 'Đã lưu trữ dữ liệu lên Đám mây an toàn!', size: payloadSize };
     } catch (err) {
       console.error("Firebase sync error:", err);
+      isPendingSync = false;
       return { success: false, message: 'Lỗi đẩy dữ liệu. Vui lòng kiểm tra kết nối mạng.' };
     }
   },
@@ -234,6 +245,7 @@ export const CloudSyncService = {
   },
 
   debouncedSyncToCloud: () => {
+    isPendingSync = true;
     if (debounceTimer) {
       clearTimeout(debounceTimer);
     }
