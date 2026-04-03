@@ -340,6 +340,12 @@ const AppContent = () => {
         if (hoursNeeded) {
           const msNeeded = hoursNeeded * 60 * 60 * 1000;
           if (Date.now() - lastSync >= msNeeded) {
+            
+            // Cơ chế xoay vòng Camera DVR (1-5 slots)
+            const currentSlot = settings.backupDvrSlot ? Number(settings.backupDvrSlot) : 1;
+            const nextSlot = currentSlot >= 5 ? 1 : currentSlot + 1;
+            const suggestedName = `poppy_backup_slot_${currentSlot}.json`;
+
             const response = await fetch(webhookUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -347,16 +353,19 @@ const AppContent = () => {
                 timestamp: new Date().toISOString(),
                 storeName: settings.storeName || 'POPPY POS',
                 type: 'auto_webhook_sync',
+                dvrSlot: currentSlot,
+                suggestedFilename: suggestedName,
                 data: currentState
               })
             });
 
             if (response.ok) {
               settings.lastWebhookSync = Date.now();
+              settings.backupDvrSlot = nextSlot;
               currentState.settings = settings;
               await StorageService.saveAll(currentState);
               dispatch({ type: 'UPDATE_SETTINGS', payload: settings });
-              dispatch({ type: 'SHOW_TOAST', payload: { message: `✅ Đã tự động tải lên Make.com theo chu kỳ ${hoursNeeded} tiếng!`, type: 'success' } });
+              dispatch({ type: 'SHOW_TOAST', payload: { message: `✅ Đã lưu Đám mây (Ghi đè Slot ${currentSlot}/5)!`, type: 'success' } });
               dispatch({
                 type: 'ADD_NOTIFICATION',
                 payload: {
@@ -476,16 +485,23 @@ const AppContent = () => {
                 <HeaderDataMonitor />
                 <div style={{ position: 'relative' }} ref={notifRef}>
                   <button onClick={() => setShowNotifications(!showNotifications)} style={{ 
-                    display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
-                    background: unreadCount > 0 ? '#FEF2F2' : (showNotifications ? 'var(--surface-hover)' : 'transparent'), 
-                    padding: unreadCount > 0 ? '6px 16px 6px 12px' : '8px', 
-                    border: unreadCount > 0 ? '1px solid #FECACA' : '1px solid transparent', 
-                    borderRadius: '24px', transition: 'all 0.2s', position: 'relative'
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                    background: showNotifications ? 'var(--surface-hover)' : 'transparent', 
+                    width: '40px', height: '40px', 
+                    border: 'none', 
+                    borderRadius: '50%', transition: 'background 0.2s', position: 'relative'
                   }}>
-                    <Bell size={20} color={unreadCount > 0 ? "var(--danger)" : "var(--text-primary)"} className={unreadCount > 0 ? 'bell-ringing' : ''} />
+                    <Bell size={22} color={unreadCount > 0 ? "var(--danger)" : "var(--text-secondary)"} className={unreadCount > 0 ? 'bell-ringing' : ''} />
                     {unreadCount > 0 && (
-                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--danger)', whiteSpace: 'nowrap' }}>
-                        Bạn có {unreadCount} tin mới
+                      <span style={{ 
+                        position: 'absolute', top: '4px', right: '4px', 
+                        background: 'var(--danger)', color: 'white', 
+                        fontSize: '10px', fontWeight: 800, 
+                        minWidth: '16px', height: '16px', 
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                        borderRadius: '10px', padding: '0 4px', border: '2px solid white'
+                      }}>
+                        {unreadCount > 99 ? '99+' : unreadCount}
                       </span>
                     )}
                   </button>
