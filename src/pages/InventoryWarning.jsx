@@ -99,18 +99,19 @@ const InventoryWarning = () => {
     return (
         <div className="module-container" style={{ padding: '24px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1400px', margin: '0 auto' }}>
-                <div className="glass-panel" style={{ padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface-color)', border: '1px solid var(--surface-border)', flexWrap: 'wrap', gap: '16px' }}>
-                    <div>
+                <div className="glass-panel" style={{ background: 'var(--surface-color)', border: '1px solid var(--surface-border)', overflow: 'hidden' }}>
+                    <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--surface-border)' }}>
                         <h3 style={{ margin: 0, fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--danger)' }}>
                             <AlertCircle size={22} /> HỆ THỐNG RADAR CẢNH BÁO TỒN KHO
                         </h3>
-                        <p style={{ margin: '4px 0 0 0', color: 'var(--text-secondary)', fontSize: '14px' }}>Dự báo Kế Hoạch Nhập Hàng Tương Lai dựa trên dữ liệu thật.</p>
+                        <p style={{ margin: '6px 0 0 0', color: 'var(--text-secondary)', fontSize: '14px' }}>Hệ thống tự động sử dụng máy học để quét lượng xuất kho lịch sử và dự toán nhu cầu nguyên liệu cho tương lai.</p>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                    
+                    <div style={{ padding: '16px 24px', display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap', background: 'var(--surface-variant)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Calendar size={18} color="var(--text-secondary)" />
-                            <span style={{ fontWeight: 600, color: 'var(--text-secondary)', fontSize: '13px' }}>Kỳ lịch sử phân tích:</span>
-                            <select className="form-input" value={datePreset} onChange={handleDatePresetChange} style={{ padding: '8px 12px', fontWeight: 600, minWidth: '130px' }}>
+                            <Calendar size={18} color="var(--primary)" />
+                            <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>Dữ liệu gốc:</span>
+                            <select className="form-input" value={datePreset} onChange={handleDatePresetChange} style={{ padding: '8px 12px', fontWeight: 600, minWidth: '130px', background: '#FFF' }}>
                                 <option value="this_week">Tuần Này</option>
                                 <option value="last_week">Tuần Trước</option>
                                 <option value="this_month">Tháng Này</option>
@@ -119,33 +120,42 @@ const InventoryWarning = () => {
                             </select>
                             
                             {datePreset === 'custom' && (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginLeft: '8px' }}>
-                                    <input title="Từ ngày" type="date" className="form-input" value={filterDate.start} onChange={e => setFilterDate({...filterDate, start: e.target.value})} style={{ padding: '8px' }} />
-                                    <span>-</span>
-                                    <input title="Đến ngày" type="date" className="form-input" value={filterDate.end} onChange={e => setFilterDate({...filterDate, end: e.target.value})} style={{ padding: '8px' }} />
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginLeft: '4px' }}>
+                                    <input title="Từ ngày" type="date" className="form-input" value={filterDate.start} onChange={e => setFilterDate({...filterDate, start: e.target.value})} style={{ padding: '8px', background: '#FFF' }} />
+                                    <span style={{ color: 'var(--text-secondary)' }}>-</span>
+                                    <input title="Đến ngày" type="date" className="form-input" value={filterDate.end} onChange={e => setFilterDate({...filterDate, end: e.target.value})} style={{ padding: '8px', background: '#FFF' }} />
                                 </div>
                             )}
                         </div>
-                        <div style={{ height: '24px', width: '1px', background: 'var(--surface-border)' }}></div>
+                        
+                        <div style={{ height: '24px', width: '1px', background: '#D1D5DB' }}></div>
+                        
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Dự báo cho:</span>
-                            <select className="form-input" value={forecastDays} onChange={(e) => setForecastDays(Number(e.target.value))} style={{ fontWeight: 700, padding: '8px 12px' }}>
+                            <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>Mục tiêu:</span>
+                            <select className="form-input" value={forecastDays} onChange={(e) => setForecastDays(Number(e.target.value))} style={{ fontWeight: 700, padding: '8px 12px', background: '#FFF' }}>
                                 <option value={1}>1 Ngày</option>
                                 <option value={3}>3 Ngày</option>
-                                <option value={7}>1 Tuần (7 ngày)</option>
-                                <option value={14}>2 Tuần (14 ngày)</option>
-                                <option value={30}>1 Tháng (30 ngày)</option>
+                                <option value={7}>1 Tuần</option>
+                                <option value={14}>2 Tuần</option>
+                                <option value={30}>1 Tháng</option>
                             </select>
                         </div>
-                        <div style={{ height: '24px', width: '1px', background: 'var(--surface-border)' }}></div>
+                        
+                        <div style={{ height: '24px', width: '1px', background: '#D1D5DB' }}></div>
+                        
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Năng lực (X đơn/ngày):</span>
-                            <input type="number" min="1" value={thresholdX} onChange={(e) => setThresholdX(Number(e.target.value))} placeholder="VD: 50" className="form-input" style={{ width: '100px', fontSize: '16px', textAlign: 'center', color: 'var(--primary)', fontWeight: 800, borderColor: 'var(--primary)', padding: '8px 12px' }} />
+                            <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>Năng lực M&S:</span>
+                            <div style={{ position: 'relative' }}>
+                                <input type="number" min="1" value={thresholdX} onChange={(e) => setThresholdX(Number(e.target.value))} className="form-input" style={{ width: '100px', fontSize: '15px', color: 'var(--primary)', fontWeight: 800, padding: '8px 12px', paddingRight: '45px', background: '#FFF' }} />
+                                <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', pointerEvents: 'none' }}>đơn</span>
+                            </div>
                         </div>
                         
-                        <button className="btn btn-primary" onClick={refreshForecast} disabled={loading} style={{ padding: '10px 20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            {loading ? 'Đang Radar...' : <><Search size={18} /> Quét Phân Tích</>}
-                        </button>
+                        <div style={{ marginLeft: 'auto' }}>
+                            <button className="btn btn-primary" onClick={refreshForecast} disabled={loading} style={{ padding: '10px 24px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 800, minWidth: '160px', justifyContent: 'center' }}>
+                                {loading ? 'Đang Radar...' : <><Search size={18} /> Quét Phân Tích</>}
+                            </button>
+                        </div>
                     </div>
                 </div>
 

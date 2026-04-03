@@ -16,24 +16,24 @@ const SmartDatePicker = ({ initialStart, initialEnd, onConfirm, onCancel }) => {
   const handleDayClick = (dayStr) => {
     const clickedDate = new Date(dayStr);
     
-    // Logic:
-    // Case 1: Start and end exist -> Reset start, clear end
-    // Case 2: Start exists, no end -> 
-    //    If clicked >= start -> Set end
-    //    If clicked < start -> Replace start
-    // Case 3: No start -> Set start
-
-    if (startDate && endDate) {
+    if (startDate && endDate && startDate.getTime() !== endDate.getTime()) {
+      // Đã có 1 khoảng thời gian, click tiếp theo sẽ reset về 1 ngày (làm điểm neo)
       setStartDate(clickedDate);
-      setEndDate(null);
-    } else if (startDate && !endDate) {
-      if (clickedDate.getTime() >= startDate.getTime()) {
+      setEndDate(clickedDate);
+    } else if (startDate) {
+      // Đang có 1 ngày được chọn (start == end). Click tiếp thao sẽ kéo dải băng
+      if (clickedDate.getTime() > startDate.getTime()) {
         setEndDate(clickedDate);
+      } else if (clickedDate.getTime() < startDate.getTime()) {
+        setEndDate(startDate); // Mốc cũ biến thành ngày kết thúc
+        setStartDate(clickedDate); // Mốc mới lùi về làm ngày bắt đầu
       } else {
-        setStartDate(clickedDate);
+        // Bấm lại đúng ngày đó => giữ nguyên 1 ngày
       }
     } else {
+      // Chưa chọn gì
       setStartDate(clickedDate);
+      setEndDate(clickedDate);
     }
   };
 

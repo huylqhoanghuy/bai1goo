@@ -115,9 +115,13 @@ const ModuleLayout = ({
      'custom': 'Tuỳ chọn'
   };
 
-  const currentPresetLabel = datePreset === 'custom' 
-        ? `${filterDate.start ? new Date(filterDate.start).toLocaleDateString('vi-VN') : '...'} - ${filterDate.end ? new Date(filterDate.end).toLocaleDateString('vi-VN') : '...'}`
-        : datePresets[datePreset];
+  const currentPresetLabel = (() => {
+    if (datePreset !== 'custom') return datePresets[datePreset];
+    const sDate = filterDate.start ? new Date(filterDate.start).toLocaleDateString('vi-VN') : '...';
+    const eDate = filterDate.end ? new Date(filterDate.end).toLocaleDateString('vi-VN') : '...';
+    if (sDate === eDate && sDate !== '...') return sDate;
+    return `${sDate} - ${eDate}`;
+  })();
 
   // Generic Reusable Active Table
   const renderActiveTable = () => (
