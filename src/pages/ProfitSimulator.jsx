@@ -126,8 +126,18 @@ const ProfitSimulator = () => {
           </div>
         </div>
 
-        <div className="product-scroll-area" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', paddingRight: '4px' }}>
+        <div className="product-scroll-area" style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px', paddingRight: '4px' }}>
           {filteredProducts.map(product => {
+            const recipeInfo = product.recipe?.length > 0 ? product.recipe.map(r => {
+              const ing = activeIngredients.find(i => i.id === r.ingredientId);
+              const subProd = !ing ? activeProducts.find(p => p.id === r.ingredientId) : null;
+              const entity = ing || subProd;
+              if (!entity) return null;
+              let displayUnit = ing ? (r.unitMode === 'buy' ? (ing.buyUnit || ing.unit) : ing.unit) : 'suất';
+              let prefix = r.unitMode === 'divide' ? `1/${r.qty}` : r.qty;
+              return { name: entity.name, qty: prefix, unit: displayUnit };
+            }).filter(Boolean) : [];
+
             return (
               <div 
                 key={product.id} 
@@ -135,56 +145,49 @@ const ProfitSimulator = () => {
                   cursor: 'pointer', 
                   overflow: 'hidden', 
                   transition: 'transform 0.1s', 
-                  display: 'flex', 
-                  flexDirection: 'row',
-                  alignItems: 'center',
+                  display: 'flex', flexDirection: 'column',
                   background: 'var(--surface-color)',
-                  borderRadius: '12px',
+                  borderRadius: '16px',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                   border: '1px solid var(--surface-border)',
                   userSelect: 'none',
-                  padding: '12px',
-                  flexShrink: 0
+                  minHeight: '200px'
                 }}
                 onClick={() => addToCart(product)}
-                onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.98)')}
+                onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.96)')}
                 onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
                 onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
               >
-                <div style={{ position: 'relative', width: '60px', height: '60px', flexShrink: 0, backgroundColor: 'var(--bg-color)', borderRadius: '8px', overflow: 'hidden' }}>
-                   {product.image ? (
-                     <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                   ) : (
-                     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', background: 'var(--surface-variant)' }}>
-                       <ImageIcon size={20} opacity={0.4} />
+                {/* Khu vực thành phần nguyên liệu (Thay cho ảnh) */}
+                <div style={{ padding: '12px', flexShrink: 0, backgroundColor: 'var(--surface-variant)', borderBottom: '1px solid var(--surface-border)', minHeight: '100px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                   <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>ĐỊNH MỨC NGUYÊN LIỆU:</span>
+                   {recipeInfo.length > 0 ? (
+                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                       {recipeInfo.map((item, idx) => (
+                         <span key={idx} style={{ background: 'var(--surface-color)', border: '1px solid var(--surface-border)', borderRadius: '6px', padding: '2px 6px', fontSize: '11px', color: 'var(--text-primary)', fontWeight: 600 }}>
+                           {item.name} <span style={{ color: 'var(--primary)', fontWeight: 800 }}>({item.qty}{item.unit})</span>
+                         </span>
+                       ))}
                      </div>
+                   ) : (
+                     <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontStyle: 'italic', display: 'flex', alignItems: 'center', height: '100%' }}>Chưa cài đặt định mức</div>
                    )}
                 </div>
                 
-                <div style={{ padding: '0 12px', flex: 1, display: 'flex', flexDirection: 'column', gap: '4px', overflow: 'hidden' }}>
-                  <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                    {product.name}
-                  </h4>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <p style={{ margin: 0, fontSize: '14px', color: 'var(--primary)', fontWeight: 800, whiteSpace: 'nowrap' }}>
+                <div style={{ padding: '12px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div style={{ minHeight: '38px', flexShrink: 0, marginBottom: '2px' }}>
+                    <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {product.name}
+                    </h4>
+                  </div>
+                  <div style={{ display: 'flex', flexShrink: 0, justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+                    <p style={{ margin: 0, fontSize: '15px', color: 'var(--primary)', fontWeight: 800 }}>
                       {product.price.toLocaleString('vi-VN')} đ
                     </p>
-                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', borderLeft: '1px solid var(--surface-border)', paddingLeft: '8px' }}>
-                      {product.recipe?.length > 0 ? product.recipe.map(r => {
-                        const ing = activeIngredients.find(i => i.id === r.ingredientId);
-                        const subProd = !ing ? activeProducts.find(p => p.id === r.ingredientId) : null;
-                        const entity = ing || subProd;
-                        if (!entity) return '';
-                        let displayUnit = ing ? (r.unitMode === 'buy' ? (ing.buyUnit || ing.unit) : ing.unit) : 'suất';
-                        let prefix = r.unitMode === 'divide' ? `1/${r.qty}` : r.qty;
-                        return `${entity.name} (${prefix}${displayUnit})`;
-                      }).filter(Boolean).join(' + ') : 'Chưa cài định mức'}
-                    </span>
+                    <div style={{ background: '#F0F9FF', padding: '6px', borderRadius: '10px', display: 'flex' }}>
+                       <Plus size={16} color="var(--primary)"/>
+                    </div>
                   </div>
-                </div>
-
-                <div style={{ background: '#F0F9FF', padding: '8px', borderRadius: '10px', display: 'flex', marginLeft: 'auto' }}>
-                    <Plus size={18} color="var(--primary)"/>
                 </div>
               </div>
             )
