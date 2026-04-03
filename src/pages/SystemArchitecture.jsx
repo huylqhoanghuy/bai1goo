@@ -1,10 +1,20 @@
-import React from 'react';
-import { PackageOpen, ShoppingCart, Calculator, BarChart3, ArrowRight, ArrowDown } from 'lucide-react';
+import React, { useState } from 'react';
+import { PackageOpen, ShoppingCart, Calculator, BarChart3, ArrowRight, ArrowDown, Edit2, Save, Trash2 } from 'lucide-react';
 import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function SystemArchitecture() {
-  const { state } = useData();
+  const { state, dispatch } = useData();
+  const { user } = useAuth();
   const settings = state.settings || {};
+  
+  const [isEditingDev, setIsEditingDev] = useState(false);
+  const [devText, setDevText] = useState(settings.developerAbout || '');
+
+  const handleSaveDevInfo = () => {
+     dispatch({ type: 'UPDATE_SETTINGS', payload: { ...settings, developerAbout: devText } });
+     setIsEditingDev(false);
+  };
   
   return (
     <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -204,15 +214,52 @@ export default function SystemArchitecture() {
          </div>
        </div>
 
-       {settings.developerAbout && (
-          <div style={{ marginTop: '24px', padding: '24px', background: 'var(--primary-glow, rgba(2, 132, 199, 0.05))', borderRadius: '12px', border: '1px solid var(--primary)', position: 'relative' }}>
-             <h5 style={{ margin: '0 0 12px 0', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                👤 Thông Tin Đội Ngũ Phát Triển & Liên Hệ F&B
+       {isEditingDev ? (
+          <div style={{ marginTop: '32px', padding: '24px', background: 'var(--surface-color)', borderRadius: '12px', border: '1px solid var(--primary)', position: 'relative' }}>
+             <h5 style={{ margin: '0 0 16px 0', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Edit2 size={18} /> Chỉnh Sửa Thông Tin Phát Triển & Liên Hệ
              </h5>
-             <div style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
-                {settings.developerAbout}
+             <textarea 
+                value={devText} 
+                onChange={(e) => setDevText(e.target.value)} 
+                className="form-input" 
+                rows={6}
+                placeholder="Nhập giới thiệu về hệ thống, đội ngũ phát triển, hoặc liên hệ kỹ thuật..."
+                style={{ width: '100%', resize: 'vertical', fontFamily: 'inherit', fontSize: '14px', marginBottom: '16px' }}
+             />
+             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                <button onClick={() => { setIsEditingDev(false); setDevText(settings.developerAbout || ''); }} className="btn btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px' }}>
+                   Hủy
+                </button>
+                <button onClick={handleSaveDevInfo} className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px' }}>
+                   <Save size={16} /> Lưu Thông Tin
+                </button>
              </div>
           </div>
+       ) : (
+          (settings.developerAbout || user?.role === 'ADMIN') && (
+             <div style={{ marginTop: '32px', padding: '24px', background: 'var(--primary-glow, rgba(2, 132, 199, 0.05))', borderRadius: '12px', border: '1px solid var(--primary)', position: 'relative' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                   <h5 style={{ margin: 0, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px' }}>
+                      👤 Thông Tin Đội Ngũ Phát Triển & Liên Hệ F&B
+                   </h5>
+                   {user?.role === 'ADMIN' && (
+                      <button onClick={() => setIsEditingDev(true)} className="btn btn-icon" title="Chỉnh sửa thông tin">
+                         <Edit2 size={16} color="var(--primary)" />
+                      </button>
+                   )}
+                </div>
+                {settings.developerAbout ? (
+                   <div style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+                      {settings.developerAbout}
+                   </div>
+                ) : (
+                   <div style={{ color: 'var(--text-disabled)', fontSize: '14px', fontStyle: 'italic' }}>
+                      Chưa có thông tin cập nhật. Nhấn vào nút chỉnh sửa để thêm bài viết giới thiệu.
+                   </div>
+                )}
+             </div>
+          )
        )}
 
     </div>

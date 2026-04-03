@@ -186,18 +186,6 @@ export default function TenantConfigTab() {
                     style={{ fontSize: '14px' }}
                 />
             </div>
-            <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Giới thiệu Đội Ngũ Phát Triển & Liên Hệ Chi Tiết</label>
-                <textarea 
-                    name="developerAbout"
-                    value={formData.developerAbout || ''} 
-                    onChange={handleChange}
-                    className="form-input" 
-                    rows={4}
-                    placeholder="Viết vài dòng giới thiệu về đội ngũ kỹ sư, tầm nhìn hệ thống hoặc thông tin liên hệ triển khai chi tiết..."
-                    style={{ fontSize: '14px', resize: 'vertical', width: '100%', fontFamily: 'inherit' }}
-                />
-            </div>
         </div>
       </div>
 
