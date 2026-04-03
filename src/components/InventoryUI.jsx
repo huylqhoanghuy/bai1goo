@@ -272,7 +272,7 @@ const InventoryUI = ({
             <div>
               <label style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom:'6px', display:'block', fontWeight: 600 }}>Giá Định Mức (Tính tự động theo 1 lẻ):</label>
               <div style={{ display: 'flex', alignItems: 'center', background: '#F3F4F6', borderRadius: '8px', padding: '0 12px', border: '1px solid var(--surface-border)' }}>
-                 <input disabled type="number" className="form-input" style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', fontWeight: 'bold', flex: 1, paddingLeft: 0 }} value={(Number(ingForm.cost) || 0).toFixed(0)} />
+                 <input disabled type="text" className="form-input" style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', fontWeight: 'bold', flex: 1, paddingLeft: 0 }} value={Number(ingForm.cost || 0).toLocaleString('vi-VN')} />
                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>đ / {ingForm.unit || '[Lẻ]'}</span>
               </div>
             </div>
