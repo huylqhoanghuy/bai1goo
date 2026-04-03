@@ -109,7 +109,7 @@ body {
 }
 
 table th, .table th, table td, .table td {
-  padding: 12px 16px; /* Thu gọn padding để nhìn tổng thể bảng chặt chẽ hơn */
+  padding: 8px 12px; /* Thu gọn padding để nhìn tổng thể bảng chặt chẽ hơn và tránh overflow */
   border: 1px solid var(--surface-border); /* Thêm Cột chia và Dòng kẻ toàn diện */
   vertical-align: middle;
 }
@@ -251,6 +251,16 @@ input:focus, select:focus, textarea:focus {
   box-shadow: var(--shadow-sm);
   font-family: inherit;
   min-height: 44px; /* Fitts Law */
+}
+
+/* Ghi đè Fitts Law cho các nút nằm trong Bảng (Table) để tránh bị phình to cột Thao Tác */
+.table td .btn {
+  min-height: 32px;
+  padding: 6px 10px;
+}
+.table td .btn-ghost {
+  min-width: 32px;
+  padding: 4px;
 }
 
 .btn:hover {
