@@ -432,16 +432,23 @@ const ProductsUI = ({ manager }) => {
 
       {showDetail && viewingProduct && (() => {
         const totalCost = calculateTotalCost(viewingProduct.recipe);
-        const categoryBreakdown = {};
+        const itemBreakdown = {};
         viewingProduct.recipe.forEach(r => {
           const detail = getEntityDisplayDetails(r.ingredientId);
           if (detail) {
             const cost = getRecipeItemCost(r);
-            const cat = detail.type === 'ingredient' ? (detail.category || 'Khác') : 'Món Chế Biến';
-            categoryBreakdown[cat] = (categoryBreakdown[cat] || 0) + cost;
+            const label = detail.name;
+            itemBreakdown[label] = (itemBreakdown[label] || 0) + cost;
           }
         });
-        const sortedCats = Object.entries(categoryBreakdown).sort((a, b) => b[1] - a[1]);
+        
+        let sortedCats = Object.entries(itemBreakdown).sort((a, b) => b[1] - a[1]);
+        if (sortedCats.length > 6) {
+           const top5 = sortedCats.slice(0, 5);
+           const others = sortedCats.slice(5).reduce((sum, item) => sum + item[1], 0);
+           top5.push(['Thành phần nhỏ khác', others]);
+           sortedCats = top5;
+        }
 
         return (
           <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
