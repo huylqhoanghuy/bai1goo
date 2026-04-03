@@ -51,7 +51,7 @@ const Inventory = () => {
       ingredients={inventory}
       suppliers={activeSuppliers}
       purchaseOrders={purchases}
-      categories={(categories || []).filter(c => !c.deleted)}
+      categories={(categories || []).filter(c => !c.deleted && c.type !== 'menu')}
       onSaveIngredient={handleSaveIngredient}
       onDeleteIngredient={deleteIngredient}
       onSaveSupplier={handleSaveSupplier}

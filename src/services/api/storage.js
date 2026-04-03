@@ -62,7 +62,37 @@ export const StorageService = {
         const dataStr = localStorage.getItem(DB_KEY);
         if (dataStr) {
           try {
-            resolve(JSON.parse(dataStr));
+            const data = JSON.parse(dataStr);
+            
+            // --- HỆ THỐNG TỰ SAO CHÉP & SỬA LỖI TRÙNG LẶP ID (AUTO-HEAL) ---
+            // Phát hiện các ID bị trùng lặp do lỗi thao tác dồn dập (double-click) hoặc data cũ.
+            let hasDuplicates = false;
+            if (typeof data === 'object' && data !== null) {
+              for (const key of Object.keys(data)) {
+                 if (Array.isArray(data[key])) {
+                    const ids = new Set();
+                    for (let i = 0; i < data[key].length; i++) {
+                       const item = data[key][i];
+                       if (item && item.id) {
+                          if (ids.has(item.id)) {
+                             // Tìm thấy ID bị trùng lặp. Đổi ID ngay lập tức để ngắt trói data.
+                             item.id = StorageService.generateId('HEAL_');
+                             hasDuplicates = true;
+                          }
+                          ids.add(item.id);
+                       }
+                    }
+                 }
+              }
+            }
+            if (hasDuplicates) {
+               // Lưu lại liền để tự fix ngầm trong cơ sở dữ liệu.
+               localStorage.setItem(DB_KEY, JSON.stringify(data));
+               console.warn('[Auto-Heal] Đã phát hiện và gỡ rối lỗi trùng lặp ID trong CSDL.');
+            }
+            // -------------------------------------------------------------
+            
+            resolve(data);
           } catch {
             resolve(getInitialState());
           }

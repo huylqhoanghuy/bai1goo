@@ -60,7 +60,7 @@ const Categories = () => {
 
   const trashColumns = [
     { key: 'name', label: 'Tên Danh Mục', render: (val, c) => <strong>{c.name}</strong> },
-    { key: 'type', label: 'Loại', render: (val, c) => c.type === 'menu' ? 'Thực Đơn' : c.type === 'expense' ? 'Thu Chi' : 'Khác' }
+    { key: 'type', label: 'Loại', render: (val, c) => c.type === 'menu' ? 'Thực Đơn POS' : c.type === 'expense' ? 'Thu Chi' : 'Kho & Chi Phí' }
   ];
 
   const activeColumns = [
@@ -69,7 +69,7 @@ const Categories = () => {
       label: <SortHeader label="Tên Danh Mục" sortKey="name" sortConfig={sortConfig} onSort={handleSort} />, 
       render: (val, c) => <strong>{c.name}</strong> 
     },
-    { key: 'type', label: 'Phân Hệ', render: (val, c) => <span style={{ padding: '4px 8px', background: 'var(--surface-variant)', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>{c.type === 'menu' ? 'Thực Đơn' : 'Thu Chi'}</span> },
+    { key: 'type', label: 'Phân Hệ', render: (val, c) => <span style={{ padding: '4px 8px', background: 'var(--surface-variant)', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>{c.type === 'menu' ? 'Thực Đơn POS' : c.type === 'expense' ? 'Thu Chi' : 'Kho & Chi Phí'}</span> },
     { key: 'items', label: 'Mặt hàng', render: (val, c) => <span style={{ padding: '4px 8px', background: 'var(--surface-border)', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>{(products || []).filter(p => !p.deleted && p.category === c.name).length} Mục</span> }
   ];
 
@@ -93,7 +93,7 @@ const Categories = () => {
               <div style={{ paddingRight: '20px' }}>
                 <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)' }}>{category.name}</h4>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
-                  <span style={{ padding: '4px 8px', background: 'var(--surface-variant)', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>{category.type === 'menu' ? 'Thực Đơn' : 'Thu Chi'}</span>
+                  <span style={{ padding: '4px 8px', background: 'var(--surface-variant)', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>{category.type === 'menu' ? 'Thực Đơn POS' : category.type === 'expense' ? 'Thu Chi' : 'Kho & Chi Phí'}</span>
                   <span style={{ padding: '4px 8px', background: 'var(--surface-border)', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>{itemCount} Mặt hàng</span>
                 </div>
               </div>
@@ -124,6 +124,7 @@ const Categories = () => {
         <select className="form-input" value={form.type} onChange={e => setForm({...form, type: e.target.value})}>
            <option value="menu">Giao diện Bán POS</option>
            <option value="expense">Khoản phí Giao Hàng</option>
+           <option value="inventory">Kho & Chi phí bán hàng</option>
         </select>
       </div>
       <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
