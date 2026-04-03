@@ -161,13 +161,21 @@ const ProfitSimulator = () => {
                    )}
                 </div>
                 
-                <div style={{ padding: '0 12px', flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                <div style={{ padding: '0 12px', flex: 1, display: 'flex', flexDirection: 'column', gap: '4px', overflow: 'hidden' }}>
+                  <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {product.name}
                   </h4>
-                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--primary)', fontWeight: 800 }}>
-                    {product.price.toLocaleString('vi-VN')} đ
-                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <p style={{ margin: 0, fontSize: '14px', color: 'var(--primary)', fontWeight: 800, whiteSpace: 'nowrap' }}>
+                      {product.price.toLocaleString('vi-VN')} đ
+                    </p>
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', borderLeft: '1px solid var(--surface-border)', paddingLeft: '8px' }}>
+                      {product.recipe?.length > 0 ? product.recipe.map(r => {
+                        const ing = activeIngredients.find(i => i.id === r.id);
+                        return ing ? `${ing.name} (${r.quantity}${ing.unit})` : '';
+                      }).filter(Boolean).join(' + ') : 'Chưa có định mức'}
+                    </span>
+                  </div>
                 </div>
 
                 <div style={{ background: '#F0F9FF', padding: '8px', borderRadius: '10px', display: 'flex', marginLeft: 'auto' }}>
