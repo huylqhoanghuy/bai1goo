@@ -95,67 +95,107 @@ export default function SystemArchitecture() {
          
          <div style={{ textAlign: 'center', marginBottom: '32px', position: 'relative', zIndex: 1 }}>
             <h3 style={{ margin: '0 0 8px 0', fontSize: '24px', fontWeight: 800, background: 'linear-gradient(to right, #38bdf8, #818cf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-               VỀ DỰ ÁN & NHÀ PHÁT TRIỂN
+               MINDMAP LUỒNG DỮ LIỆU & THAO TÁC HỆ THỐNG
             </h3>
-            <p style={{ margin: 0, color: '#94a3b8', fontSize: '14px' }}>Hệ Sinh Thái Poppy POS V2 & Đội Ngũ Kiến Tạo</p>
+            <p style={{ margin: 0, color: '#94a3b8', fontSize: '14px' }}>Sơ đồ luân chuyển Dữ Liệu Tồn Kho, Doanh Thu và Kế Toán ERP</p>
          </div>
 
-         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', position: 'relative', zIndex: 1 }}>
-            {/* Trung tâm */}
-            <div style={{ padding: '16px 32px', background: 'var(--primary)', borderRadius: '30px', fontWeight: 800, fontSize: '18px', boxShadow: '0 10px 25px -5px rgba(2, 132, 199, 0.5)', zIndex: 2 }}>
-               POPPY POS PROJECT
-            </div>
+         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', position: 'relative', zIndex: 1 }}>
             
-            {/* Đường nối xuống */}
-            <div style={{ width: '2px', height: '30px', background: 'rgba(255, 255, 255, 0.2)' }}></div>
-            
-            {/* Phân nhánh */}
-            <div style={{ width: '60%', height: '2px', background: 'rgba(255, 255, 255, 0.2)', position: 'relative' }}>
-               <div style={{ position: 'absolute', left: 0, top: 0, width: '2px', height: '30px', background: 'rgba(255, 255, 255, 0.2)' }}></div>
-               <div style={{ position: 'absolute', right: 0, top: 0, width: '2px', height: '30px', background: 'rgba(255, 255, 255, 0.2)' }}></div>
-               <div style={{ position: 'absolute', left: '50%', top: 0, width: '2px', height: '30px', background: 'rgba(255, 255, 255, 0.2)', transform: 'translateX(-50%)' }}></div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', width: '100%', marginTop: '30px' }}>
+            {/* TẦNG 1: Đối tác & Mua hàng */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', width: '100%' }}>
+               <div style={{ padding: '16px 20px', background: 'rgba(244, 63, 94, 0.1)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '12px', textAlign: 'center', width: '200px' }}>
+                  <PackageOpen size={24} color="#f43f5e" style={{ margin: '0 auto 8px auto' }} />
+                  <div style={{ fontWeight: 800, fontSize: '14px', color: '#f43f5e' }}>NHÀ CUNG CẤP</div>
+                  <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>Cung cấp NVL & Cấp Nợ</div>
+               </div>
                
-               {/* Người Mệnh Lệnh (Owner) */}
-               <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(45deg, #f59e0b, #ea580c)', margin: '0 auto 12px auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                     👤
-                  </div>
-                  <h4 style={{ margin: '0 0 4px 0', fontSize: '16px', color: '#f8fafc' }}>Lê Quang Huy</h4>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#fbbf24', fontWeight: 600 }}>CEO / System Architect</p>
-                  <p style={{ margin: '12px 0 0 0', fontSize: '12px', color: '#94a3b8', lineHeight: 1.5 }}>
-                     Người thiết kế logic, hoạch định tài chính và đặt ra bộ quy tắc vận hành khắt khe (ERP) cho toàn bộ hệ thống.
-                  </p>
+               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, background: '#334155', padding: '4px 8px', borderRadius: '4px', zIndex: 2 }}>Tạo Phiếu PO</div>
+                  <ArrowRight size={20} style={{ margin: '4px 0', marginLeft: '-15px', marginRight: '-15px', zIndex: 1 }} />
                </div>
 
-               {/* Hệ Thống & Liên Hệ */}
-               <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(45deg, #10b981, #059669)', margin: '0 auto 12px auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                     <PackageOpen size={20} color="white" />
-                  </div>
-                  <h4 style={{ margin: '0 0 4px 0', fontSize: '16px', color: '#f8fafc' }}>Poppy POS V2.1</h4>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#34d399', fontWeight: 600 }}>Tài sản trí tuệ & Liên hệ</p>
-                  <p style={{ margin: '12px 0 0 0', fontSize: '12px', color: '#94a3b8', lineHeight: 1.5 }}>
-                     Bản quyền thuộc về Xóm Gà Poppy. Liên hệ triển khai & tư vấn vận hành F&B thông qua Email/Hotline của cửa hàng.
-                  </p>
+               <div style={{ padding: '16px 20px', background: 'rgba(244, 63, 94, 0.2)', border: '2px solid rgba(244, 63, 94, 0.5)', borderRadius: '12px', textAlign: 'center', width: '240px', boxShadow: '0 0 15px rgba(244,63,94,0.3)' }}>
+                  <PackageOpen size={24} color="#f43f5e" style={{ margin: '0 auto 8px auto' }} />
+                  <div style={{ fontWeight: 800, fontSize: '15px', color: '#f8fafc' }}>KHO NVL & VẬT TƯ</div>
+                  <div style={{ fontSize: '11px', color: '#cbd5e1', marginTop: '4px' }}>Ghi nhận Tồn Kho & Update Cost</div>
                </div>
-
-               {/* AI Assistant (Antigravity) */}
-               <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center', position: 'relative' }}>
-                  <div style={{ position: 'absolute', top: -10, right: -10, background: '#3b82f6', color: 'white', fontSize: '10px', padding: '4px 8px', borderRadius: '12px', fontWeight: 800 }}>⚡ PAIR PROGRAMMING</div>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(45deg, #3b82f6, #4f46e5)', margin: '0 auto 12px auto', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-                     🤖
-                  </div>
-                  <h4 style={{ margin: '0 0 4px 0', fontSize: '16px', color: '#f8fafc' }}>Antigravity (AI)</h4>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#818cf8', fontWeight: 600 }}>Google DeepMind Agent</p>
-                  <p style={{ margin: '12px 0 0 0', fontSize: '12px', color: '#94a3b8', lineHeight: 1.5 }}>
-                     Cộng sự mã hóa chính thức kiến tạo toàn bộ giao diện và luồng logic code dựa trên chỉ đạo của CEO. Hỗ trợ 24/7 trong IDE!
-                  </p>
-               </div>
-
             </div>
+
+            {/* Mũi tên dọc trung tâm (Từ Kho xuống Bán hàng) */}
+            <div style={{ display: 'flex', width: '100%', justifyContent: 'flex-end', paddingRight: 'calc(50% - 240px/2)' }}>
+               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: '#94a3b8', height: '60px', position: 'relative' }}>
+                  <div style={{ width: '2px', height: '100%', borderLeft: 'dashed 2px rgba(255,255,255,0.2)' }}></div>
+                  <div style={{ fontSize: '11px', fontWeight: 600, background: '#1e293b', padding: '4px 8px', borderRadius: '4px', position: 'absolute', top: '20px', border: '1px solid rgba(255,255,255,0.1)' }}>Trừ hao NVL (BOM)</div>
+                  <ArrowDown size={20} style={{ marginTop: '-10px', marginLeft: '-2px' }} />
+               </div>
+            </div>
+
+            {/* TẦNG 2: Bán Hàng */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', width: '100%' }}>
+               <div style={{ padding: '16px 20px', background: 'rgba(14, 165, 233, 0.1)', border: '1px solid rgba(14, 165, 233, 0.3)', borderRadius: '12px', textAlign: 'center', width: '200px' }}>
+                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '8px' }}>
+                     <span style={{ fontSize: '11px', padding: '2px 6px', background: '#eab308', borderRadius: '4px', color:'black', fontWeight:600 }}>Quầy</span>
+                     <span style={{ fontSize: '11px', padding: '2px 6px', background: '#ea580c', borderRadius: '4px', color:'white', fontWeight:600 }}>Shopee</span>
+                     <span style={{ fontSize: '11px', padding: '2px 6px', background: '#16a34a', borderRadius: '4px', color:'white', fontWeight:600 }}>Grab</span>
+                  </div>
+                  <div style={{ fontWeight: 800, fontSize: '14px', color: '#38bdf8' }}>KÊNH BÁN HÀNG</div>
+                  <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>Nguồn phát sinh giao dịch</div>
+               </div>
+               
+               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, background: '#334155', padding: '4px 8px', borderRadius: '4px', zIndex: 2 }}>Tạo Đơn (Order)</div>
+                  <ArrowRight size={20} style={{ margin: '4px 0', marginLeft: '-15px', marginRight: '-15px', zIndex: 1 }} />
+               </div>
+
+               <div style={{ padding: '16px 20px', background: 'rgba(14, 165, 233, 0.2)', border: '2px solid rgba(14, 165, 233, 0.5)', borderRadius: '12px', textAlign: 'center', width: '240px', boxShadow: '0 0 15px rgba(14,165,233,0.3)' }}>
+                  <ShoppingCart size={24} color="#38bdf8" style={{ margin: '0 auto 8px auto' }} />
+                  <div style={{ fontWeight: 800, fontSize: '15px', color: '#f8fafc' }}>HỆ THỐNG POS</div>
+                  <div style={{ fontSize: '11px', color: '#cbd5e1', marginTop: '4px' }}>Ghi nhận Doanh Thu & Giá Vốn</div>
+               </div>
+            </div>
+
+            {/* Mũi tên dọc trung tâm (Từ Kho & POS xuống Sổ Quỹ) */}
+            <div style={{ display: 'flex', width: '100%', justifyContent: 'flex-end', paddingRight: 'calc(50% - 240px/2)' }}>
+               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: '#94a3b8', height: '60px', position: 'relative' }}>
+                  <div style={{ width: '2px', height: '100%', borderLeft: 'dashed 2px rgba(255,255,255,0.2)' }}></div>
+                  <div style={{ fontSize: '11px', fontWeight: 600, background: '#1e293b', padding: '4px 8px', borderRadius: '4px', position: 'absolute', top: '20px', border: '1px solid rgba(255,255,255,0.1)' }}>Kết chuyển Kế toán</div>
+                  <ArrowDown size={20} style={{ marginTop: '-10px', marginLeft: '-2px' }} />
+               </div>
+            </div>
+
+            {/* TẦNG 3: Kế Toán & Dòng Tiền */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', width: '100%' }}>
+               <div style={{ padding: '16px 20px', background: 'rgba(34, 197, 94, 0.2)', border: '2px solid rgba(34, 197, 94, 0.5)', borderRadius: '12px', textAlign: 'center', width: '300px', boxShadow: '0 0 15px rgba(34,197,94,0.3)' }}>
+                  <Calculator size={24} color="#4ade80" style={{ margin: '0 auto 8px auto' }} />
+                  <div style={{ fontWeight: 800, fontSize: '15px', color: '#f8fafc' }}>KẾ TOÁN & SỔ QUỸ KÉP</div>
+                  <div style={{ fontSize: '11px', color: '#bbf7d0', marginTop: '4px' }}>Quản lý Ví Ngân Hàng, Tiền Mặt & Số Dư</div>
+               </div>
+            </div>
+
+            <div style={{ height: '40px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+               <div style={{ width: '2px', height: '100%', borderLeft: 'solid 2px rgba(255,255,255,0.2)' }}></div>
+            </div>
+
+            {/* TẦNG 4: Đầu ra Báo Cáo */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', width: '100%', flexWrap: 'wrap' }}>
+               <div style={{ padding: '12px', background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.3)', borderRadius: '12px', textAlign: 'center', width: '160px' }}>
+                  <BarChart3 size={20} color="#eab308" style={{ margin: '0 auto 8px auto' }} />
+                  <div style={{ fontWeight: 700, fontSize: '13px', color: '#fde047' }}>BÁO CÁO K.Q.K.D</div>
+                  <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>Tổng hợp P&L & Lãi Lỗ</div>
+               </div>
+               <div style={{ padding: '12px', background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.3)', borderRadius: '12px', textAlign: 'center', width: '160px' }}>
+                  <PackageOpen size={20} color="#eab308" style={{ margin: '0 auto 8px auto' }} />
+                  <div style={{ fontWeight: 700, fontSize: '13px', color: '#fde047' }}>PHÂN TÍCH TỒN</div>
+                  <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>Biến động vốn lưu động</div>
+               </div>
+               <div style={{ padding: '12px', background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.3)', borderRadius: '12px', textAlign: 'center', width: '160px' }}>
+                  <Calculator size={20} color="#eab308" style={{ margin: '0 auto 8px auto' }} />
+                  <div style={{ fontWeight: 700, fontSize: '13px', color: '#fde047' }}>BÁO CÁO CÔNG NỢ</div>
+                  <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>Phải thu & Phải trả</div>
+               </div>
+            </div>
+
          </div>
       </div>
     </div>
