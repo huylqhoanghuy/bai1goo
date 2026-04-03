@@ -1,7 +1,11 @@
 import React from 'react';
 import { PackageOpen, ShoppingCart, Calculator, BarChart3, ArrowRight, ArrowDown } from 'lucide-react';
+import { useData } from '../context/DataContext';
 
 export default function SystemArchitecture() {
+  const { state } = useData();
+  const settings = state.settings || {};
+  
   return (
     <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
       <div className="glass-panel" style={{ padding: '32px', position: 'relative' }}>
@@ -198,7 +202,19 @@ export default function SystemArchitecture() {
                 Đơn Hàng đã bị Hủy hoặc Xóa Mềm <ArrowRight size={14} /> Bị Hệ thống từ chối lọc <ArrowRight size={14} /> Gạch tên khỏi Sổ Cảnh Báo Vay Nợ.
             </div>
          </div>
-    </div>
+       </div>
+
+       {settings.developerAbout && (
+          <div style={{ marginTop: '24px', padding: '24px', background: 'var(--primary-glow, rgba(2, 132, 199, 0.05))', borderRadius: '12px', border: '1px solid var(--primary)', position: 'relative' }}>
+             <h5 style={{ margin: '0 0 12px 0', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                👤 Thông Tin Đội Ngũ Phát Triển & Liên Hệ F&B
+             </h5>
+             <div style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+                {settings.developerAbout}
+             </div>
+          </div>
+       )}
+
     </div>
     </div>
   );
