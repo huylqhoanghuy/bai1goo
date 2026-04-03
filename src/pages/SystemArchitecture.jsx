@@ -8,10 +8,7 @@ export default function SystemArchitecture() {
       <h3 style={{ margin: '0 0 24px 0', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
          <BarChart3 size={20} color="var(--primary)" /> Sơ Đồ Kiến Trúc Hệ Sinh Thái Poppy POS
       </h3>
-      
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', fontSize: '14px', lineHeight: 1.6 }}>
-        Sơ đồ này thể hiện luồng luân chuyển dữ liệu lõi giữa 4 phân hệ lớn: Vận hành Kho, Bán Hàng POS, Kế Toán Dòng Tiền, và Phân Tích Báo Cáo. Hệ thống tuân thủ nguyên tắc ERP, bất kỳ thay đổi nào từ Kho và Bán hàng đều tự động đồng bộ sang Kế Toán.
-      </p>
+
       <div style={{ marginTop: '40px', padding: '24px', background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95))', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.1)', color: 'white', position: 'relative', overflow: 'hidden' }}>
          <svg style={{ position: 'absolute', top: 0, right: 0, opacity: 0.05, width: '300px', height: '300px' }} viewBox="0 0 100 100">
              <path d="M50 0 L100 50 L50 100 L0 50 Z" fill="white" />
@@ -123,6 +120,9 @@ export default function SystemArchitecture() {
          </div>
       </div>
 
+      <p style={{ color: 'var(--text-secondary)', margin: '32px 0', fontSize: '14px', lineHeight: 1.6 }}>
+        Sơ đồ trên thể hiện luồng luân chuyển dữ liệu lõi giữa 4 phân hệ lớn: Vận hành Kho, Bán Hàng POS, Kế Toán Dòng Tiền, và Phân Tích Báo Cáo. Hệ thống tuân thủ nguyên lý ERP, bất kỳ thay đổi nào từ Kho và Bán hàng đều tự động đồng bộ sang Kế Toán.
+      </p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px', position: 'relative' }}>
         
         {/* Phân hệ KHO */}
