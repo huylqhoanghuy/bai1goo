@@ -239,25 +239,34 @@ const ProfitSimulator = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>Doanh Thu Gốc (Gross):</span>
-              <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>{analysis.grossRevenue.toLocaleString('vi-VN')} đ</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>{analysis.grossRevenue.toLocaleString('vi-VN')} đ</span>
+                {analysis.grossRevenue > 0 && <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>(100%)</span>}
+              </div>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>
                 Chiết khấu sàn ({analysis.actualCommissionRate}%):
               </span>
-              <span style={{ fontSize: '14px', fontWeight: 800, color: '#EA580C' }}>
-                -{analysis.channelFee.toLocaleString('vi-VN')} đ
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '14px', fontWeight: 800, color: '#EA580C' }}>
+                  -{analysis.channelFee.toLocaleString('vi-VN')} đ
+                </span>
+                {analysis.grossRevenue > 0 && <span style={{ fontSize: '12px', color: '#EA580C', opacity: 0.8 }}>({((analysis.channelFee / analysis.grossRevenue) * 100).toFixed(1)}%)</span>}
+              </div>
             </div>
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>
                 Tổng Vốn Nguyên Liệu (COGS):
               </span>
-              <span style={{ fontSize: '14px', fontWeight: 800, color: '#EA580C' }}>
-                -{analysis.totalCogs.toLocaleString('vi-VN')} đ
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '14px', fontWeight: 800, color: '#EA580C' }}>
+                  -{analysis.totalCogs.toLocaleString('vi-VN')} đ
+                </span>
+                {analysis.grossRevenue > 0 && <span style={{ fontSize: '12px', color: '#EA580C', opacity: 0.8 }}>({((analysis.totalCogs / analysis.grossRevenue) * 100).toFixed(1)}%)</span>}
+              </div>
             </div>
             
             {manualDiscount > 0 && (
@@ -265,9 +274,12 @@ const ProfitSimulator = () => {
                   <span style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: 600 }}>
                     Tự cắt KM Mời Khách:
                   </span>
-                  <span style={{ fontSize: '14px', fontWeight: 800, color: '#EA580C' }}>
-                    -{(Number(manualDiscount) || 0).toLocaleString('vi-VN')} đ
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: '#EA580C' }}>
+                      -{(Number(manualDiscount) || 0).toLocaleString('vi-VN')} đ
+                    </span>
+                    {analysis.grossRevenue > 0 && <span style={{ fontSize: '12px', color: '#EA580C', opacity: 0.8 }}>({(((Number(manualDiscount) || 0) / analysis.grossRevenue) * 100).toFixed(1)}%)</span>}
+                  </div>
                 </div>
             )}
           </div>
