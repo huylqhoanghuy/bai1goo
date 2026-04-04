@@ -400,26 +400,46 @@ const InventoryUI = ({
                    </div>
                 </div>
 
-                <h4 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase' }}>THÔNG TIN ĐỢT NHẬP HÀNG GẦN NHẤT</h4>
-                {latestPO ? (
-                  <div style={{ background: '#F8FAFC', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 600 }}>Ngày chốt đơn:</span>
-                        <strong style={{ fontSize: '14px' }}>{new Date(latestPO.date).toLocaleString('vi-VN')}</strong>
-                     </div>
-                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 600 }}>Khối lượng đã nhập:</span>
-                        <strong style={{ fontSize: '15px', color: 'var(--primary)' }}>+ {latestItem?.baseQty} {ing.buyUnit || ing.unit}</strong>
-                     </div>
-                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 600 }}>Đơn giá thực tế đợt này:</span>
-                        <strong style={{ fontSize: '15px', color: 'var(--danger)' }}>{(latestItem?.cost || 0).toLocaleString('vi-VN')} đ <span style={{fontSize:'12px', color:'var(--text-secondary)'}}>/ {ing.buyUnit || ing.unit}</span></strong>
-                     </div>
-                     <div style={{ width: '100%', height: '1px', background: '#E2E8F0', margin: '4px 0' }}/>
-                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 600 }}>Nguồn cung cấp:</span>
-                        <strong style={{ fontSize: '15px', color: 'var(--text-primary)' }}>{supplier?.name || 'Vô danh'}</strong>
-                     </div>
+                <h4 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase' }}>LỊCH SỬ NHẬP HÀNG (THEO DÕI NGUỒN CỐC)</h4>
+                {sorted.length > 0 ? (
+                  <div style={{ maxHeight: '250px', overflowY: 'auto', border: '1px solid var(--surface-border)', borderRadius: '8px' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                      <thead style={{ position: 'sticky', top: 0, background: 'var(--surface-color)', zIndex: 1 }}>
+                        <tr style={{ borderBottom: '2px solid var(--surface-border)' }}>
+                          <th style={{ padding: '10px', color: 'var(--text-secondary)' }}>Ngày & Giờ (Tự Sinh)</th>
+                          <th style={{ padding: '10px', color: 'var(--text-secondary)' }}>Mã PO</th>
+                          <th style={{ padding: '10px', color: 'var(--text-secondary)' }}>Nhà Cung Cấp</th>
+                          <th style={{ padding: '10px', color: 'var(--text-secondary)', textAlign: 'right' }}>Lô Nhập</th>
+                          <th style={{ padding: '10px', color: 'var(--text-secondary)', textAlign: 'right' }}>Giá/Lô</th>
+                          <th style={{ padding: '10px', color: 'var(--text-secondary)' }}>Trạng Thái</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sorted.map(po => {
+                           const item = po.items.find(it => it.ingredientId === ing.id);
+                           if (!item) return null;
+                           const sup = (suppliers || []).find(s => s.id === po.supplierId);
+                           return (
+                             <tr key={po.id} style={{ borderBottom: '1px solid #E5E7EB', background: '#FFFFFF' }}>
+                               <td style={{ padding: '10px', fontWeight: 500 }}>
+                                  <div>{new Date(po.date).toLocaleDateString('vi-VN')}</div>
+                                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{new Date(po.date).toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})}</div>
+                               </td>
+                               <td style={{ padding: '10px', color: 'var(--primary)', fontWeight: 600 }}>{po.id}</td>
+                               <td style={{ padding: '10px', fontWeight: 500 }}>{sup?.name || '---'}</td>
+                               <td style={{ padding: '10px', textAlign: 'right', fontWeight: 700, color: 'var(--primary)' }}>+ {item.baseQty} <span style={{fontSize:'10px'}}>{ing.buyUnit}</span></td>
+                               <td style={{ padding: '10px', textAlign: 'right', fontWeight: 600, color: 'var(--danger)' }}>{(item.cost || 0).toLocaleString('vi-VN')} đ</td>
+                               <td style={{ padding: '10px' }}>
+                                 {po.status === 'Paid' ? <span style={{ color: 'var(--success)', fontWeight: 600, fontSize: '11px', background: '#DCFCE7', padding: '2px 6px', borderRadius: '4px' }}>Đã chi</span> : 
+                                  po.status === 'Debt' ? <span style={{ color: 'var(--danger)', fontWeight: 600, fontSize: '11px', background: '#FEE2E2', padding: '2px 6px', borderRadius: '4px' }}>Ghi nợ</span> :
+                                  po.status === 'Pending' ? <span style={{ color: 'var(--warning)', fontWeight: 600, fontSize: '11px', background: '#FEF3C7', padding: '2px 6px', borderRadius: '4px' }}>Chờ duyệt</span> :
+                                  <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Đã Xoá</span>}
+                               </td>
+                             </tr>
+                           )
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 ) : (
                   <p style={{ background: '#FEF2F2', color: 'var(--danger)', padding: '16px', borderRadius: '8px', border: '1px dashed #FECACA', fontWeight: 600, fontSize: '14px', textAlign: 'center' }}>Vật tư này chưa từng được nạp qua Phiếu Nhập Hàng hệ thống.</p>
