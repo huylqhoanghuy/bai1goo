@@ -64,23 +64,30 @@ export const StorageService = {
           try {
             const data = JSON.parse(dataStr);
             
-            // --- HỆ THỐNG TỰ SAO CHÉP & SỬA LỖI TRÙNG LẶP ID (AUTO-HEAL) ---
-            // Phát hiện các ID bị trùng lặp do lỗi thao tác dồn dập (double-click) hoặc data cũ.
+            // --- HỆ THỐNG GỠ LỖI TRÙNG LẶP ID ---
+            // Phát hiện các ID bị trùng lặp do lỗi thao tác dồn dập hoặc copy đè mây.
             let hasDuplicates = false;
             if (typeof data === 'object' && data !== null) {
               for (const key of Object.keys(data)) {
                  if (Array.isArray(data[key])) {
                     const ids = new Set();
+                    const uniqueArray = [];
                     for (let i = 0; i < data[key].length; i++) {
                        const item = data[key][i];
                        if (item && item.id) {
                           if (ids.has(item.id)) {
-                             // Tìm thấy ID bị trùng lặp. Đổi ID ngay lập tức để ngắt trói data.
-                             item.id = StorageService.generateId('HEAL_');
+                             // Phát hiện nhân bản: BỎ QUA không đẩy vào mảng mới để triệt tiêu bản sao
                              hasDuplicates = true;
+                          } else {
+                             ids.add(item.id);
+                             uniqueArray.push(item);
                           }
-                          ids.add(item.id);
+                       } else {
+                          uniqueArray.push(item);
                        }
+                    }
+                    if (data[key].length !== uniqueArray.length) {
+                        data[key] = uniqueArray;
                     }
                  }
               }
@@ -88,7 +95,7 @@ export const StorageService = {
             if (hasDuplicates) {
                // Lưu lại liền để tự fix ngầm trong cơ sở dữ liệu.
                localStorage.setItem(DB_KEY, JSON.stringify(data));
-               console.warn('[Auto-Heal] Đã phát hiện và gỡ rối lỗi trùng lặp ID trong CSDL.');
+               console.warn('[Auto-Heal] Đã dọn dẹp triệt để các ID bị nhân bản (triệt tiêu sự bành trướng dữ liệu).');
             }
             // -------------------------------------------------------------
             

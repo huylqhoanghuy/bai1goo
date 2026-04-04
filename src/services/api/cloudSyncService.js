@@ -18,6 +18,25 @@ window.addEventListener('beforeunload', (e) => {
 export const CloudSyncService = {
   syncToCloud: async () => {
     isPendingSync = true;
+    
+    // --- DEV ENVIRONMENT DATA PROTECTION GUARD ---
+    // Ngăn chặn môi trường lập trình (Localhost) thao tác đè dữ liệu rác lên Firebase (Đám Mây).
+    if (import.meta.env.DEV) {
+       const bypass = sessionStorage.getItem('__dev_push_bypass');
+       if (!bypass) {
+          const pin = window.prompt("🛑 MÔI TRƯỜNG DEV - BẢO VỆ DATA ONLINE 🛑\n\nBạn đang chạy Localhost. Việc test có thể đẩy Dữ Liệu Rác hoặc sinh Duplicate đè hỏng số liệu Online!\n\nNhập Mã PIN Admin (1004) để MỞ KHÓA ghi dữ liệu lên Mây trong phiên này.\n(Hoặc bấm Cancel/Để trống để CẤM GHI MÂY, chỉ thao tác trên máy nhánh này):");
+          if (pin === '1004') {
+             sessionStorage.setItem('__dev_push_bypass', 'granted');
+             alert("✅ [Mở khóa thành công] Dữ liệu từ Localhost sẽ được ghi ngược lên Đám Mây.");
+          } else {
+             console.warn("[Dev Guard] Đã cấm đẩy dữ liệu từ Localhost lên Firebase. Bảo toàn Data Online.");
+             isPendingSync = false;
+             return { success: false, message: 'Dev Guard: Chế độ test chỉ lưu Local, vô hiệu hóa Cloud Sync.' };
+          }
+       }
+    }
+    // ---------------------------------------------
+
     try {
       const state = await StorageService.getAll();
       const keys = Object.keys(state);
