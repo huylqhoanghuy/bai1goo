@@ -24,10 +24,26 @@ export const CloudSyncService = {
     if (import.meta.env.DEV) {
        const bypass = sessionStorage.getItem('__dev_push_bypass');
        if (!bypass) {
-          const pin = window.prompt("🛑 MÔI TRƯỜNG DEV - BẢO VỆ DATA ONLINE 🛑\n\nBạn đang chạy Localhost. Việc test có thể đẩy Dữ Liệu Rác hoặc sinh Duplicate đè hỏng số liệu Online!\n\nNhập Mã PIN Admin (1004) để MỞ KHÓA ghi dữ liệu lên Mây trong phiên này.\n(Hoặc bấm Cancel/Để trống để CẤM GHI MÂY, chỉ thao tác trên máy nhánh này):");
+          let pin = null;
+          if (GlobalConfirm.current) {
+              const res = await GlobalConfirm.current({
+                  title: 'MÔI TRƯỜNG DEV DEV - BẢO VỆ LIÊN MÂY',
+                  message: 'Cảnh báo: Bạn đang thao tác trên Localhost.\nNhập PIN (1004) nếu muốn đồng bộ rủi ro lên Firebase, hoặc Hủy để an toàn dùng nội bộ.',
+                  type: 'warning',
+                  confirmText: 'MỞ KHÓA PUSH MÂY',
+                  cancelText: 'CHỈ LƯU KHO LOCAL',
+                  withInput: true
+              });
+              if (res.confirmed) pin = res.value;
+          } else {
+              pin = window.prompt("🛑 DEV GUARD 🛑\nNhập Mã PIN Admin (1004) để MỞ KHÓA ghi Firebase:");
+          }
+
           if (pin === '1004') {
              sessionStorage.setItem('__dev_push_bypass', 'granted');
-             alert("✅ [Mở khóa thành công] Dữ liệu từ Localhost sẽ được ghi ngược lên Đám Mây.");
+             if (GlobalConfirm.current) {
+                 await GlobalConfirm.current({ title: 'ĐÃ MỞ KHÓA', message: 'Luồng PUSH đồng bộ Đám mây đã được kích hoạt ngầm.', type: 'info', cancelText: 'Đóng' });
+             }
           } else {
              console.warn("[Dev Guard] Đã cấm đẩy dữ liệu từ Localhost lên Firebase. Bảo toàn Data Online.");
              isPendingSync = false;
