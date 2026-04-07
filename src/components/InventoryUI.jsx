@@ -5,6 +5,7 @@ import ModuleLayout from './ModuleLayout';
 import SortHeader from './SortHeader';
 import CurrencyInput from './CurrencyInput';
 import SmartTable from './SmartTable';
+import SmartDateFilter from './SmartDateFilter';
 
 const InventoryUI = ({
   ingredients,
@@ -34,6 +35,7 @@ const InventoryUI = ({
   const [ledgerFilterType, setLedgerFilterType] = useState('ALL'); // ALL, IN, OUT
   const [ledgerDateFrom, setLedgerDateFrom] = useState('');
   const [ledgerDateTo, setLedgerDateTo] = useState('');
+  const [ledgerPreset, setLedgerPreset] = useState('all');
   // Compute last purchase from purchase orders map (purely calculated from props)
   const lastPurchaseMap = React.useMemo(() => {
     const map = {};
@@ -498,11 +500,13 @@ const InventoryUI = ({
                         <button className="btn no-print" onClick={() => setLedgerFilterType('IN')} style={{ padding: '6px 16px', fontSize: '13px', borderRadius: '6px', fontWeight: 600, background: ledgerFilterType === 'IN' ? 'var(--success)' : 'transparent', color: ledgerFilterType === 'IN' ? 'white' : 'var(--success)', border: ledgerFilterType === 'IN' ? 'none' : '1px solid currentColor' }}>+ VÀO</button>
                         <button className="btn no-print" onClick={() => setLedgerFilterType('OUT')} style={{ padding: '6px 16px', fontSize: '13px', borderRadius: '6px', fontWeight: 600, background: ledgerFilterType === 'OUT' ? '#F59E0B' : 'transparent', color: ledgerFilterType === 'OUT' ? 'white' : '#B45309', border: ledgerFilterType === 'OUT' ? 'none' : '1px solid currentColor' }}>- RA</button>
                     </div>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', background: 'var(--surface-color)', padding: '4px 12px', borderRadius: '8px', border: '1px solid var(--surface-border)' }} className="no-print">
-                        <span style={{ fontSize: '13px', fontWeight: 500 }}>Từ:</span>
-                        <input type="date" style={{ padding: '4px 8px', fontSize: '13px', border: '1px solid #D1D5DB', borderRadius: '4px', width: '130px', outline: 'none' }} value={ledgerDateFrom} onChange={(e) => setLedgerDateFrom(e.target.value)} />
-                        <span style={{ fontSize: '13px', fontWeight: 500, marginLeft: '8px' }}>Đến:</span>
-                        <input type="date" style={{ padding: '4px 8px', fontSize: '13px', border: '1px solid #D1D5DB', borderRadius: '4px', width: '130px', outline: 'none' }} value={ledgerDateTo} onChange={(e) => setLedgerDateTo(e.target.value)} />
+                    <div className="no-print" style={{ zIndex: 100 }}>
+                        <SmartDateFilter 
+                           filterDate={{ start: ledgerDateFrom, end: ledgerDateTo }}
+                           setFilterDate={(f) => { setLedgerDateFrom(f?.start || ''); setLedgerDateTo(f?.end || ''); }}
+                           datePreset={ledgerPreset}
+                           setDatePreset={setLedgerPreset}
+                        />
                     </div>
                 </div>
                 {sortedLedger.length > 0 ? (
