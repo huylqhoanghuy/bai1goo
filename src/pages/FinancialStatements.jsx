@@ -292,82 +292,128 @@ export default function FinancialStatements() {
                <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '32px' }}>Trích xuất theo chuẩn VAS/IFRS - Cảnh báo Real-time từ Trí Tuệ Nhân Tạo</p>
                
                <div style={{ fontSize: '15px', lineHeight: '1.8', color: 'var(--text-primary)' }}>
-                  <p style={{ fontSize: '16px', marginBottom: '24px' }}><strong>Kính Gửi Hội Đồng Quản Trị & Ban Giám Đốc,</strong><br/>
-                  Dưới đây là Báo cáo Sức khỏe Hệ thống chuyên sâu, được phân rã thành **4 trụ cột điều hành** giúp các Cổ đông có thể nắm bắt bức tranh toàn cảnh và dễ dàng luân phiên quản trị chéo (Cross-management):</p>
+                  <p style={{ fontSize: '16px', marginBottom: '24px', padding: '16px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}><strong>Kính Gửi Hội Đồng Quản Trị & Ban Lãnh Đạo,</strong><br/>
+                  Bản Thuyết Minh Báo Cáo Tài Chính (Financial Notes) dưới đây được trích xuất theo chuẩn kế toán quản trị chuyên sâu. Dữ liệu được tính toán tự động dựa trên giao dịch thực tế trên hệ thống Poppy POS.<br/>Để đảm bảo tính minh bạch và ra quyết định thần tốc, báo cáo sức khỏe doanh nghiệp được phân tích rạch ròi theo <strong>4 Trụ cột Vận Hành (C-Level Perspectives)</strong>. Yêu cầu các thành viên HĐQT đọc kỹ và thực thi chéo chỉ đạo liên quan.</p>
 
                   {/* 1. GÓC ĐỘ CFO (Tài Chính & Dòng Tiền) */}
-                  <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '12px', marginBottom: '20px', borderLeft: '4px solid #3b82f6' }}>
-                     <h4 style={{ margin: '0 0 12px 0', color: '#1e293b', fontSize: '17px', display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase' }}>1. Góc độ CFO: Thanh khoản & Hiệu suất Vốn (Liquidity & ROE)</h4>
+                  <div style={{ background: '#f0f9ff', padding: '24px', borderRadius: '12px', marginBottom: '24px', borderLeft: '4px solid #0284c7', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                     <h4 style={{ margin: '0 0 16px 0', color: '#0284c7', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase', fontWeight: 800 }}>1. Góc độ Giám Đốc Tài Chính (CFO): Cấu Trúc Vốn & Thanh Khoản</h4>
                      <ul style={{ margin: 0, paddingLeft: '20px' }}>
-                        <li style={{ marginBottom: '8px' }}>
-                           <strong>Khả năng thanh toán hiện hành (Current Ratio):</strong> {(totalLiabilities > 0 ? (totalAssets / totalLiabilities) : (totalAssets > 0 ? 999 : 0)).toFixed(2)} lần.
-                           <span style={{ fontSize: '13px', color: '#475569', marginLeft: '8px', background: '#e2e8f0', padding: '2px 8px', borderRadius: '4px', verticalAlign: 'middle' }}>(Tổng TS: {formatVND(totalAssets)} ÷ Nợ: {formatVND(totalLiabilities)})</span><br/>
-                           <span style={{ color: 'var(--text-secondary)' }}>👉 <strong>Chỉ đạo:</strong> Mốc an toàn &gt; 1.5 lần. {totalAssets > (totalLiabilities * 1.5) ? 'Tài sản dồi dào, doanh nghiệp hoàn toàn miễn nhiễm với rủi ro phá sản ngắn hạn.' : 'Đang dưới mốc an toàn! Tuyệt đối không ký thêm hợp đồng mua chịu (Công nợ) mới.'}</span>
+                        <li style={{ marginBottom: '16px' }}>
+                           <strong style={{ fontSize: '16px' }}>Hệ số Thanh toán Hiện hành (Current Ratio):</strong> <span style={{ fontSize: '18px', fontWeight: 800, color: totalLiabilities > 0 && (totalAssets/totalLiabilities) > 1.5 ? '#16a34a' : '#ef4444' }}>{(totalLiabilities > 0 ? (totalAssets / totalLiabilities) : (totalAssets > 0 ? 999 : 0)).toFixed(2)} lần.</span>
+                           <span style={{ display: 'block', fontSize: '13px', color: '#475569', marginTop: '4px' }}><strong>[Công thức]:</strong> Tổng Tài Sản Lưu Động ({formatVND(totalAssets)}) ÷ Tổng Nợ Phải Trả Ngắn Hạn ({formatVND(totalLiabilities)})</span>
+                           <div style={{ background: '#fff', padding: '12px', borderRadius: '8px', marginTop: '8px', border: '1px solid #bae6fd' }}>
+                               👉 <strong>Thuyết minh Phân tích:</strong> Hệ số này đo lường khả năng dùng tiền mặt và hàng tồn kho để trả ngay các khoản nợ nhà cung cấp đang treo. Mốc an toàn lý tưởng của ngành F&B là <strong>&gt; 1.5 lần</strong>. {
+                                 totalAssets > (totalLiabilities * 1.5) 
+                                 ? 'Hiện tại, doanh nghiệp đang có cấu trúc vốn cực kỳ an toàn. Lượng tiền và hàng hóa dồi dào, hoàn toàn miễn nhiễm với rủi ro vỡ nợ ngắn hạn. Có thể xem xét dùng tiền nhàn rỗi để nhập lô lớn lấy chiết khấu.' 
+                                 : 'CẢNH BÁO: Hệ số đang dưới mức an toàn! Doanh nghiệp đang đối mặt với rủi ro mất thanh khoản. Tiền mặt không đủ để trả nợ nhà cung cấp. Yêu cầu GIẢM NGAY việc nhập hàng mới và đốc thúc bán hàng để thu tiền mặt.'
+                               }
+                           </div>
                         </li>
-                        <li style={{ marginBottom: '8px' }}>
-                           <strong>Lợi nhuận trên Vốn Chủ Sở Hữu (ROE):</strong> {ownersEquity > 0 ? ((netProfit / ownersEquity) * 100).toFixed(2) : 0}%.
-                           <span style={{ fontSize: '13px', color: '#475569', marginLeft: '8px', background: '#e2e8f0', padding: '2px 8px', borderRadius: '4px', verticalAlign: 'middle' }}>(Lãi ròng: {formatVND(netProfit)} ÷ Vốn CSH: {formatVND(ownersEquity)})</span><br/>
-                           <span style={{ color: 'var(--text-secondary)' }}>👉 <strong>Chỉ đạo:</strong> Thể hiện 100 đồng vốn cổ đông bỏ ra sinh được bao nhiêu đồng lãi. {ownersEquity > 0 && (netProfit/ownersEquity) >= 0.2 ? 'ROE xuất sắc, vượt kênh đầu tư tài chính. Nên giữ lại lợi nhuận để gộp vốn mở điểm bán mới (Scale-up).' : 'ROE đang thấp hoặc âm, cần tạm dừng các kế hoạch mở rộng để tối ưu lại Cửa hàng hiện tại.'}</span>
+                        <li style={{ marginBottom: '16px' }}>
+                           <strong style={{ fontSize: '16px' }}>Tỷ suất Sinh lời trên Vốn Chủ Sở Hữu (ROE):</strong> <span style={{ fontSize: '18px', fontWeight: 800, color: ownersEquity > 0 && (netProfit/ownersEquity) >= 0.15 ? '#16a34a' : '#f59e0b' }}>{ownersEquity > 0 ? ((netProfit / ownersEquity) * 100).toFixed(2) : 0}%.</span>
+                           <span style={{ display: 'block', fontSize: '13px', color: '#475569', marginTop: '4px' }}><strong>[Công thức]:</strong> Lợi Nhuận Ròng ({formatVND(netProfit)}) ÷ Vốn Chủ Sở Hữu ({formatVND(ownersEquity)})</span>
+                           <div style={{ background: '#fff', padding: '12px', borderRadius: '8px', marginTop: '8px', border: '1px solid #bae6fd' }}>
+                               👉 <strong>Thuyết minh Phân tích:</strong> Thể hiện 100 đồng vốn cổ đông bỏ vào quán đang đẻ ra bao nhiêu đồng tiền lãi. {
+                                 ownersEquity > 0 && (netProfit/ownersEquity) >= 0.15 
+                                 ? 'Hiệu quả sử dụng vốn của HĐQT đang RẤT TỐT (vượt xa mức lãi suất ngân hàng). Đề xuất giữ lại phần lợi nhuận chưa phân phối này (Retained Earnings) để tái đầu tư hoặc mở rộng quy mô (Scale-up) thay vì chia cổ tức tức thì.' 
+                                 : 'Hiệu suất sinh lời đang nằm ở mức thấp (dưới kênh đầu tư rủi ro thấp). Tuyệt đối KHÔNG gọi thêm vốn mới hay mở rộng mặt bằng lúc này. Phải tập trung tối ưu hóa lợi nhuận trên mặt bằng hiện tại trước.'
+                               }
+                           </div>
                         </li>
                         <li>
-                           <strong>Sức khỏe Ngân quỹ (Net Cash Flow):</strong> {netCashFlow >= 0 ? <span style={{color: '#16a34a', fontWeight:700}}>THẶNG DƯ {formatVND(netCashFlow)}</span> : <span style={{color: '#dc2626', fontWeight:700}}>THÂM HỤT {formatVND(netCashFlow)}</span>}.<br/>
-                           <span style={{ color: 'var(--text-secondary)' }}>👉 <strong>Chỉ đạo:</strong> {netCashFlow >= 0 ? 'Dòng tiền dương từ hoạt động kinh doanh (Core Operations) đang đủ nuôi máy bộ máy, có thể trích quỹ dự phòng hoặc chia cổ tức.' : 'Đang "đốt tiền" (Burn-rate) nhanh hơn dòng tiền vào. Yêu cầu kiểm soát ngay Phút (Stop) các khoản chi tiêu không tạo ra doanh thu ngay tức khắc.'}</span>
+                           <strong style={{ fontSize: '16px' }}>Đo lường Sức khỏe Ngân quỹ (Net Cash Flow):</strong> {netCashFlow >= 0 ? <span style={{color: '#16a34a', fontWeight:800, fontSize: '18px'}}>THẶNG DƯ {formatVND(netCashFlow)}</span> : <span style={{color: '#ef4444', fontWeight:800, fontSize: '18px'}}>BỊ BÀO MÒN {formatVND(netCashFlow)}</span>}
+                           <span style={{ display: 'block', fontSize: '13px', color: '#475569', marginTop: '4px' }}><strong>[Công thức]:</strong> Tổng Dòng Tiền Vào ({formatVND(cashInflows)}) - Tổng Dòng Tiền Ra từ vận hành/nhập hàng ({formatVND(cashOutflows)})</span>
+                           <div style={{ background: '#fff', padding: '12px', borderRadius: '8px', marginTop: '8px', border: '1px solid #bae6fd' }}>
+                               👉 <strong>Thuyết minh Phân tích:</strong> Lợi nhuận P&L chỉ là con số trên giấy, Cash Flow mới là máu của doanh nghiệp (Cash is King). {
+                                 netCashFlow >= 0 
+                                 ? 'Tuyệt vời. Dòng tiền thuần đang DƯƠNG. Máy tạo tiền từ Core Business đang vận hành trơn tru đủ tự nuôi hệ thống mà không cần bơm thêm máu từ bên ngoài.' 
+                                 : 'CỰC KỲ NGUY HIỂM. Máu (tiền mặt) đang chảy ra khỏi doanh nghiệp nhanh hơn tốc độ bơm vào! Lợi nhuận có thể đang bị chôn vùi dưới dạng Hàng Tồn Kho hoặc Công Nợ Phải Thu. CFO cần siết chặt lệnh xuất kho và khóa chặt van chi tiêu rác (Burn-rate).'
+                               }
+                           </div>
                         </li>
                      </ul>
                   </div>
 
                   {/* 2. GÓC ĐỘ CMO (Doanh Thu & Kênh Bán) */}
-                  <div style={{ background: '#fdf4ff', padding: '24px', borderRadius: '12px', marginBottom: '20px', borderLeft: '4px solid #d946ef' }}>
-                     <h4 style={{ margin: '0 0 12px 0', color: '#1e293b', fontSize: '17px', display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase' }}>2. Góc độ CMO: Phát triển Kênh Bán & Khấu trừ (Sales & Margin)</h4>
+                  <div style={{ background: '#fdf4ff', padding: '24px', borderRadius: '12px', marginBottom: '24px', borderLeft: '4px solid #d946ef', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                     <h4 style={{ margin: '0 0 16px 0', color: '#c026d3', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase', fontWeight: 800 }}>2. Góc độ Giám Đốc Thương Mại (CMO): Biên Lợi Nhuận & Phí Sàn</h4>
                      <ul style={{ margin: 0, paddingLeft: '20px' }}>
-                        <li style={{ marginBottom: '8px' }}>
-                           <strong>Biên Lợi Nhuận Gộp (Gross Margin):</strong> {totalNetRevenue > 0 ? ((grossProfit/totalNetRevenue)*100).toFixed(2) : 0}%. 
-                           <span style={{ fontSize: '13px', color: '#86198f', marginLeft: '8px', background: '#fae8ff', padding: '2px 8px', borderRadius: '4px', verticalAlign: 'middle' }}>(Lãi gộp: {formatVND(grossProfit)} ÷ Doanh thu thuần: {formatVND(totalNetRevenue)})</span><br/>
-                           <span style={{ color: 'var(--text-secondary)' }}>👉 <strong>Chỉ đạo:</strong> Mốc chuẩn F&B là 60%-70%. {totalNetRevenue > 0 && (grossProfit/totalNetRevenue) < 0.5 ? 'Biên gộp đang DƯỚI 50% => Giá vốn (Food Cost) quá cao hoặc đang giảm giá ngầm quá nhiều. Cần rà soát lại Menu/Giá bán ngay.' : 'Biên gộp khỏe mạnh, có thể tung thêm Combo hoặc Flash Sale để hút Traffic.'}</span>
+                        <li style={{ marginBottom: '16px' }}>
+                           <strong style={{ fontSize: '16px' }}>Biên Lợi Nhuận Gộp (Gross Margin Ratio):</strong> <span style={{ fontSize: '18px', fontWeight: 800, color: totalNetRevenue > 0 && (grossProfit/totalNetRevenue) >= 0.5 ? '#16a34a' : '#ef4444' }}>{totalNetRevenue > 0 ? ((grossProfit/totalNetRevenue)*100).toFixed(2) : 0}%.</span>
+                           <span style={{ display: 'block', fontSize: '13px', color: '#475569', marginTop: '4px' }}><strong>[Công thức]:</strong> Lợi Nhuận Gộp (Doanh thu - Giá Vốn: {formatVND(grossProfit)}) ÷ Doanh thu thuần ({formatVND(totalNetRevenue)})</span>
+                           <div style={{ background: '#fff', padding: '12px', borderRadius: '8px', marginTop: '8px', border: '1px solid #f5d0fe' }}>
+                               👉 <strong>Thuyết minh Phân tích:</strong> Biên gộp là bộ đệm sinh tử để trang trải mọi chi phí tĩnh (Mặt bằng, nhân sự). Tiêu chuẩn ngành F&B bắt buộc Gross Margin phải từ <strong>50% - 70%</strong>. {
+                                 totalNetRevenue > 0 && (grossProfit/totalNetRevenue) < 0.5 
+                                 ? 'BÁO ĐỘNG ĐỎ! Biên gộp đang DƯỚI 50%. Có 3 nguyên nhân: (1) Giá cost nguyên liệu đầu vào đang quá đắt do quản trị Supplier kém. (2) Món ăn định giá sai (đang bán quá rẻ bù lỗ). (3) Quán đang vung tay chạy quá nhiều chương trình khuyến mãi/giảm giá trên món. YÊU CẦU CMO & BẾP TRƯỞNG LẬP TỨC NGỒI LẠI ĐIỀU CHỈNH PRICING!' 
+                                 : 'Biên gộp khỏe, cấu trúc giá bán (Pricing Strategy) so với Food Cost đang được set-up chuẩn xác. Có biên độ linh hoạt để có thể dùng ngân sách chạy quảng cáo Marketing.'
+                               }
+                           </div>
                         </li>
                         <li>
-                           <strong>Tỷ trọng ăn mòn của Phí Sàn & Thuế App:</strong> {totalGrossRevenue > 0 ? ((platformFee/totalGrossRevenue)*100).toFixed(2) : 0}%.
-                           <span style={{ fontSize: '13px', color: '#86198f', marginLeft: '8px', background: '#fae8ff', padding: '2px 8px', borderRadius: '4px', verticalAlign: 'middle' }}>(Tổng cấu véo: {formatVND(platformFee)} ÷ Doanh thu gốc: {formatVND(totalGrossRevenue)})</span><br/>
-                           <span style={{ color: 'var(--text-secondary)' }}>👉 <strong>Chỉ đạo:</strong> {totalGrossRevenue > 0 && (platformFee/totalGrossRevenue) >= 0.2 ? 'Nền tảng giao đồ ăn đang "ăn mòn" hơn 20% doanh thu gốc. Đề xuất tung chương trình MKT kéo User qua Zalo/Hotline hoặc chèn tờ rơi vào đơn hàng để chuyển đổi khách App thành khách quen mua trực tiếp (Direct Orders).' : 'Kênh trực tiếp đang hoạt động tốt, không bị lệ thuộc vào nền tảng thứ 3.'}</span>
+                           <strong style={{ fontSize: '16px' }}>Tỷ lệ Ăn Mòn Nền Tảng (Platform Dependency Ratio):</strong> <span style={{ fontSize: '18px', fontWeight: 800, color: '#c026d3' }}>{totalGrossRevenue > 0 ? ((platformFee/totalGrossRevenue)*100).toFixed(2) : 0}%.</span>
+                           <span style={{ display: 'block', fontSize: '13px', color: '#475569', marginTop: '4px' }}><strong>[Công thức]:</strong> Tổng Phí Dịch vụ & Thuế nộp hộ (Grab/Shopee: {formatVND(platformFee)}) ÷ Doanh thu gốc chưa chiết khấu ({formatVND(totalGrossRevenue)})</span>
+                           <div style={{ background: '#fff', padding: '12px', borderRadius: '8px', marginTop: '8px', border: '1px solid #f5d0fe' }}>
+                               👉 <strong>Thuyết minh Phân tích:</strong> Đo lường hệ thống đang bị mất máu bao nhiêu % để "nuôi" các nền tảng thương mại điện tử. {
+                                 totalGrossRevenue > 0 && (platformFee/totalGrossRevenue) >= 0.2 
+                                 ? 'Chi phí duy trì kênh Online đang bòn rút TRÊN 20% tổng GTV! Mức độ lệ thuộc nền tảng quá cao. Chỉ đạo tối thượng cho CMO: Phải tung chiến dịch Local Marketing kéo tập khách đó qua Zalo, số Hotline hoặc chèn thư ngỏ (Bounce-back cards) vào túi hàng để chuyển họ thành khách mua Offline (Direct Orders).' 
+                                 : 'Mức độ ảnh hưởng của nền tảng nằm trong giới hạn kiểm soát. Phân bổ đa kênh (Omnichannel) đang hoạt động ổn định và hài hòa giữa Online/Offline.'
+                               }
+                           </div>
                         </li>
                      </ul>
                   </div>
 
                   {/* 3. GÓC ĐỘ COO (Vận hành & Chi phí ẩn) */}
-                  <div style={{ background: '#f0fdf4', padding: '24px', borderRadius: '12px', marginBottom: '20px', borderLeft: '4px solid #10b981' }}>
-                     <h4 style={{ margin: '0 0 12px 0', color: '#1e293b', fontSize: '17px', display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase' }}>3. Góc độ COO: Hiệu suất Vận hành (Operations & OPEX)</h4>
+                  <div style={{ background: '#f0fdf4', padding: '24px', borderRadius: '12px', marginBottom: '24px', borderLeft: '4px solid #16a34a', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                     <h4 style={{ margin: '0 0 16px 0', color: '#16a34a', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase', fontWeight: 800 }}>3. Góc độ Giám Đốc Vận Hành (COO): Kiểm Soát Chi Phí Định Mức</h4>
                      <ul style={{ margin: 0, paddingLeft: '20px' }}>
-                        <li style={{ marginBottom: '8px' }}>
-                           <strong>Gánh nặng Định phí (OPEX Ratio):</strong> {totalNetRevenue > 0 ? ((operatingExpenses/totalNetRevenue)*100).toFixed(2) : 0}%.
-                           <span style={{ fontSize: '13px', color: '#166534', marginLeft: '8px', background: '#dcfce7', padding: '2px 8px', borderRadius: '4px', verticalAlign: 'middle' }}>(Chi phí Q/L: {formatVND(operatingExpenses)} ÷ Doanh thu thuần: {formatVND(totalNetRevenue)})</span><br/>
-                           <span style={{ color: 'var(--text-secondary)' }}>👉 <strong>Chỉ đạo:</strong> Mốc chuẩn là &lt; 25%. Trực tiếp phản ánh hiệu suất chắt bóp chi phí của Ban vận hành (Điện, nước, nhân sự, hao hụt). {totalNetRevenue > 0 && (operatingExpenses/totalNetRevenue) > 0.3 ? 'OPEX ĐANG NUỐT TRỌN LỢI NHUẬN. COO có trát (Mandate) rà soát hệ thống điện nước, cắt giảm nhân sự dưa thừa vào giờ thấp điểm (Off-peak).' : 'Kiểm soát bộ máy Cửa hàng rất tốt, tinh gọn và cỗ máy tối ưu.'}</span>
+                        <li style={{ marginBottom: '16px' }}>
+                           <strong style={{ fontSize: '16px' }}>Tỷ Trọng Gánh Nặng Định Phí (OPEX Burden Ratio):</strong> <span style={{ fontSize: '18px', fontWeight: 800, color: totalNetRevenue > 0 && (operatingExpenses/totalNetRevenue) > 0.3 ? '#ef4444' : '#16a34a' }}>{totalNetRevenue > 0 ? ((operatingExpenses/totalNetRevenue)*100).toFixed(2) : 0}%.</span>
+                           <span style={{ display: 'block', fontSize: '13px', color: '#475569', marginTop: '4px' }}><strong>[Công thức]:</strong> Tổng Định Phí Hoạt Động (Tiền thuê mặt bằng, điện nước, nhân viên: {formatVND(operatingExpenses)}) ÷ Doanh thu thuần ({formatVND(totalNetRevenue)})</span>
+                           <div style={{ background: '#fff', padding: '12px', borderRadius: '8px', marginTop: '8px', border: '1px solid #bbf7d0' }}>
+                               👉 <strong>Thuyết minh Phân tích:</strong> Định phí là "sát thủ tàng hình". Mốc tối đa cho phép là <strong>&lt; 30%</strong>. Chỉ số này phản ánh năng lực tối ưu quản trị tại cửa hàng của Cửa hàng trưởng / COO. {
+                                 totalNetRevenue > 0 && (operatingExpenses/totalNetRevenue) > 0.3 
+                                 ? 'NGUY HIỂM KÉP! OPEX ĐANG NUỐT RÉT LỢI NHUẬN GỘP. Chi phí cố định quá phình to so với sức kiếm tiền hiện hành. Chỉ đạo cấp tốc: COO lập tức kiểm tra lại bill điện chiếu sáng/điều hòa, xem xét cắt giảm giờ công nhân viên part-time ở các khung giờ thấp điểm chết (Idle hours), thương lượng lại giá mặt bằng/bảo vệ!' 
+                                 : 'Định mức vận hành đang được thiết lập tinh gọn. Hệ thống Back-office đang không gây áp lực lên đôi vai của lực lượng Sales.'
+                               }
+                           </div>
                         </li>
                         <li>
-                           <strong>Biên Lợi Nhuận Ròng (Net Margin):</strong> {totalNetRevenue > 0 ? ((netProfit/totalNetRevenue)*100).toFixed(2) : 0}%. 
-                           <span style={{ fontSize: '13px', color: '#166534', marginLeft: '8px', background: '#dcfce7', padding: '2px 8px', borderRadius: '4px', verticalAlign: 'middle' }}>(Lãi ròng: {formatVND(netProfit)} ÷ Doanh thu thuần: {formatVND(totalNetRevenue)})</span><br/>
-                           <span style={{ color: 'var(--text-secondary)' }}>👉 <strong>Chỉ đạo:</strong> Mốc kỳ vọng là &gt; 15%. Chốt hạ cuối cùng của nỗ lực toàn thể hệ thống. Lợi nhuận gộp có đẹp đến đâu mà Net Margin âm thì bằng Không. </span>
+                           <strong style={{ fontSize: '16px' }}>Biên Lợi Nhuận Ròng Hoạt Động (Net Profit Margin):</strong> <span style={{ fontSize: '18px', fontWeight: 800, color: totalNetRevenue > 0 && (netProfit/totalNetRevenue) > 0.1 ? '#16a34a' : '#f59e0b' }}>{totalNetRevenue > 0 ? ((netProfit/totalNetRevenue)*100).toFixed(2) : 0}%.</span>
+                           <span style={{ display: 'block', fontSize: '13px', color: '#475569', marginTop: '4px' }}><strong>[Công thức]:</strong> Lãi ròng ({formatVND(netProfit)}) ÷ Doanh thu thuần ({formatVND(totalNetRevenue)})</span>
+                           <div style={{ background: '#fff', padding: '12px', borderRadius: '8px', marginTop: '8px', border: '1px solid #bbf7d0' }}>
+                               👉 <strong>Thuyết minh Phân tích:</strong> Chốt chặn cuối cùng (Bottom Line). Sau khi thu 100 đồng vào túi, trả tiền gà, tiền lương, phí Grab, chủ đầu tư ĐƯỢC MANG VỀ RỜ đúng bao nhiêu đồng. Mốc vàng của F&B là <strong>&gt; 15%</strong>.  {
+                                 totalNetRevenue > 0 && (netProfit/totalNetRevenue) < 0.1 
+                                 ? 'Biết ròng QUÁ MỎNG (Dưới 10%). Nếu có thêm bất kỳ biến cố rủi ro hỏng hóc nguyên liệu nào, công ty sẽ rơi ngay vào vòng xoáy thua lỗ (Break-even trap). Phải nâng giá trị trung bình đơn (AOV) bằng cách Up-sale!' 
+                                 : 'Biên ròng lý tưởng. Cấu trúc Unit-Economics của quán đã được chứng minh sinh lời vững vàng.'
+                               }
+                           </div>
                         </li>
                      </ul>
                   </div>
 
                   {/* 4. GÓC ĐỘ SUPPLY CHAIN (Bếp Trưởng & Kho) */}
-                  <div style={{ background: '#fffbeb', padding: '24px', borderRadius: '12px', marginBottom: '20px', borderLeft: '4px solid #f59e0b' }}>
-                     <h4 style={{ margin: '0 0 12px 0', color: '#1e293b', fontSize: '17px', display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase' }}>4. Góc độ Bếp Trưởng: Chuỗi Cung Cứng & Tồn Kho (Supply Chain)</h4>
-                     <p style={{ margin: '0 0 8px 0', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                        <span>Lượng vốn bị kẹt chết trong Tồn kho (NVL): <strong>{totalAssets > 0 ? ((totalInventoryValue/totalAssets)*100).toFixed(2) : 0}%</strong> tổng tài sản.</span>
-                        <span style={{ fontSize: '13px', color: '#92400e', background: '#fef3c7', padding: '2px 8px', borderRadius: '4px' }}>(Giá trị kho: {formatVND(totalInventoryValue)} ÷ Tổng TS: {formatVND(totalAssets)})</span>
+                  <div style={{ background: '#fffbeb', padding: '24px', borderRadius: '12px', marginBottom: '20px', borderLeft: '4px solid #f59e0b', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                     <h4 style={{ margin: '0 0 16px 0', color: '#d97706', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase', fontWeight: 800 }}>4. Góc độ Bếp Trưởng (Head Chef): Chuỗi Cung Cứng & Hàng Tồn (Inventory Rate)</h4>
+                     <p style={{ margin: '0 0 12px 0', fontSize: '16px' }}>
+                        <strong>Tỷ trọng Vốn Chôn Chết trong Kho Lạnh: </strong>
+                        <span style={{ fontWeight: 800, fontSize: '18px', color: totalAssets > 0 && (totalInventoryValue/totalAssets) > 0.25 ? '#ef4444' : '#16a34a' }}>{totalAssets > 0 ? ((totalInventoryValue/totalAssets)*100).toFixed(2) : 0}% </span> 
+                        tổng tài sản cố định.
                      </p>
-                     <div style={{ padding: '12px', background: 'rgba(255,255,255,0.6)', borderRadius: '8px', border: '1px dashed #fcd34d' }}>
-                        <strong>[Mốc rủi ro ngành F&B]: Mức Tối Ưu luân chuyển từ 15% - 25%</strong>
-                        <ul style={{ margin: '6px 0 0 0', paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '14px' }}>
-                           <li><strong>Dưới 15%:</strong> Có thể cháy hàng bất cứ lúc nào. Đặc biệt rủi ro nếu có Đơn Khách Sỉ (Catering).</li>
-                           <li><strong>15% - 25%:</strong> {totalAssets > 0 && (totalInventoryValue/totalAssets) >= 0.15 && (totalInventoryValue/totalAssets) <= 0.25 ? <span style={{color:'#d97706', fontWeight: 700}}>XUẤT SẮC. QUẢN TRỊ KHO ĐANG Ở CHUẨN VÀNG.</span> : ''}</li>
-                           <li><strong>Trên 25%:</strong> {totalAssets > 0 && (totalInventoryValue/totalAssets) > 0.25 ? <span style={{color:'#dc2626', fontWeight: 700}}>BÁO ĐỘNG ĐỎ. VỐN ĐANG BỊ GIAM TRONG TỦ ĐÔNG. Bếp trưởng cần lên phương án ưu tiên đẩy các món dùng nguyên liệu đang tồn dư nhiều. Tránh hỏng hóc!</span> : ''}</li>
+                     <p style={{ fontSize: '13px', color: '#475569', marginBottom: '16px' }}><strong>[Công thức]:</strong> Tổng Giá Trị Kho Theo Định Mức ({formatVND(totalInventoryValue)}) ÷ Tổng Tài Sản ({formatVND(totalAssets)})</p>
+                     
+                     <div style={{ padding: '16px', background: '#fff', borderRadius: '8px', border: '1px solid #fde68a' }}>
+                        <strong style={{ fontSize: '15px', color: '#b45309' }}>[Phân tích rủi ro hư hỏng Supply Chain của Ngành F&B]: Mức tồn kho tối ưu lý tưởng dao động từ 15% - 25%</strong>
+                        <ul style={{ margin: '12px 0 0 0', paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.6' }}>
+                           <li style={{ marginBottom: '8px' }}><strong>Trạng thái Dưới 15%:</strong> Dấu hiệu đứt gãy cung ứng. Nguy cơ cháy hàng vào giờ cao điểm rất lớn. Phải trữ sẵn thêm nguyên liệu cơ bản có date xa.</li>
+                           <li style={{ marginBottom: '8px' }}><strong>Trạng thái Từ 15% - 25%:</strong> {totalAssets > 0 && (totalInventoryValue/totalAssets) >= 0.15 && (totalInventoryValue/totalAssets) <= 0.25 ? <span style={{color:'#16a34a', fontWeight: 700}}>CHUẨN VỰC. Bếp trưởng đang gối đầu (Just-In-Time) nhập hàng một cách kỷ luật. Không mất tiền điện nuôi tủ đông dư thừa.</span> : 'Vùng An Toàn Vàng.'}</li>
+                           <li><strong>Trạng thái Trên 25%:</strong> {totalAssets > 0 && (totalInventoryValue/totalAssets) > 0.25 ? <span style={{color:'#ef4444', fontWeight: 700}}>RÚT RUỘT KẾT QUẢ KINH DOANH. Dòng tiền đang đông cứng thành rau quả thịt trong tủ lạnh. Đối mặt rủi ro hết HSD (Spoilage Cost) cực cao. Mệnh lệnh cho Bếp Trưởng: KHÓA lệnh mua hàng tạm thời, tổ chức rà soát kho, tung ra các thực đơn Món Ngon Ngày Mai để đẩy nốt lượng nguyên liệu tồn đọng trong vòng 48h!</span> : 'Nguy cơ ôm hàng quá đà gây ứ đọng vốn và hao hụt tự nhiên.'}</li>
                         </ul>
                      </div>
                   </div>
 
-                  <p style={{ marginTop: '32px', textAlign: 'center', fontStyle: 'italic', fontSize: '13px', color: 'var(--text-secondary)' }}>Báo cáo được khởi tạo theo cơ chế Real-time Accounting Protocol độc quyền dành cho Ban Lãnh Đạo cấp cao (C-Level).<br/>Mọi thành viên HĐQT đều có bổn phận đọc hiểu và thực thi các chỉ đạo tương ứng chức năng của mình.</p>
+                  <p style={{ marginTop: '32px', textAlign: 'center', fontStyle: 'italic', fontSize: '13px', color: 'var(--text-secondary)' }}>Bản Thuyết Minh Tự Động này được trích xuất theo nguyên lý Unit-Economics Realtime.<br/>Tuyệt đối Không Chia Sẻ (Confidential) dữ liệu này ra bên ngoài HĐQT và Cán Bộ Điều Hành.</p>
                </div>
            </div>
         </div>
