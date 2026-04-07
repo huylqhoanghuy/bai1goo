@@ -31,7 +31,9 @@ const InventoryUI = ({
   const [supForm, setSupForm] = useState({ id: '', name: '', phone: '', email: '', address: '', notes: '', debt: 0 });
   
   const [expandedIngId, setExpandedIngId] = useState(null);
-
+  const [ledgerFilterType, setLedgerFilterType] = useState('ALL'); // ALL, IN, OUT
+  const [ledgerDateFrom, setLedgerDateFrom] = useState('');
+  const [ledgerDateTo, setLedgerDateTo] = useState('');
   // Compute last purchase from purchase orders map (purely calculated from props)
   const lastPurchaseMap = React.useMemo(() => {
     const map = {};
@@ -435,8 +437,19 @@ const InventoryUI = ({
            }
          });
 
-         // 3. Sắp xếp từ mới đến cũ
-         const sortedLedger = ledgerData.sort((a,b) => b.date - a.date);
+         // 3. Lọc và Sắp xếp từ mới đến cũ
+         const sortedLedger = ledgerData
+           .filter(row => {
+               if (ledgerFilterType !== 'ALL' && row.type !== ledgerFilterType) return false;
+               if (ledgerDateFrom && row.date < new Date(ledgerDateFrom)) return false;
+               if (ledgerDateTo && row.date > new Date(ledgerDateTo + 'T23:59:59.999Z')) return false;
+               return true;
+           })
+           .sort((a,b) => b.date - a.date);
+
+         // 4. Tổng hợp
+         const sumIn = sortedLedger.filter(r => r.type === 'IN').reduce((acc, r) => acc + (r.qty || 0), 0);
+         const sumOut = sortedLedger.filter(r => r.type === 'OUT').reduce((acc, r) => acc + Math.abs(r.qty || 0), 0);
 
          return (
            <div className="modal-overlay" style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1200, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}>
@@ -471,7 +484,27 @@ const InventoryUI = ({
                    </div>
                 </div>
 
-                <h4 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase' }}>SAO KÊ XUẤT NHẬP TỒN (LỊCH SỬ THAY ĐỔI)</h4>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '16px' }}>
+                    <h4 style={{ margin: '0', fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase' }}>SAO KÊ XUẤT NHẬP TỒN (LỊCH SỬ THAY ĐỔI)</h4>
+                    <div style={{ display: 'flex', gap: '16px', fontWeight: 700, fontSize: '15px', padding: '6px 16px', background: 'var(--bg-color)', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
+                        <span style={{ color: 'var(--success)' }}>+ VÀO: {sumIn.toLocaleString('vi-VN')} {ing.unit}</span>
+                        <span style={{ color: '#B45309' }}>- RA: {sumOut.toLocaleString('vi-VN')} {ing.unit}</span>
+                    </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '4px', background: 'var(--surface-color)', padding: '4px', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
+                        <button className="btn no-print" onClick={() => setLedgerFilterType('ALL')} style={{ padding: '6px 16px', fontSize: '13px', borderRadius: '6px', fontWeight: 600, background: ledgerFilterType === 'ALL' ? 'var(--primary)' : 'transparent', color: ledgerFilterType === 'ALL' ? 'white' : 'var(--text-secondary)', border: 'none' }}>Tất cả</button>
+                        <button className="btn no-print" onClick={() => setLedgerFilterType('IN')} style={{ padding: '6px 16px', fontSize: '13px', borderRadius: '6px', fontWeight: 600, background: ledgerFilterType === 'IN' ? 'var(--success)' : 'transparent', color: ledgerFilterType === 'IN' ? 'white' : 'var(--success)', border: ledgerFilterType === 'IN' ? 'none' : '1px solid currentColor' }}>+ VÀO</button>
+                        <button className="btn no-print" onClick={() => setLedgerFilterType('OUT')} style={{ padding: '6px 16px', fontSize: '13px', borderRadius: '6px', fontWeight: 600, background: ledgerFilterType === 'OUT' ? '#F59E0B' : 'transparent', color: ledgerFilterType === 'OUT' ? 'white' : '#B45309', border: ledgerFilterType === 'OUT' ? 'none' : '1px solid currentColor' }}>- RA</button>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', background: 'var(--surface-color)', padding: '4px 12px', borderRadius: '8px', border: '1px solid var(--surface-border)' }} className="no-print">
+                        <span style={{ fontSize: '13px', fontWeight: 500 }}>Từ:</span>
+                        <input type="date" style={{ padding: '4px 8px', fontSize: '13px', border: '1px solid #D1D5DB', borderRadius: '4px', width: '130px', outline: 'none' }} value={ledgerDateFrom} onChange={(e) => setLedgerDateFrom(e.target.value)} />
+                        <span style={{ fontSize: '13px', fontWeight: 500, marginLeft: '8px' }}>Đến:</span>
+                        <input type="date" style={{ padding: '4px 8px', fontSize: '13px', border: '1px solid #D1D5DB', borderRadius: '4px', width: '130px', outline: 'none' }} value={ledgerDateTo} onChange={(e) => setLedgerDateTo(e.target.value)} />
+                    </div>
+                </div>
                 {sortedLedger.length > 0 ? (
                   <div style={{ border: '1px solid var(--surface-border)', borderRadius: '8px', overflow: 'hidden' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
