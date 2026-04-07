@@ -13,7 +13,6 @@ export const generateId = (prefix) => {
 
 export const adjustInventoryQuantity = (ingredients, products, recipe, quantityMultiplier, isDeduct) => {
   let updatedIngredients = [...ingredients];
-  if (!window._debugInvs) window._debugInvs = []; // Tracing logs for QA
   
   const parseSafeNumber = (val) => {
     if (val === undefined || val === null) return 0;
@@ -30,7 +29,6 @@ export const adjustInventoryQuantity = (ingredients, products, recipe, quantityM
       if (subProduct) {
         const itemQty = parseSafeNumber(recItem.qty);
         const subQty = recItem.unitMode === 'divide' ? (itemQty ? 1 / itemQty : 0) : itemQty;
-        window._debugInvs.push(`[Tracer] Xuyên thấu Bán Thành Phẩm: ${subProduct.name}. Hệ số: ${subQty}`);
         processRecursion(subProduct.recipe, mult * subQty);
       } else {
         const ingIndex = updatedIngredients.findIndex(i => i.id === recItem.ingredientId);
@@ -46,15 +44,11 @@ export const adjustInventoryQuantity = (ingredients, products, recipe, quantityM
           const currentStock = parseSafeNumber(ing.stock);
           
           const newStock = isDeduct ? Math.max(0, currentStock - changeUnits) : (currentStock + changeUnits);
-          window._debugInvs.push(`[Tracer] OK ${ing.name}: Kho cũ ${currentStock} -> Kho mới ${newStock} (+/- ${changeUnits})`);
-          
           updatedIngredients[ingIndex] = {
             ...ing,
             stock: newStock
           };
 
-        } else {
-          window._debugInvs.push(`[Tracer] THẤT BẠI: Không tìm thấy Nguyên liệu gốc mang ID ${recItem.ingredientId}`);
         }
       }
     });
@@ -560,7 +554,6 @@ export const processDeleteTransaction = (state, action) => {
       const matchedItems = inferItemsFromPrice(grossValue, state.products || []);
 
       if (matchedItems && matchedItems.length > 0) {
-        window._debugInvs = [];
         let restoredNames = matchedItems.map(m => `${m.quantity} ${m.product?.name || 'Món'}`).join(' + ');
         matchedItems.forEach(itemInfo => {
           updatedIngredients = adjustInventoryQuantity(updatedIngredients, state.products, itemInfo.product?.recipe, itemInfo.quantity || 1, false);
@@ -569,7 +562,7 @@ export const processDeleteTransaction = (state, action) => {
         const successNotif = {
             id: 'NOT_' + Date.now().toString(36) + Math.random().toString(36).substring(2,5),
             title: 'Phục hồi Kho: Data Healer',
-            message: `Đã dịch ngược Phiếu Thu ${transaction.amount.toLocaleString()}đ thành: [${restoredNames}]. Tracer: ${window._debugInvs.join(' | ')}`,
+            message: `Đã dịch ngược Phiếu Thu ${transaction.amount.toLocaleString()}đ thành: [${restoredNames}]. Đã hoàn trả vào kho.`,
             type: 'info',
             isRead: false,
             timestamp: new Date().toISOString()
@@ -577,8 +570,6 @@ export const processDeleteTransaction = (state, action) => {
         // Ensure notifications array exists
         if (!state.notifications) state.notifications = [];
         state.notifications.unshift(successNotif);
-
-        setTimeout(() => alert(`--- DATA HEALER REPORT ---\nMón được khớp: ${restoredNames}\nThay đổi Kho: \n${window._debugInvs.join('\n')}`), 500);
 
       } else {
          const newNotif = {
@@ -590,7 +581,6 @@ export const processDeleteTransaction = (state, action) => {
             timestamp: new Date().toISOString()
          };
          state.notifications = [newNotif, ...(state.notifications || [])].slice(0, 20);
-         setTimeout(() => alert('DATA HEALER FAILED:\n' + newNotif.message), 500);
       }
     }
   }

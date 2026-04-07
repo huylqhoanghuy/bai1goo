@@ -161,7 +161,14 @@ const POS = () => {
       setOrderCode('');
     } catch (e) {
       console.error(e);
-      alert("HỆ THỐNG GẶP LỖI KHI LƯU ĐƠN: " + (e.stack || e.message));
+      dispatch({
+        type: 'ADD_NOTIFICATION',
+        payload: { 
+          title: 'Lỗi Đặt Hàng', 
+          message: e.message || 'Lý do không xác định', 
+          type: 'error' 
+        }
+      });
     }
     setExtraFee(0);
     setExtraFeeNote('');
