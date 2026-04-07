@@ -397,10 +397,27 @@ const InventoryUI = ({
                 }
 
                 if (latestRecipe) {
-                   const rItem = latestRecipe.find(r => r.ingredientId === ing.id);
-                   if (rItem) {
-                      consumed += (Number(rItem.qty) || 0) * (Number(cartItem.quantity) || 1);
-                   }
+                   const getConsumedQuantity = (recipe, targetIngId, multiplier) => {
+                       let total = 0;
+                       if (!recipe) return 0;
+                       recipe.forEach(recItem => {
+                          const itemQty = Number(recItem.qty) || 0;
+                          const subQty = recItem.unitMode === 'divide' ? (itemQty ? 1 / itemQty : 0) : itemQty;
+                          const combinedMult = multiplier * subQty;
+
+                          if (recItem.ingredientId === targetIngId) {
+                             total += combinedMult;
+                          } else {
+                             const subProduct = (products || []).find(p => p.id === recItem.ingredientId);
+                             if (subProduct && subProduct.recipe) {
+                                 total += getConsumedQuantity(subProduct.recipe, targetIngId, combinedMult);
+                             }
+                          }
+                       });
+                       return total;
+                   };
+                   
+                   consumed += getConsumedQuantity(latestRecipe, ing.id, Number(cartItem.quantity) || 1);
                 }
              });
              if (consumed > 0) {
