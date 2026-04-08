@@ -48,6 +48,24 @@ export default function FinancialStatements() {
     return val < 0 ? `- ${amount}` : amount;
   };
 
+  const safeDiv = (num, den) => (den === 0 || isNaN(den) || !den) ? 0 : (num / den);
+
+  // Chỉ tiêu tài chính KPI calculations
+  const metrics = {
+     currentRatio: safeDiv(totalAssets, totalLiabilities),
+     quickRatio: safeDiv(totalCash, totalLiabilities),
+     debtRatio: safeDiv(totalLiabilities, totalAssets),
+     equityRatio: safeDiv(ownersEquity, totalAssets),
+     inventoryRatio: safeDiv(totalInventoryValue, totalAssets),
+     inventoryTurnover: safeDiv(totalCOGS, totalInventoryValue),
+     assetTurnover: safeDiv(totalNetRevenue, totalAssets),
+     ros: safeDiv(netProfit, totalNetRevenue),
+     roa: safeDiv(netProfit, totalAssets),
+     roe: safeDiv(netProfit, ownersEquity),
+     cogsRatio: safeDiv(totalCOGS, totalNetRevenue),
+     opexRatio: safeDiv(operatingExpenses, totalNetRevenue),
+     platformRatio: safeDiv(totalPlatformCommission, totalGrossRevenue)
+  };
   return (
     <div className="bctc-container" style={{ padding: '0 0 40px 0', maxWidth: '1000px', margin: '0 auto', opacity: isRefreshing ? 0.6 : 1, transition: '0.3s' }}>
       
@@ -101,6 +119,11 @@ export default function FinancialStatements() {
           onClick={() => setActiveTab('notes')}
           style={{ flex: 1, minWidth: '180px', background: activeTab === 'notes' ? 'var(--primary)' : 'var(--surface-color)', color: activeTab === 'notes' ? '#fff' : 'var(--text-primary)', border: 'none', padding: '16px 20px', borderRadius: '12px', fontWeight: 700, fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: '0.2s', boxShadow: activeTab === 'notes' ? '0 10px 15px -3px rgba(249, 115, 22, 0.3)' : 'none' }}>
           <BookOpen size={20} /> Thuyết Minh
+        </button>
+        <button 
+          onClick={() => setActiveTab('indicators')}
+          style={{ flex: 1, minWidth: '180px', background: activeTab === 'indicators' ? 'var(--primary)' : 'var(--surface-color)', color: activeTab === 'indicators' ? '#fff' : 'var(--text-primary)', border: 'none', padding: '16px 20px', borderRadius: '12px', fontWeight: 700, fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: '0.2s', boxShadow: activeTab === 'indicators' ? '0 10px 15px -3px rgba(249, 115, 22, 0.3)' : 'none' }}>
+          <PieChart size={20} /> Chỉ Tiêu BCTC
         </button>
       </div>
 
@@ -415,6 +438,257 @@ export default function FinancialStatements() {
 
                   <p style={{ marginTop: '32px', textAlign: 'center', fontStyle: 'italic', fontSize: '13px', color: 'var(--text-secondary)' }}>Bản Thuyết Minh Tự Động này được trích xuất theo nguyên lý Unit-Economics Realtime.<br/>Tuyệt đối Không Chia Sẻ (Confidential) dữ liệu này ra bên ngoài HĐQT và Cán Bộ Điều Hành.</p>
                </div>
+           </div>
+        </div>
+      )}
+
+      {/* TAB CONTENT: FINANCIAL INDICATORS */}
+      {activeTab === 'indicators' && (
+        <div style={{ animation: 'fadeIn 0.3s' }}>
+           <div className="bctc-panel" style={{ background: '#fff', borderRadius: '16px', padding: '32px', border: '1px solid var(--surface-border)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+               <h3 className="bctc-panel-title" style={{ margin: '0 0 8px 0', fontSize: '20px', fontWeight: 800, textAlign: 'center', color: 'var(--text-primary)', textTransform: 'uppercase' }}>CÁC CHỈ TIÊU PHÂN TÍCH BÁO CÁO TÀI CHÍNH</h3>
+               <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '32px' }}>Hệ thống trích xuất và tính toán tự động dựa trên số liệu kinh doanh hiện hành</p>
+               
+                                                                           <div className="table-responsive" style={{ overflowX: 'auto', paddingBottom: '16px' }}>
+                    <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, fontSize: '13px', textAlign: 'left', minWidth: '940px', border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                        <thead>
+                            <tr style={{ background: '#f8fafc' }}>
+                               <th style={{ padding: '12px 10px', width: '40px', borderBottom: '2px solid #cbd5e1', borderRight: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 800, color: '#334155' }}>STT</th>
+                               <th style={{ padding: '12px 10px', borderBottom: '2px solid #cbd5e1', borderRight: '1px solid #e2e8f0', fontWeight: 800, color: '#334155' }}>Chỉ tiêu & Cách tính</th>
+                               <th style={{ padding: '12px 10px', width: '200px', borderBottom: '2px solid #cbd5e1', borderRight: '1px solid #e2e8f0', textAlign: 'right', fontWeight: 800, color: '#334155' }}>Kết Quả</th>
+                               <th style={{ padding: '12px 10px', width: '100px', borderBottom: '2px solid #cbd5e1', borderRight: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 800, color: '#0284c7' }}>Khuyến Nghị</th>
+                               <th style={{ padding: '12px 10px', borderBottom: '2px solid #cbd5e1', fontWeight: 800, color: '#334155' }}>Ý Nghĩa Báo Cáo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {/* NHÓM I */}
+                            <tr style={{ background: '#f1f5f9' }}>
+                               <td style={{ padding: '10px', textAlign: 'center', fontWeight: 800, borderBottom: '1px solid #e2e8f0' }}>I</td>
+                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Khả Năng Thanh Toán Đo Lường Rủi Ro</td>
+                            </tr>
+                            <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
+                               <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Thanh toán hiện thời (Current Ratio)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tổng Tài Sản / Tổng Nợ</strong></div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
+                                   <div style={{ fontWeight: 800, fontSize: '15px', color: metrics.currentRatio >= 1.5 ? 'var(--success)' : (metrics.currentRatio < 1 ? 'var(--danger)' : 'var(--warning)') }}>{metrics.currentRatio === 0 && totalLiabilities === 0 ? "Tuyệt đối an toàn" : metrics.currentRatio.toFixed(2)}</div>
+                                   <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', background: '#f1f5f9', padding: '3px 6px', borderRadius: '4px', fontSize: '11px', fontFamily: 'monospace', color: '#64748b', border: '1px solid #e2e8f0' }}>
+                                       <span style={{ color: '#0f172a', fontWeight: 500 }}>{formatVND(totalAssets)}</span><span style={{ margin: '0 4px', color: '#94a3b8' }}>/</span><span style={{ color: '#0f172a', fontWeight: 500 }}>{formatVND(totalLiabilities)}</span>
+                                   </div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt;= 1.5 lần</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Theo dõi khả năng lấy Tài sản hiện có bán rã trả nợ tức thì.</td>
+                            </tr>
+                            <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
+                               <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Thanh toán nhanh (Quick Ratio)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tiền Mặt / Tổng Nợ</strong></div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
+                                   <div style={{ fontWeight: 800, fontSize: '15px', color: metrics.quickRatio >= 1 ? 'var(--success)' : 'var(--danger)' }}>{metrics.quickRatio === 0 && totalLiabilities === 0 ? "Tuyệt đối an toàn" : metrics.quickRatio.toFixed(2)}</div>
+                                   <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', background: '#f1f5f9', padding: '3px 6px', borderRadius: '4px', fontSize: '11px', fontFamily: 'monospace', color: '#64748b', border: '1px solid #e2e8f0' }}>
+                                       <span style={{ color: '#0f172a', fontWeight: 500 }}>{formatVND(totalCash)}</span><span style={{ margin: '0 4px', color: '#94a3b8' }}>/</span><span style={{ color: '#0f172a', fontWeight: 500 }}>{formatVND(totalLiabilities)}</span>
+                                   </div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt;= 1.0 lần</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Mức độ thanh khoản cao nhất (chỉ dùng Tiền để trả nợ).</td>
+                            </tr>
+
+                            {/* NHÓM II */}
+                            <tr style={{ background: '#f1f5f9' }}>
+                               <td style={{ padding: '10px', textAlign: 'center', fontWeight: 800, borderBottom: '1px solid #e2e8f0' }}>II</td>
+                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Cơ Cấu Tài Sản Máy Móc</td>
+                            </tr>
+                            <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
+                               <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Hệ số Nợ Vay (Debt Ratio)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tổng Nợ / Tổng Tài Sản</strong></div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
+                                   <div style={{ fontWeight: 800, fontSize: '15px', color: metrics.debtRatio > 0.5 ? 'var(--danger)' : 'var(--text-primary)' }}>{(metrics.debtRatio * 100).toFixed(2)}%</div>
+                                   <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', background: '#fee2e2', padding: '3px 6px', borderRadius: '4px', fontSize: '11px', fontFamily: 'monospace', color: '#991b1b', border: '1px solid #fca5a5' }}>
+                                       <span style={{ fontWeight: 500 }}>{formatVND(totalLiabilities)}</span><span style={{ margin: '0 4px', color: '#f87171' }}>/</span><span style={{ color: '#0f172a', fontWeight: 500 }}>{formatVND(totalAssets)}</span>
+                                   </div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&lt; 50%</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Tỷ trọng mua sắm nợ. Càng cao càng áp lực trả nợ.</td>
+                            </tr>
+                            <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
+                               <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Hệ số Vốn Tự Cấp (Equity)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Vốn Chủ / Tổng Tài Sản</strong></div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
+                                   <div style={{ fontWeight: 800, fontSize: '15px' }}>{(metrics.equityRatio * 100).toFixed(2)}%</div>
+                                   <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', background: '#dcfce7', padding: '3px 6px', borderRadius: '4px', fontSize: '11px', fontFamily: 'monospace', color: '#166534', border: '1px solid #86efac' }}>
+                                       <span style={{ fontWeight: 500 }}>{formatVND(ownersEquity)}</span><span style={{ margin: '0 4px', color: '#4ade80' }}>/</span><span style={{ color: '#0f172a', fontWeight: 500 }}>{formatVND(totalAssets)}</span>
+                                   </div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt;= 50%</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Mức độ tự chủ kinh tế vững bền.</td>
+                            </tr>
+                            <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
+                               <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>3</td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Đọng Vốn Tồn Kho</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tồn Kho / Tổng Tài Sản</strong></div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
+                                   <div style={{ fontWeight: 800, fontSize: '15px', color: metrics.inventoryRatio > 0.25 ? 'var(--danger)' : 'var(--text-primary)' }}>{(metrics.inventoryRatio * 100).toFixed(2)}%</div>
+                                   <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', background: '#fef9c3', padding: '3px 6px', borderRadius: '4px', fontSize: '11px', fontFamily: 'monospace', color: '#854d0e', border: '1px solid #fde047' }}>
+                                       <span style={{ fontWeight: 500 }}>{formatVND(totalInventoryValue)}</span><span style={{ margin: '0 4px', color: '#eab308' }}>/</span><span style={{ color: '#0f172a', fontWeight: 500 }}>{formatVND(totalAssets)}</span>
+                                   </div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>15-25%</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Tỷ lệ càng cao vốn ngâm càng hẹp.</td>
+                            </tr>
+
+                            {/* NHÓM III */}
+                            <tr style={{ background: '#f1f5f9' }}>
+                               <td style={{ padding: '10px', textAlign: 'center', fontWeight: 800, borderBottom: '1px solid #e2e8f0' }}>III</td>
+                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Hiệu Suất Vận Hành Tối Ưu Nguồn Thu</td>
+                            </tr>
+                            <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
+                               <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tốc độ đẩy hàng (Vòng quay kho)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Giá Vốn / Tồn Kho</strong></div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
+                                   <div style={{ fontWeight: 800, fontSize: '15px' }}>{metrics.inventoryTurnover.toFixed(2)} chu kỳ</div>
+                                   <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', background: '#f1f5f9', padding: '3px 6px', borderRadius: '4px', fontSize: '11px', fontFamily: 'monospace', color: '#64748b', border: '1px solid #e2e8f0' }}>
+                                       <span style={{ color: '#0f172a', fontWeight: 500 }}>{formatVND(totalCOGS)}</span><span style={{ margin: '0 4px', color: '#94a3b8' }}>/</span><span style={{ color: '#eab308', fontWeight: 500 }}>{formatVND(totalInventoryValue)}</span>
+                                   </div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt; 4 lần</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Luân chuyển hàng nhanh tránh thiu ôi.</td>
+                            </tr>
+                            <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
+                               <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Vắt Sức Tài Sản (Asset Turnover)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Doanh Thu / Tổng Tài Sản</strong></div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
+                                   <div style={{ fontWeight: 800, fontSize: '15px' }}>{metrics.assetTurnover.toFixed(2)} vòng</div>
+                                   <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', background: '#f1f5f9', padding: '3px 6px', borderRadius: '4px', fontSize: '11px', fontFamily: 'monospace', color: '#64748b', border: '1px solid #e2e8f0' }}>
+                                       <span style={{ color: '#0284c7', fontWeight: 500 }}>{formatVND(totalNetRevenue)}</span><span style={{ margin: '0 4px', color: '#94a3b8' }}>/</span><span style={{ color: '#0f172a', fontWeight: 500 }}>{formatVND(totalAssets)}</span>
+                                   </div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt; 1.5 lần</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Năng suất ra tiền so với máy móc chi phí cố định.</td>
+                            </tr>
+
+                            {/* NHÓM IV */}
+                            <tr style={{ background: '#f1f5f9' }}>
+                               <td style={{ padding: '10px', textAlign: 'center', fontWeight: 800, borderBottom: '1px solid #e2e8f0' }}>IV</td>
+                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Đo Lường Tỷ Suất Sinh Lời Cuối Năm</td>
+                            </tr>
+                            <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
+                               <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Lợi Nhuận Ròng Thuần (ROS)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Lợi Nhuận Ròng / Doanh Thu</strong></div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
+                                   <div style={{ fontWeight: 800, fontSize: '15px', color: metrics.ros >= 0.15 ? 'var(--success)' : (metrics.ros < 0 ? 'var(--danger)' : 'var(--text-primary)') }}>{(metrics.ros * 100).toFixed(2)}%</div>
+                                   <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', background: '#faf5ff', padding: '3px 6px', borderRadius: '4px', fontSize: '11px', fontFamily: 'monospace', color: '#7e22ce', border: '1px solid #e9d5ff' }}>
+                                       <span style={{ fontWeight: 500 }}>{formatVND(netProfit)}</span><span style={{ margin: '0 4px', color: '#c084fc' }}>/</span><span style={{ color: '#0f172a', fontWeight: 500 }}>{formatVND(totalNetRevenue)}</span>
+                                   </div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt; 15%</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Thực lãi cầm về ví cá nhân. Dưới ngưỡng là đuối.</td>
+                            </tr>
+                            <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
+                               <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Sinh Lãi Của Tài Sản (ROA)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Lợi Nhuận / Tổng Tài Sản</strong></div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
+                                   <div style={{ fontWeight: 800, fontSize: '15px', color: metrics.roa >= 0.1 ? 'var(--success)' : (metrics.roa < 0 ? 'var(--danger)' : 'var(--text-primary)') }}>{(metrics.roa * 100).toFixed(2)}%</div>
+                                   <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', background: '#faf5ff', padding: '3px 6px', borderRadius: '4px', fontSize: '11px', fontFamily: 'monospace', color: '#7e22ce', border: '1px solid #e9d5ff' }}>
+                                       <span style={{ fontWeight: 500 }}>{formatVND(netProfit)}</span><span style={{ margin: '0 4px', color: '#c084fc' }}>/</span><span style={{ color: '#0f172a', fontWeight: 500 }}>{formatVND(totalAssets)}</span>
+                                   </div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt; 10%</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Máy móc có sinh ra được lãi để bù mòn khấu hao?</td>
+                            </tr>
+                            <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
+                               <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>3</td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Lần Nữ Cổ Đông Quán (ROE)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Lợi Nhuận / Vốn Chủ Cổ Đông</strong></div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
+                                   <div style={{ fontWeight: 800, fontSize: '15px', color: metrics.roe >= 0.15 ? 'var(--success)' : (metrics.roe < 0 ? 'var(--danger)' : 'var(--text-primary)') }}>{(metrics.roe * 100).toFixed(2)}%</div>
+                                   <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', background: '#faf5ff', padding: '3px 6px', borderRadius: '4px', fontSize: '11px', fontFamily: 'monospace', color: '#7e22ce', border: '1px solid #e9d5ff' }}>
+                                       <span style={{ fontWeight: 500 }}>{formatVND(netProfit)}</span><span style={{ margin: '0 4px', color: '#c084fc' }}>/</span><span style={{ color: '#22c55e', fontWeight: 500 }}>{formatVND(ownersEquity)}</span>
+                                   </div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt; 15%</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>100đ tiền túi ném vô quán đẻ hơn hay gửi Bank hơn?</td>
+                            </tr>
+
+                            {/* NHÓM V */}
+                            <tr style={{ background: '#f1f5f9' }}>
+                               <td style={{ padding: '10px', textAlign: 'center', fontWeight: 800, borderBottom: '1px solid #e2e8f0' }}>V</td>
+                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Kiểm Soát Các Gói Cước Chi Phí Vận Hành</td>
+                            </tr>
+                            <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
+                               <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Nuốt Cốt Nguyên Liệu (COGS Margin)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Hàng Nhập (Giá gốc) / Doanh Thu</strong></div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
+                                   <div style={{ fontWeight: 800, fontSize: '15px', color: metrics.cogsRatio > 0.4 ? 'var(--danger)' : 'var(--success)' }}>{(metrics.cogsRatio * 100).toFixed(2)}%</div>
+                                   <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', background: '#fee2e2', padding: '3px 6px', borderRadius: '4px', fontSize: '11px', fontFamily: 'monospace', color: '#991b1b', border: '1px solid #fca5a5' }}>
+                                       <span style={{ fontWeight: 500 }}>{formatVND(totalCOGS)}</span><span style={{ margin: '0 4px', color: '#f87171' }}>/</span><span style={{ color: '#0284c7', fontWeight: 500 }}>{formatVND(totalNetRevenue)}</span>
+                                   </div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&lt; 40%</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Tỉ lệ tiền pha chế mua cốt so với bán. Vượt là báo mộng.</td>
+                            </tr>
+                            <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
+                               <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Rút Máu Vận Hành Khác (OPEX)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tổng Chi Phí Vận Hành / Doanh Thu</strong></div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
+                                   <div style={{ fontWeight: 800, fontSize: '15px', color: metrics.opexRatio > 0.3 ? 'var(--warning)' : 'var(--success)' }}>{(metrics.opexRatio * 100).toFixed(2)}%</div>
+                                   <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', background: '#fee2e2', padding: '3px 6px', borderRadius: '4px', fontSize: '11px', fontFamily: 'monospace', color: '#991b1b', border: '1px solid #fca5a5' }}>
+                                       <span style={{ fontWeight: 500 }}>{formatVND(operatingExpenses)}</span><span style={{ margin: '0 4px', color: '#f87171' }}>/</span><span style={{ color: '#0284c7', fontWeight: 500 }}>{formatVND(totalNetRevenue)}</span>
+                                   </div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&lt; 30%</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Kiểm tra xem Lương Lậu hay Mặt Bằng có ngốn lố tay?</td>
+                            </tr>
+                            <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
+                               <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>3</td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Cống Nạp Hoa Hồng Sàn Công Nghệ</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tiền Chiết Khấu / Doanh Thu Gốc</strong></div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
+                                   <div style={{ fontWeight: 800, fontSize: '15px', color: metrics.platformRatio > 0.25 ? 'var(--warning)' : 'var(--text-primary)' }}>{(metrics.platformRatio * 100).toFixed(2)}%</div>
+                                   <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', background: '#fee2e2', padding: '3px 6px', borderRadius: '4px', fontSize: '11px', fontFamily: 'monospace', color: '#991b1b', border: '1px solid #fca5a5' }}>
+                                       <span style={{ fontWeight: 500 }}>{formatVND(totalPlatformCommission)}</span><span style={{ margin: '0 4px', color: '#f87171' }}>/</span><span style={{ color: '#0f172a', fontWeight: 500 }}>{formatVND(totalGrossRevenue)}</span>
+                                   </div>
+                               </td>
+                               <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&lt; 25%</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Shoppe, Grab vặt trụi nếu &gt;25%, bán ngập mặt chả dư.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+               </div>
+
            </div>
         </div>
       )}
