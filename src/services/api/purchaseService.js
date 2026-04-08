@@ -15,7 +15,7 @@ export const PurchaseApi = {
     await StorageService.saveCollection('purchaseOrders', list);
 
     // Update Ingredients Stock & Buy Price
-    if (purchase.items && purchase.items.length > 0) {
+    if (purchase.status !== 'Draft' && purchase.items && purchase.items.length > 0) {
         const ingredients = await StorageService.getCollection('ingredients');
         let ingredientsChanged = false;
         purchase.items.forEach(item => {
@@ -49,15 +49,20 @@ export const PurchaseApi = {
         const txList = await StorageService.getCollection('transactions');
         const accounts = await StorageService.getCollection('accounts');
         
-        // Find default cash account or use first available
-        const cashAcc = accounts.find(a => a.type === 'cash') || accounts[0];
+        let payAcc = null;
+        if (purchase.accountId) {
+             payAcc = accounts.find(a => a.id === purchase.accountId);
+        }
+        if (!payAcc) {
+             payAcc = accounts.find(a => a.type === 'cash') || accounts[0];
+        }
         
-        if (cashAcc) {
+        if (payAcc) {
             txList.unshift({
                 id: StorageService.generateId('TX-'),
                 type: 'Chi',
                 amount: Number(purchase.totalAmount),
-                accountId: cashAcc.id,
+                accountId: payAcc.id,
                 categoryId: 'FC4',
                 categoryName: 'Nhập hàng nguyên liệu',
                 date: purchase.date,
@@ -67,7 +72,7 @@ export const PurchaseApi = {
                 status: 'Completed'
             });
             await StorageService.saveCollection('transactions', txList);
-            cashAcc.balance = (Number(cashAcc.balance) || 0) - Number(purchase.totalAmount);
+            payAcc.balance = (Number(payAcc.balance) || 0) - Number(purchase.totalAmount);
             await StorageService.saveCollection('accounts', accounts);
         }
     }
@@ -81,29 +86,32 @@ export const PurchaseApi = {
     if (poIndex === -1) throw new Error("Không tìm thấy phiếu rỗng (PO không tồn tại)");
     
     const po = list[poIndex];
-    if (po.status !== 'Pending') {
-       throw new Error("Chỉ được chỉnh sửa phiếu đang ở trạng thái Ghi nợ (Pending).");
+    if (po.status !== 'Pending' && po.status !== 'Draft') {
+       throw new Error("Chỉ được chỉnh sửa phiếu đang ở trạng thái Ghi nợ (Pending) hoặc Trình Ký (Draft).");
     }
 
     // 1. Revert Old State
     const suppliers = await StorageService.getCollection('suppliers');
-    const supIdx = suppliers.findIndex(s => s.id === po.supplierId);
-    if (supIdx !== -1) {
-       suppliers[supIdx].debt = Math.max(0, (Number(suppliers[supIdx].debt) || 0) - Number(po.totalAmount));
-    }
-    
     const ingredients = await StorageService.getCollection('ingredients');
-    if (po.items && po.items.length > 0) {
-        po.items.forEach(item => {
-            const idx = ingredients.findIndex(i => i.id === item.ingredientId);
-            if (idx !== -1) {
-                ingredients[idx].stock = Math.max(0, (Number(ingredients[idx].stock) || 0) - Number(item.baseQty));
-            }
-        });
+
+    if (po.status === 'Pending') {
+        const supIdx = suppliers.findIndex(s => s.id === po.supplierId);
+        if (supIdx !== -1) {
+           suppliers[supIdx].debt = Math.max(0, (Number(suppliers[supIdx].debt) || 0) - Number(po.totalAmount));
+        }
+        
+        if (po.items && po.items.length > 0) {
+            po.items.forEach(item => {
+                const idx = ingredients.findIndex(i => i.id === item.ingredientId);
+                if (idx !== -1) {
+                    ingredients[idx].stock = Math.max(0, (Number(ingredients[idx].stock) || 0) - Number(item.baseQty));
+                }
+            });
+        }
     }
 
     // 2. Apply New State
-    if (updatedPurchase.items && updatedPurchase.items.length > 0) {
+    if (updatedPurchase.status !== 'Draft' && updatedPurchase.items && updatedPurchase.items.length > 0) {
         updatedPurchase.items.forEach(item => {
             const idx = ingredients.findIndex(i => i.id === item.ingredientId);
             if (idx !== -1) {
@@ -126,14 +134,20 @@ export const PurchaseApi = {
     if (updatedPurchase.status === 'Paid') {
         const txList = await StorageService.getCollection('transactions');
         const accounts = await StorageService.getCollection('accounts');
-        const cashAcc = accounts.find(a => a.type === 'cash') || accounts[0];
+        let payAcc = null;
+        if (updatedPurchase.accountId) {
+             payAcc = accounts.find(a => a.id === updatedPurchase.accountId);
+        }
+        if (!payAcc) {
+             payAcc = accounts.find(a => a.type === 'cash') || accounts[0];
+        }
         
-        if (cashAcc) {
+        if (payAcc) {
             txList.unshift({
                 id: StorageService.generateId('TX-'),
                 type: 'Chi',
                 amount: Number(updatedPurchase.totalAmount),
-                accountId: cashAcc.id,
+                accountId: payAcc.id,
                 categoryId: 'FC4',
                 categoryName: 'Nhập hàng nguyên liệu',
                 date: updatedPurchase.date || new Date().toISOString(),
@@ -143,7 +157,7 @@ export const PurchaseApi = {
                 status: 'Completed'
             });
             await StorageService.saveCollection('transactions', txList);
-            cashAcc.balance = (Number(cashAcc.balance) || 0) - Number(updatedPurchase.totalAmount);
+            payAcc.balance = (Number(payAcc.balance) || 0) - Number(updatedPurchase.totalAmount);
             await StorageService.saveCollection('accounts', accounts);
         }
     }
@@ -250,7 +264,7 @@ export const PurchaseApi = {
     }
 
     // Revert Ingredients Stock
-    if (po.items && po.items.length > 0) {
+    if (po.status !== 'Draft' && po.items && po.items.length > 0) {
         const ingredients = await StorageService.getCollection('ingredients');
         let ingredientsChanged = false;
         po.items.forEach(item => {

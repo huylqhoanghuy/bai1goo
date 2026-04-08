@@ -3,7 +3,7 @@ import { useLocalList } from '../hooks/useLocalList';
 import SortHeader from './SortHeader';
 import { useData } from '../context/DataContext';
 import CurrencyInput from './CurrencyInput';
-import { PackagePlus, CheckSquare, Square, Trash2, Eye, Truck, CreditCard, Search, XCircle, Edit } from 'lucide-react';
+import { PackagePlus, CheckSquare, Square, Trash2, Eye, Truck, CreditCard, Search, XCircle, Edit, CheckCircle } from 'lucide-react';
 import { useConfirm } from '../context/ConfirmContext';
 
 export default function PurchasesUI({ 
@@ -132,6 +132,7 @@ export default function PurchasesUI({
         supplierId: importForm.supplierId, 
         items: importForm.items.map(i => ({ ingredientId: i.ingredientId, baseQty: Number(i.baseQty), cost: Number(i.cost) })),
         totalAmount,
+        accountId: importForm.accountId || (rootState.accounts.length > 0 ? rootState.accounts[0].id : null),
         status: finalStatus, 
         date: new Date().toISOString()
     };
@@ -189,13 +190,23 @@ export default function PurchasesUI({
                     </td>
                     <td style={{ padding: '16px' }}>{supName}</td>
                     <td style={{ padding: '16px', textAlign: 'center' }}>
-                      <span style={{ display: 'inline-flex', padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, background: o.status === 'Paid' ? '#F0FDF4' : '#FEF2F2', color: o.status === 'Paid' ? '#166534' : '#991B1B' }}>
-                         {o.status === 'Paid' ? 'Đã Thanh Toán' : 'Đang Treo Nợ'}
-                      </span>
+                        {o.status === 'Paid' ? (
+                          <span style={{ display: 'inline-flex', padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, background: '#F0FDF4', color: '#166534' }}>
+                            Đã Thanh Toán
+                          </span>
+                        ) : o.status === 'Draft' ? (
+                          <span style={{ display: 'inline-flex', padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, background: '#FFF7ED', color: '#C2410C' }}>
+                            Bản Nháp / Trình Ký
+                          </span>
+                        ) : (
+                          <span style={{ display: 'inline-flex', padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, background: '#FEF2F2', color: '#991B1B' }}>
+                            Đang Treo Nợ
+                          </span>
+                        )}
                     </td>
                     <td style={{ padding: '16px', textAlign: 'right', fontWeight: 700, color: 'var(--primary)', fontSize: '15px' }}>{o.totalAmount.toLocaleString('vi-VN')} ₫</td>
                     <td style={{ padding: '16px', display: 'flex', gap: '8px', justifyContent: 'flex-end', opacity: expandedPoId === o.id ? 1 : 0.8 }}>
-                       {o.status === 'Pending' && (
+                       {(o.status === 'Pending' || o.status === 'Draft') && (
                          <button className="btn btn-ghost" style={{ padding: '6px', color: 'var(--primary)', background: '#F0F9FF' }} onClick={(e) => {
                             e.stopPropagation();
                             setImportForm({
@@ -346,6 +357,15 @@ export default function PurchasesUI({
                         </table>
                      )}
 
+                     <div style={{ marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Nguồn quỹ chi trả (Nếu chốt thanh toán):</label>
+                        <select className="form-input" style={{ width: '100%', padding: '10px' }} value={importForm.accountId || (rootState.accounts.length > 0 ? rootState.accounts[0].id : '')} onChange={e => setImportForm({...importForm, accountId: e.target.value})}>
+                           {rootState.accounts.map(acc => (
+                              <option key={acc.id} value={acc.id}>{acc.name} (Tồn quỹ: {acc.balance.toLocaleString('vi-VN')} đ)</option>
+                           ))}
+                        </select>
+                     </div>
+
                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#F8FAFC', padding: '16px', borderRadius: '8px', marginBottom: '20px' }}>
                         <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>TỔNG THANH TOÁN (BILL):</span>
                         <span style={{ fontSize: '24px', fontWeight: 800, color: 'var(--primary)' }}>
@@ -355,10 +375,10 @@ export default function PurchasesUI({
 
                      <div style={{ display: 'flex', gap: '12px' }}>
                         <button className="btn btn-secondary" style={{ flex: 1, padding: '14px', display: 'flex', justifyContent: 'center', gap: '8px', background: '#fff', color: '#B91C1C', border: '1px solid #FECACA' }} onClick={() => commitPurchaseLocal('Pending')}>
-                           <CreditCard size={18} /> Ghi Nợ 
+                           <CreditCard size={18} /> {editPoId ? 'Duyệt Ghi Nợ Kho (Nhập hàng)' : 'Lưu Ghi Nợ Kho'}
                         </button>
                         <button className="btn btn-primary" style={{ flex: 2, padding: '14px', display: 'flex', justifyContent: 'center', gap: '8px' }} onClick={() => commitPurchaseLocal('Paid')}>
-                           ✔ Thanh Toán Ngay Bằng Quỹ Tiền Mặt
+                           <CheckCircle size={18} /> {editPoId ? 'Duyệt Nhập & Chốt Trừ Quỹ' : 'Thanh Toán & Trừ Quỹ'}
                         </button>
                      </div>
                  </div>
@@ -394,8 +414,8 @@ export default function PurchasesUI({
                   </div>
                   <div>
                     <label style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Trạng Thái</label>
-                    <div style={{ fontWeight: 600, color: po.status === 'Paid' ? 'var(--success)' : 'var(--danger)' }}>
-                      {po.status === 'Paid' ? 'Đã thanh toán' : 'Ghi Nợ'}
+                    <div style={{ fontWeight: 600, color: po.status === 'Paid' ? 'var(--success)' : po.status === 'Draft' ? '#C2410C' : 'var(--danger)' }}>
+                      {po.status === 'Paid' ? 'Đã thanh toán' : po.status === 'Draft' ? 'Chờ Duyệt' : 'Ghi Nợ'}
                     </div>
                   </div>
                   <div>
@@ -445,7 +465,7 @@ export default function PurchasesUI({
                    <div style={{ fontSize: '24px', fontWeight: 700, color: 'var(--primary)' }}>{Number(po.totalAmount || 0).toLocaleString('vi-VN')} đ</div>
                 </div>
 
-                {po.status === 'Pending' && (
+                {(po.status === 'Pending' || po.status === 'Draft') && (
                     <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                         <button className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', fontSize: '15px' }} onClick={(e) => {
                             e.preventDefault();

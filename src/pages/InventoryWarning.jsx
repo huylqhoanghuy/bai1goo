@@ -490,7 +490,7 @@ const InventoryWarning = () => {
                                     supplierId: selectedSupplierId,
                                     items: poItems,
                                     totalAmount: totalAmount,
-                                    status: 'Pending',
+                                    status: 'Draft',
                                     date: new Date().toISOString()
                                 });
                                 showToast(`Đã chốt trình ký đơn hàng (${selectedShortfalls.length} món) thành công! Lệnh đã chuyển chờ kế toán xác nhận Ghi Nợ / Thanh Toán.`);
