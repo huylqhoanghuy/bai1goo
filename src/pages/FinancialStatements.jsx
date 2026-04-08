@@ -469,7 +469,7 @@ export default function FinancialStatements() {
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Thanh toán hiện thời (Current Ratio)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Thanh toán hiện thời (Current Ratio - CR)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tổng Tài Sản / Tổng Nợ</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -484,7 +484,7 @@ export default function FinancialStatements() {
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Thanh toán nhanh (Quick Ratio)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Thanh toán nhanh (Quick Ratio - QR)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tiền Mặt / Tổng Nợ</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -505,7 +505,7 @@ export default function FinancialStatements() {
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ lệ Nợ trên Tài sản (Debt Ratio)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ lệ Nợ trên Tài sản (Debt to Asset - D/A)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tổng Nợ / Tổng Tài Sản</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -520,7 +520,7 @@ export default function FinancialStatements() {
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ lệ Vốn Chủ Sở Hữu (Equity)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ lệ Vốn Chủ Sở Hữu (Equity Ratio - ER)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Vốn Chủ Tự Khởi / Tổng Tài Sản</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -535,7 +535,7 @@ export default function FinancialStatements() {
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>3</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ trọng vốn tồn kho</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ trọng Vốn Tồn kho (Inventory to Assets - I/A)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tồn Kho / Tổng Tài Sản</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -556,7 +556,7 @@ export default function FinancialStatements() {
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Vòng quay hàng tồn kho</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Vòng quay Hàng Tồn kho (Inventory Turnover - ITO)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Giá Vốn / Tồn Kho</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -571,7 +571,7 @@ export default function FinancialStatements() {
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Vòng quay tổng tài sản (Asset Turnover)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Vòng quay Tổng Tài sản (Asset Turnover - ATO)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Doanh Thu / Tổng Tài Sản</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -592,7 +592,7 @@ export default function FinancialStatements() {
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Biên Lợi Nhuận Thuần (ROS)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Biên Lợi nhuận Thuần (Net Profit Margin - NPM/ROS)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Lợi Nhuận Ròng / Doanh Thu</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -607,7 +607,7 @@ export default function FinancialStatements() {
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ suất sinh lời trên Tài sản (ROA)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ suất Sinh lời trên Tài sản (Return on Assets - ROA)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Lợi Nhuận / Tổng Tài Sản</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -622,7 +622,7 @@ export default function FinancialStatements() {
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>3</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ suất Lợi nhuận trên Vốn chủ (ROE)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ suất Sinh lời trên Vốn chủ (Return on Equity - ROE)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Lợi Nhuận / Vốn Chủ</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -643,7 +643,7 @@ export default function FinancialStatements() {
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ trọng Giá vốn hàng bán (COGS Margin)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ trọng Giá vốn Hàng bán (Cost of Goods Sold - COGS)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Giá Vốn / Doanh Thu</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -658,7 +658,7 @@ export default function FinancialStatements() {
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ trọng Chi phí vận hành (OPEX Margin)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ trọng Chi phí Vận hành (Operating Expenses - OPEX)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tổng Chi Phí Vận Hành / Doanh Thu</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
