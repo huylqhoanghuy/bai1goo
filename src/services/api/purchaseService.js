@@ -24,6 +24,7 @@ export const PurchaseApi = {
                 ingredients[idx].stock = (Number(ingredients[idx].stock) || 0) + Number(item.baseQty);
                 if (Number(item.cost) > 0) {
                    ingredients[idx].buyPrice = Number(item.cost);
+                   ingredients[idx].cost = Number(item.cost) / (Number(ingredients[idx].conversionRate) || 1);
                 }
                 ingredientsChanged = true;
             }
@@ -72,6 +73,89 @@ export const PurchaseApi = {
     }
 
     return newDoc;
+  },
+
+  update: async (id, updatedPurchase) => {
+    const list = await PurchaseApi.getAll();
+    const poIndex = list.findIndex(p => p.id === id);
+    if (poIndex === -1) throw new Error("Không tìm thấy phiếu rỗng (PO không tồn tại)");
+    
+    const po = list[poIndex];
+    if (po.status !== 'Pending') {
+       throw new Error("Chỉ được chỉnh sửa phiếu đang ở trạng thái Ghi nợ (Pending).");
+    }
+
+    // 1. Revert Old State
+    const suppliers = await StorageService.getCollection('suppliers');
+    const supIdx = suppliers.findIndex(s => s.id === po.supplierId);
+    if (supIdx !== -1) {
+       suppliers[supIdx].debt = Math.max(0, (Number(suppliers[supIdx].debt) || 0) - Number(po.totalAmount));
+    }
+    
+    const ingredients = await StorageService.getCollection('ingredients');
+    if (po.items && po.items.length > 0) {
+        po.items.forEach(item => {
+            const idx = ingredients.findIndex(i => i.id === item.ingredientId);
+            if (idx !== -1) {
+                ingredients[idx].stock = Math.max(0, (Number(ingredients[idx].stock) || 0) - Number(item.baseQty));
+            }
+        });
+    }
+
+    // 2. Apply New State
+    if (updatedPurchase.items && updatedPurchase.items.length > 0) {
+        updatedPurchase.items.forEach(item => {
+            const idx = ingredients.findIndex(i => i.id === item.ingredientId);
+            if (idx !== -1) {
+                ingredients[idx].stock = (Number(ingredients[idx].stock) || 0) + Number(item.baseQty);
+                if (Number(item.cost) > 0) {
+                   ingredients[idx].buyPrice = Number(item.cost);
+                   ingredients[idx].cost = Number(item.cost) / (Number(ingredients[idx].conversionRate) || 1);
+                }
+            }
+        });
+    }
+
+    if (updatedPurchase.supplierId && updatedPurchase.status === 'Pending') {
+        const newSupIdx = suppliers.findIndex(s => s.id === updatedPurchase.supplierId);
+        if (newSupIdx !== -1) {
+            suppliers[newSupIdx].debt = (Number(suppliers[newSupIdx].debt) || 0) + Number(updatedPurchase.totalAmount);
+        }
+    }
+
+    if (updatedPurchase.status === 'Paid') {
+        const txList = await StorageService.getCollection('transactions');
+        const accounts = await StorageService.getCollection('accounts');
+        const cashAcc = accounts.find(a => a.type === 'cash') || accounts[0];
+        
+        if (cashAcc) {
+            txList.unshift({
+                id: StorageService.generateId('TX-'),
+                type: 'Chi',
+                amount: Number(updatedPurchase.totalAmount),
+                accountId: cashAcc.id,
+                categoryId: 'FC4',
+                categoryName: 'Nhập hàng nguyên liệu',
+                date: updatedPurchase.date || new Date().toISOString(),
+                voucherCode: StorageService.generateId('PC-'),
+                note: `Thanh toán phiếu nhập kho ${po.id}`,
+                relatedId: po.id,
+                status: 'Completed'
+            });
+            await StorageService.saveCollection('transactions', txList);
+            cashAcc.balance = (Number(cashAcc.balance) || 0) - Number(updatedPurchase.totalAmount);
+            await StorageService.saveCollection('accounts', accounts);
+        }
+    }
+
+    await StorageService.saveCollection('suppliers', suppliers);
+    await StorageService.saveCollection('ingredients', ingredients);
+
+    const newPo = { ...po, ...updatedPurchase, id: po.id };
+    list[poIndex] = newPo;
+    await StorageService.saveCollection('purchaseOrders', list);
+    
+    return newPo;
   },
 
   updateStatus: async (id, status, targetAccountId = null) => {

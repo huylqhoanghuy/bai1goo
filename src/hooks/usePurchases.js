@@ -22,6 +22,7 @@ export const usePurchases = () => {
   }, [fetchData]);
 
   const add = async (payload) => { await PurchaseApi.add(payload); };
+  const update = async (id, payload) => { await PurchaseApi.update(id, payload); };
   const updateStatus = async (id, status, accountId) => { await PurchaseApi.updateStatus(id, status, accountId); };
   const remove = async (id) => { await PurchaseApi.delete(id); };
 
@@ -37,6 +38,7 @@ export const usePurchases = () => {
     purchases: data,
     loading,
     addPurchase: add,
+    updatePurchase: update,
     updatePurchaseStatus: updateStatus,
     deletePurchase: remove,
     getSuppliers,

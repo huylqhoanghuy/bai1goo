@@ -3,7 +3,8 @@ import { useLocalList } from '../hooks/useLocalList';
 import SortHeader from './SortHeader';
 import { useData } from '../context/DataContext';
 import CurrencyInput from './CurrencyInput';
-import { PackagePlus, CheckSquare, Square, Trash2, Eye, Truck, CreditCard, Search, XCircle } from 'lucide-react';
+import { PackagePlus, CheckSquare, Square, Trash2, Eye, Truck, CreditCard, Search, XCircle, Edit } from 'lucide-react';
+import { useConfirm } from '../context/ConfirmContext';
 
 export default function PurchasesUI({ 
   purchases, 
@@ -11,12 +12,15 @@ export default function PurchasesUI({
   ingredients, 
   onAddPurchase, 
   onPayDebt, 
+  onUpdatePurchase,
   onDeletePurchase
 }) {
   const { state: rootState, dispatch } = useData();
+  const { confirm } = useConfirm();
   const [showForm, setShowForm] = useState(false);
   const [expandedPoId, setExpandedPoId] = useState(null);
   const [payDebtForm, setPayDebtForm] = useState(null);
+  const [editPoId, setEditPoId] = useState(null);
 
   useEffect(() => {
     const handleEsc = (e) => {
@@ -24,6 +28,7 @@ export default function PurchasesUI({
         setShowForm(false);
         setExpandedPoId(null);
         setPayDebtForm(null);
+        setEditPoId(null);
       }
     };
     window.addEventListener('keydown', handleEsc);
@@ -81,7 +86,16 @@ export default function PurchasesUI({
     }));
   };
 
-  const commitPurchaseLocal = (status) => {
+  const updateItemInCart = (idx, field, value) => {
+    setImportForm(prev => {
+        const newItems = [...prev.items];
+        newItems[idx][field] = Number(value) || 0;
+        newItems[idx].totalLine = newItems[idx].baseQty * newItems[idx].cost;
+        return { ...prev, items: newItems };
+    });
+  };
+
+  const commitPurchaseLocal = async (status) => {
     if (!importForm.supplierId) {
        dispatch({ type: 'ADD_NOTIFICATION', payload: { title: 'Lỗi Nhập Kho', message: 'Bắt buộc phải chọn Nhà Cung Cấp. Nếu chưa có, vui lòng tạo mới.', type: 'error' } });
        return;
@@ -91,22 +105,50 @@ export default function PurchasesUI({
        return;
     }
 
+    let finalStatus = status;
+
+    if (finalStatus === 'Paid') {
+       const res = await confirm({
+           title: 'Xác Thực Quản Trị',
+           message: 'Lô hàng sẽ được nhập vào kho và trừ quỹ tiền mặt.\nVui lòng nhập mã PIN xác nhận:',
+           type: 'warning',
+           withInput: true,
+           confirmText: 'Xác Nhận Nhập Kho'
+       });
+       
+       if (!res.confirmed) return;
+
+       const systemPin = (typeof window !== 'undefined') ? (JSON.parse(localStorage.getItem('omnipos_gaumuoi_v3') || '{}').settings?.securityPin || '1004') : '1004';
+       
+       if (res.value !== systemPin) {
+           dispatch({ type: 'ADD_NOTIFICATION', payload: { title: 'Sai Mã PIN', message: 'Mã PIN không chính xác! Phiếu nhập đã tự động chuyển sang Ghi Nợ (Pending).', type: 'error' } });
+           finalStatus = 'Pending';
+       }
+    }
+
     const totalAmount = importForm.items.reduce((sum, item) => sum + item.totalLine, 0);
     
-    onAddPurchase && onAddPurchase({
+    const payload = {
         supplierId: importForm.supplierId, 
         items: importForm.items.map(i => ({ ingredientId: i.ingredientId, baseQty: Number(i.baseQty), cost: Number(i.cost) })),
         totalAmount,
-        status, 
+        status: finalStatus, 
         date: new Date().toISOString()
-    });
+    };
+    
+    if (editPoId && onUpdatePurchase) {
+        onUpdatePurchase(editPoId, payload);
+    } else if (onAddPurchase) {
+        onAddPurchase(payload);
+    }
     
     dispatch({ 
       type: 'ADD_NOTIFICATION', 
-      payload: { title: 'Nhập Kho Bãi', message: `Nhập lô hàng trị giá ${totalAmount.toLocaleString('vi-VN')} đ thành công!`, type: 'success' } 
+      payload: { title: 'Nhập Kho Bãi', message: `Đã xử lý phiếu nhập hàng trị giá ${totalAmount.toLocaleString('vi-VN')} đ thành công!`, type: 'success' } 
     });
 
     setShowForm(false);
+    setEditPoId(null);
     setImportForm({ supplierId: '', items: [] });
   };
 
@@ -154,8 +196,27 @@ export default function PurchasesUI({
                     <td style={{ padding: '16px', textAlign: 'right', fontWeight: 700, color: 'var(--primary)', fontSize: '15px' }}>{o.totalAmount.toLocaleString('vi-VN')} ₫</td>
                     <td style={{ padding: '16px', display: 'flex', gap: '8px', justifyContent: 'flex-end', opacity: expandedPoId === o.id ? 1 : 0.8 }}>
                        {o.status === 'Pending' && (
-                         <button className="btn btn-ghost" style={{ padding: '6px', color: 'var(--primary)', background: '#F0F9FF' }} onClick={() => onPayDebt && onPayDebt(o.id, o.totalAmount, supName)} title="Rút Két Trả Nợ">
-                           <CreditCard size={16} />
+                         <button className="btn btn-ghost" style={{ padding: '6px', color: 'var(--primary)', background: '#F0F9FF' }} onClick={(e) => {
+                            e.stopPropagation();
+                            setImportForm({
+                                supplierId: o.supplierId,
+                                items: o.items.map(i => {
+                                    const ing = ingredients.find(ingr => ingr.id === i.ingredientId);
+                                    const globalCost = ing ? (Number(ing.buyPrice) || (Number(ing.cost) * (Number(ing.conversionRate) || 1))) : Number(i.cost);
+                                    return {
+                                        ingredientId: i.ingredientId,
+                                        ingredientName: ing ? ing.name : 'Unknown',
+                                        baseQty: Number(i.baseQty),
+                                        unit: ing ? (ing.buyUnit || ing.unit) : '',
+                                        cost: globalCost,
+                                        totalLine: Number(i.baseQty) * globalCost
+                                    };
+                                })
+                            });
+                            setEditPoId(o.id);
+                            setShowForm(true);
+                         }} title="Kiểm duyệt & Cập nhật phiếu">
+                           <Edit size={16} />
                          </button>
                        )}
                        <button className="btn btn-ghost" style={{ padding: '6px' }} onClick={() => setExpandedPoId(prev => prev === o.id ? null : o.id)} title="Xem Chi Tiết">
@@ -201,9 +262,17 @@ export default function PurchasesUI({
           </button>
        </div>
 
-       {showForm ? (
-          <div style={{ background: '#fff', padding: '24px', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
-             <h3 style={{ margin: '0 0 20px', color: 'var(--text-primary)' }}>Lập phiếu nhập kho & Thanh toán</h3>
+       {renderActiveList()}
+
+       {showForm && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#fff', padding: '24px', borderRadius: '16px', border: '1px solid var(--surface-border)', width: '900px', maxWidth: '95%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}>
+             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                 <h3 style={{ margin: 0, color: 'var(--text-primary)' }}>{editPoId ? 'Kiểm Duyệt / Cập Nhật Phiếu Nhập' : 'Lập phiếu nhập kho & Thanh toán'}</h3>
+                 <button className="btn btn-ghost" style={{ padding: '6px' }} onClick={() => { setShowForm(false); setEditPoId(null); setImportForm({ supplierId: '', items: [] }); }}>
+                    <XCircle size={24} color="var(--text-secondary)" />
+                 </button>
+             </div>
              <div className="dashboard-chart-grid-2" style={{ gap: '20px' }}>
                  <div>
                     <label style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'block', marginBottom: '8px' }}>Nhà Cung Cấp Đối Tác</label>
@@ -261,7 +330,12 @@ export default function PurchasesUI({
                                  <tr key={idx} style={{ borderBottom: '1px dashed var(--surface-border)' }}>
                                     <td style={{ padding: '12px 0', fontSize: '14px', fontWeight: 600 }}>{item.ingredientName}</td>
                                     <td style={{ padding: '12px 0', fontSize: '14px' }}>{item.baseQty} <span style={{ color: 'var(--text-secondary)' }}>{item.unit}</span></td>
-                                    <td style={{ padding: '12px 0', fontSize: '14px', textAlign: 'right' }}>{item.cost?.toLocaleString('vi-VN')} ₫</td>
+                                    <td style={{ padding: '12px 0', fontSize: '14px', textAlign: 'right' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px' }}>
+        <CurrencyInput style={{ width: '100px', textAlign: 'right', padding: '4px 8px', borderRadius: '6px', border: '1px solid var(--surface-border)', outline: 'none' }} value={item.cost} onChange={v => updateItemInCart(idx, 'cost', v)} />
+        <span style={{ color: 'var(--text-secondary)' }}>đ</span>
+    </div>
+ </td>
                                     <td style={{ padding: '12px 0', fontSize: '14px', textAlign: 'right', fontWeight: 800, color: 'var(--primary)' }}>{item.totalLine?.toLocaleString('vi-VN')} ₫</td>
                                     <td style={{ padding: '12px 0', textAlign: 'right' }}>
                                        <button onClick={() => handleRemoveItem(idx)} style={{ background: 'transparent', border: 'none', color: 'var(--danger)', cursor: 'pointer' }}><Trash2 size={16}/></button>
@@ -290,7 +364,8 @@ export default function PurchasesUI({
                  </div>
              </div>
           </div>
-       ) : renderActiveList()}
+        </div>
+       )}
 
        {/* Modal Chi Tiết Phiếu Nhập */}
        {expandedPoId && (
@@ -343,7 +418,14 @@ export default function PurchasesUI({
                                 </div>
                                 <div style={{ flex: 1 }}>
                                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Số lượng nhập</div>
-                                   <div style={{ fontWeight: 700 }}>{item.baseQty} <span style={{ fontWeight: 400, fontSize: '13px' }}>{ing?.unit}</span></div>
+                                   <div style={{ fontWeight: 700 }}>
+                                       {item.baseQty} <span style={{ fontWeight: 400, fontSize: '13px' }}>{ing?.buyUnit || ing?.unit}</span>
+                                       {ing?.buyUnit && ing?.conversionRate > 1 && (
+                                           <span style={{ fontWeight: 500, fontSize: '12px', color: 'var(--text-secondary)', marginLeft: '4px' }}>
+                                               (&asymp; {Number(item.baseQty * ing.conversionRate).toLocaleString('vi-VN', {maximumFractionDigits:3})} {ing.unit})
+                                           </span>
+                                       )}
+                                   </div>
                                 </div>
                                 <div style={{ flex: 1, textAlign: 'right' }}>
                                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Đơn giá kho</div>
@@ -364,19 +446,31 @@ export default function PurchasesUI({
                 </div>
 
                 {po.status === 'Pending' && (
-                    <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+                    <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                         <button className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', fontSize: '15px' }} onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            setPayDebtForm({ 
-                                poId: po.id, 
-                                amount: po.totalAmount, 
-                                supplierName: sup?.name || po.seller,
-                                accountId: 'ACC1' 
+                            setImportForm({
+                                supplierId: po.supplierId,
+                                items: po.items.map(i => {
+                                    const ing = ingredients.find(ingr => ingr.id === i.ingredientId);
+                                    const globalCost = ing ? (Number(ing.buyPrice) || (Number(ing.cost) * (Number(ing.conversionRate) || 1))) : Number(i.cost);
+                                    return {
+                                        ingredientId: i.ingredientId,
+                                        ingredientName: ing ? ing.name : 'Unknown',
+                                        baseQty: Number(i.baseQty),
+                                        unit: ing ? (ing.buyUnit || ing.unit) : '',
+                                        cost: globalCost,
+                                        totalLine: Number(i.baseQty) * globalCost
+                                    };
+                                })
                             });
+                            setEditPoId(po.id);
+                            setShowForm(true);
+                            setExpandedPoId(null);
                         }}>
-                            <CreditCard size={20}/>
-                            Duyệt Xuất Quỹ & Cấn Trừ Nợ Phụ Tùng
+                            <Edit size={20}/>
+                            Kiểm Duyệt Phiếu Nhập & Sửa Lỗi Ngoại Lệ
                         </button>
                     </div>
                 )}
@@ -389,8 +483,25 @@ export default function PurchasesUI({
        
        {payDebtForm && (
         <div className="modal-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, backdropFilter: 'blur(4px)' }}>
-          <form style={{ width: '450px', padding: '32px', background: 'var(--bg-color)', borderRadius: '16px', boxShadow: 'var(--shadow-lg)' }} onSubmit={(e) => {
+          <form style={{ width: '450px', padding: '32px', background: 'var(--bg-color)', borderRadius: '16px', boxShadow: 'var(--shadow-lg)' }} onSubmit={async (e) => {
              e.preventDefault();
+             
+             const res = await confirm({
+                 title: 'Xác Thực Quản Trị',
+                 message: 'Bạn đang thực hiện trừ quỹ cấn trừ công nợ đối tác.\nVui lòng nhập mã PIN xác nhận:',
+                 type: 'warning',
+                 withInput: true,
+                 confirmText: 'Xác nhận Xuất Quỹ'
+             });
+
+             if (!res.confirmed) return;
+
+             const systemPin = (typeof window !== 'undefined') ? (JSON.parse(localStorage.getItem('omnipos_gaumuoi_v3') || '{}').settings?.securityPin || '1004') : '1004';
+             if (res.value !== systemPin) {
+                 dispatch({ type: 'ADD_NOTIFICATION', payload: { title: 'Lỗi', message: 'Mã PIN không chính xác! Hành động bị hủy.', type: 'error' } });
+                 return;
+             }
+
              if (onPayDebt) {
                 onPayDebt(payDebtForm.poId, payDebtForm.amount, payDebtForm.supplierName, payDebtForm.accountId);
              }

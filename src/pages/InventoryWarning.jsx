@@ -4,9 +4,11 @@ import { useData } from '../context/DataContext';
 import { useInventoryForecast } from '../hooks/useInventoryForecast';
 import { PurchaseApi } from '../services/api/purchaseService';
 import SmartDatePicker from '../components/SmartDatePicker';
+import { useConfirm } from '../context/ConfirmContext';
 
 const InventoryWarning = () => {
     const { state, dispatch } = useData();
+    const { confirm } = useConfirm();
     
     const today = new Date();
     const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
@@ -78,6 +80,8 @@ const InventoryWarning = () => {
     }
 
     const [selectedShortfalls, setSelectedShortfalls] = useState([]);
+    const [showPreviewModal, setShowPreviewModal] = useState(false);
+    const [selectedSupplierId, setSelectedSupplierId] = useState('');
 
     const handleDatePresetChange = (preset) => {
         if (preset.target) preset = preset.target.value; // Fallback just in case
@@ -359,9 +363,11 @@ const InventoryWarning = () => {
                                         </td>
                                         <td style={{ padding: '12px 10px' }}>
                                             <strong style={{ fontSize: '16px', color: 'var(--primary)' }}>+ {item.buyQty}</strong> <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{item.buyUnit || item.unit}</span>
-                                            <div style={{ marginTop: '4px', fontSize: '11px', color: 'var(--success)', background: '#F0FDF4', padding: '2px 6px', borderRadius: '4px', display: 'inline-block', fontWeight: 600 }}>
-                                                Chuẩn bị cho {thresholdX * forecastDays} Đơn
-                                            </div>
+                                            {item.projectedRequiredQty > 0 && (
+                                                <div style={{ marginTop: '4px', fontSize: '11px', color: 'var(--success)', background: '#F0FDF4', padding: '2px 6px', borderRadius: '4px', display: 'inline-block', fontWeight: 600 }}>
+                                                    &asymp; {Math.floor((item.buyQty * (Number(item.conversionRate) || 1)) / (item.projectedRequiredQty / (thresholdX * forecastDays))).toLocaleString('vi-VN')} suất
+                                                </div>
+                                            )}
                                         </td>
                                         <td style={{ padding: '12px 10px', textAlign: 'right', fontWeight: 600, color: 'var(--text-primary)' }}>
                                             <div style={{ marginBottom: '8px' }}>{item.estimatedCost.toLocaleString('vi-VN')} đ</div>
@@ -380,22 +386,8 @@ const InventoryWarning = () => {
                                 </div>
                                 <button disabled={selectedShortfalls.length === 0} className="btn btn-primary" style={{ padding: '14px 24px', fontWeight: 700, fontSize: '15px', opacity: selectedShortfalls.length === 0 ? 0.5 : 1 }} onClick={() => {
                                     const sid = document.getElementById('autoPosupplier').value;
-                                    const selectedItemsData = shortfallItems.filter(i => selectedShortfalls.includes(i.id));
-                                    const poItems = selectedItemsData.map(item => ({
-                                        ingredientId: item.id,
-                                        baseQty: item.buyQty * (Number(item.conversionRate) || 1),
-                                        cost: item.buyPrice / (Number(item.conversionRate) || 1),
-                                        itemTotal: item.estimatedCost
-                                    }));
-                                    PurchaseApi.add({
-                                        supplierId: sid,
-                                        items: poItems,
-                                        totalAmount: selectedItemsData.reduce((sum, i) => sum + i.estimatedCost, 0),
-                                        status: 'Pending',
-                                        date: new Date().toISOString()
-                                    });
-                                    showToast(`Đã phác thảo trình ký kế hoạch Nhập Dự Cấp (${selectedShortfalls.length} món) vào hàng chờ Duyệt Kế Toán!`);
-                                    setSelectedShortfalls([]);
+                                    setSelectedSupplierId(sid);
+                                    setShowPreviewModal(true);
                                 }}>
                                     <Package size={18} style={{ marginRight: '8px' }}/>
                                     Trình Ký Xét Duyệt ({selectedShortfalls.length})
@@ -406,6 +398,111 @@ const InventoryWarning = () => {
                     </div>
                 </div>
             </div>
+
+            {/* PREVIEW MODAL */}
+            {showPreviewModal && (
+                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+                    <div style={{ background: '#FFF', borderRadius: '16px', width: '100%', maxWidth: '700px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', overflow: 'hidden' }}>
+                        <div style={{ padding: '24px', borderBottom: '1px solid var(--surface-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface-color)' }}>
+                            <h3 style={{ margin: 0, fontSize: '18px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}><Package size={20} color="var(--primary)" /> Kiểm Tra & Trình Ký Chốt Đơn</h3>
+                            <button onClick={() => setShowPreviewModal(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>✕</button>
+                        </div>
+                        <div style={{ padding: '24px', overflowY: 'auto', flex: 1 }}>
+                            <div style={{ marginBottom: '20px' }}>
+                                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Nhà Cung Cấp:</p>
+                                <strong style={{ fontSize: '16px' }}>{state.suppliers?.find(s => s.id === selectedSupplierId)?.name || '[Phiếu mua thả tự do]'}</strong>
+                            </div>
+                            
+                            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+                                <thead>
+                                    <tr style={{ background: '#F8FAFC', color: 'var(--text-secondary)' }}>
+                                        <th style={{ padding: '12px 10px', borderBottom: '1px solid var(--surface-border)' }}>Mặt Hàng</th>
+                                        <th style={{ padding: '12px 10px', borderBottom: '1px solid var(--surface-border)' }}>S.Lượng Mua</th>
+                                        <th style={{ padding: '12px 10px', borderBottom: '1px solid var(--surface-border)', textAlign: 'right' }}>Đơn Giá Kho</th>
+                                        <th style={{ padding: '12px 10px', borderBottom: '1px solid var(--surface-border)', textAlign: 'right' }}>Dự Chi Tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {shortfallItems.filter(i => selectedShortfalls.includes(i.id)).map(item => {
+                                        const cost = Number(item.buyPrice) || (Number(item.cost) * (Number(item.conversionRate) || 1));
+                                        const qty = Number(item.buyQty) || 0;
+                                        const cosPerDon = item.projectedRequiredQty / (thresholdX * forecastDays);
+                                        const maxPortions = cosPerDon > 0 ? Math.floor((qty * (Number(item.conversionRate) || 1)) / cosPerDon) : 0;
+                                        return (
+                                        <tr key={item.id}>
+                                            <td style={{ padding: '12px 10px', borderBottom: '1px dashed var(--surface-border)' }}><strong>{item.name}</strong></td>
+                                            <td style={{ padding: '12px 10px', borderBottom: '1px dashed var(--surface-border)' }}>
+                                                {qty} <span style={{fontSize:'12px', color:'var(--text-secondary)'}}>{item.buyUnit || item.unit}</span>
+                                                {maxPortions > 0 && (
+                                                    <div style={{ marginTop: '4px', fontSize: '11px', color: 'var(--success)', background: '#F0FDF4', padding: '2px 6px', borderRadius: '4px', display: 'inline-block', fontWeight: 600 }}>
+                                                        &asymp; {maxPortions.toLocaleString('vi-VN')} suất
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td style={{ padding: '12px 10px', borderBottom: '1px dashed var(--surface-border)', textAlign: 'right' }}>{cost.toLocaleString('vi-VN')} đ</td>
+                                            <td style={{ padding: '12px 10px', borderBottom: '1px dashed var(--surface-border)', textAlign: 'right', fontWeight: 600 }}>{(qty * cost).toLocaleString('vi-VN')} đ</td>
+                                        </tr>
+                                    )})}
+                                </tbody>
+                            </table>
+                            
+                            <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FEF2F2', padding: '16px', borderRadius: '8px', border: '1px solid #FECACA' }}>
+                                <span style={{ fontWeight: 600, color: 'var(--danger)' }}>TỔNG GIÁ TRỊ LÔ HÀNG ĐỀ XUẤT:</span>
+                                <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--danger)' }}>
+                                    {shortfallItems.filter(i => selectedShortfalls.includes(i.id)).reduce((sum, item) => sum + (Number(item.buyQty) || 0) * (Number(item.buyPrice) || (Number(item.cost) * (Number(item.conversionRate) || 1))), 0).toLocaleString('vi-VN')} đ
+                                </span>
+                            </div>
+                        </div>
+                        <div style={{ padding: '20px 24px', borderTop: '1px solid var(--surface-border)', display: 'flex', justifyContent: 'flex-end', gap: '12px', background: '#F8FAFC' }}>
+                            <button className="btn btn-secondary" onClick={() => setShowPreviewModal(false)} style={{ padding: '12px 24px', background: '#FFF' }}>Sửa lại đơn</button>
+                            <button className="btn btn-primary" style={{ padding: '12px 24px', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={async () => {
+                                const res = await confirm({
+                                    title: 'Xác Thực Quản Trị Yêu Cầu',
+                                    message: 'Vui lòng nhập mã PIN cấp quản lý để chốt Đơn Hàng này và chuyển lệnh sang phòng kế toán:',
+                                    type: 'warning',
+                                    withInput: true,
+                                    confirmText: 'Chốt Tạo Đơn'
+                                });
+
+                                if (!res.confirmed) return;
+
+                                const systemPin = (typeof window !== 'undefined') ? (JSON.parse(localStorage.getItem('omnipos_gaumuoi_v3') || '{}').settings?.securityPin || '1004') : '1004';
+                                if (res.value !== systemPin) {
+                                    dispatch({ type: 'ADD_NOTIFICATION', payload: { title: 'Lỗi', message: 'Mã PIN sai! Bạn không thể trình ký đơn này.', type: 'error' } });
+                                    return;
+                                }
+
+                                const selectedItemsData = shortfallItems.filter(i => selectedShortfalls.includes(i.id));
+                                const poItems = selectedItemsData.map(item => {
+                                    const c = Number(item.buyPrice) || (Number(item.cost) * (Number(item.conversionRate) || 1));
+                                    const q = Number(item.buyQty) || 0;
+                                    return {
+                                        ingredientId: item.id,
+                                        baseQty: q,
+                                        cost: c,
+                                        itemTotal: q * c
+                                    };
+                                });
+                                
+                                const totalAmount = poItems.reduce((sum, i) => sum + i.itemTotal, 0);
+                                
+                                PurchaseApi.add({
+                                    supplierId: selectedSupplierId,
+                                    items: poItems,
+                                    totalAmount: totalAmount,
+                                    status: 'Pending',
+                                    date: new Date().toISOString()
+                                });
+                                showToast(`Đã chốt trình ký đơn hàng (${selectedShortfalls.length} món) thành công! Lệnh đã chuyển chờ kế toán xác nhận Ghi Nợ / Thanh Toán.`);
+                                setSelectedShortfalls([]);
+                                setShowPreviewModal(false);
+                            }}>
+                                <Focus size={18} /> Xác Nhận Khởi Tạo Phiếu (Cần Mã PIN)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

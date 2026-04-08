@@ -1,9 +1,11 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useData } from '../context/DataContext';
 import { useListController } from './useListController';
+import { useConfirm } from '../context/ConfirmContext';
 
 export const useAccountingManager = () => {
   const { state, dispatch } = useData();
+  const { confirm } = useConfirm();
 
   // State
   const [selectedAcc, setSelectedAcc] = useState(null);
@@ -125,9 +127,25 @@ export const useAccountingManager = () => {
     });
   }, [state.transactions, filters, selectedAcc, activeJournalTab]);
 
-  const handleVoucherSubmit = (e) => {
+  const handleVoucherSubmit = async (e) => {
     e.preventDefault();
     const payload = { ...vForm, amount: Number(vForm.amount) };
+
+    const res = await confirm({
+        title: 'Xác Thực Quản Trị',
+        message: 'Chứng từ này sẽ tác động trực tiếp đến số dư quỹ mặt.\nVui lòng nhập mã PIN xác nhận:',
+        type: 'warning',
+        withInput: true,
+        confirmText: 'Xác nhận Kế Toán'
+    });
+
+    if (!res.confirmed) return;
+
+    const systemPin = (typeof window !== 'undefined') ? (JSON.parse(localStorage.getItem('omnipos_gaumuoi_v3') || '{}').settings?.securityPin || '1004') : '1004';
+    if (res.value !== systemPin) {
+        dispatch({ type: 'ADD_NOTIFICATION', payload: { title: 'Lỗi', message: 'Mã PIN không chính xác! Giao dịch bị hủy.', type: 'error' } });
+        return;
+    }
     
     if (vForm.id) {
         dispatch({ type: 'UPDATE_TRANSACTION', payload });

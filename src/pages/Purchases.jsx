@@ -12,6 +12,7 @@ const Purchases = () => {
     purchases, 
     loading, 
     addPurchase, 
+    updatePurchase,
     updatePurchaseStatus, 
     deletePurchase, 
     getSuppliers, 
@@ -41,9 +42,18 @@ const Purchases = () => {
   const handleAddPurchase = async (payload) => {
     try {
       await addPurchase(payload);
-      showToast(payload.status === 'Paid' ? 'Đã thanh toán phiếu nhập & Cập nhật tồn kho!' : 'Đã ghi nợ phiếu nhập & Cập nhật tồn kho!', 'success');
+      showToast(payload.status === 'Paid' ? 'Đã lập phiếu nhập mới và cấn trừ thanh toán!' : 'Đã ghi nợ phiếu nhập mới!', 'success');
     } catch (err) {
       showToast('Lỗi lập phiếu: ' + err.message, 'error');
+    }
+  };
+
+  const handleUpdatePurchase = async (id, payload) => {
+    try {
+      await updatePurchase(id, payload);
+      showToast(payload.status === 'Paid' ? 'Đã chỉnh sửa phiếu nhập & thanh toán khoản nợ!' : 'Đã chỉnh sửa và lưu Ghi nợ thành công!', 'success');
+    } catch (err) {
+      showToast('Lỗi cập nhật phiếu: ' + err.message, 'error');
     }
   };
 
@@ -89,6 +99,7 @@ const Purchases = () => {
          suppliers={suppliers}
          ingredients={ingredients}
          onAddPurchase={handleAddPurchase}
+         onUpdatePurchase={handleUpdatePurchase}
          onPayDebt={handlePayDebt}
          onDeletePurchase={handleDeletePurchase}
          isRefreshing={isRefreshing}

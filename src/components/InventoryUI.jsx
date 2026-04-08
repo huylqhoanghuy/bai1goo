@@ -6,6 +6,8 @@ import SortHeader from './SortHeader';
 import CurrencyInput from './CurrencyInput';
 import SmartTable from './SmartTable';
 import SmartDateFilter from './SmartDateFilter';
+import { useConfirm } from '../context/ConfirmContext';
+import { useData } from '../context/DataContext';
 
 const InventoryUI = ({
   ingredients,
@@ -19,6 +21,8 @@ const InventoryUI = ({
   onSaveSupplier,
   onDeleteSupplier
 }) => {
+  const { dispatch } = useData();
+  const { confirm } = useConfirm();
   const [activeTab, setActiveTab] = useState('ingredient');
   
   // Local hooks for UI states (search, sort, selection)
@@ -54,8 +58,25 @@ const InventoryUI = ({
     return map;
   }, [ingredients, purchaseOrders]);
 
-  const saveIngredient = (e) => {
+  const saveIngredient = async (e) => {
     e.preventDefault();
+
+    const res = await confirm({
+        title: 'Xác Thực Quản Trị',
+        message: 'Bạn đang thay đổi cấu hình tồn kho, định mức, hoặc giá vốn nguyên liệu.\nVui lòng nhập mã PIN xác nhận:',
+        type: 'warning',
+        withInput: true,
+        confirmText: 'Xác Nhận Lưu'
+    });
+    
+    if (!res.confirmed) return;
+    
+    const systemPin = (typeof window !== 'undefined') ? (JSON.parse(localStorage.getItem('omnipos_gaumuoi_v3') || '{}').settings?.securityPin || '1004') : '1004';
+    if (res.value !== systemPin) {
+        dispatch({ type: 'ADD_NOTIFICATION', payload: { title: 'Lỗi', message: 'Mã PIN không chính xác! Hủy thao tác cập nhật.', type: 'error' } });
+        return;
+    }
+
     const payload = { ...ingForm, stock: Number(ingForm.stock), cost: Number(ingForm.cost), buyPrice: Number(ingForm.buyPrice), minStock: Number(ingForm.minStock), conversionRate: Number(ingForm.conversionRate) || 1 };
     onSaveIngredient(payload);
     currentListState.setShowForm(false);
@@ -126,6 +147,22 @@ const InventoryUI = ({
           } 
         },
         {
+          key: 'buyPrice',
+          label: 'Giá Nhập / ĐVT Gốc',
+          sortable: true,
+          render: (val, item) => item.buyUnit ? (
+            <span>{Number((item.buyPrice || ((Number(item.cost)||0) * (Number(item.conversionRate) || 1))) || 0).toLocaleString('vi-VN')} đ <span style={{fontSize:'12px', color:'var(--text-secondary)'}}>/ {item.buyUnit}</span></span>
+          ) : <span style={{color: 'var(--text-secondary)', fontStyle: 'italic'}}>- Không có ĐVT Gốc -</span>
+        },
+        {
+          key: 'cost',
+          label: 'Giá Định Mức (Cost)',
+          sortable: true,
+          render: (val, item) => (
+             <><strong>{Number(item.cost || 0).toLocaleString('vi-VN')} đ</strong> <span style={{fontSize:'12px', color:'var(--text-secondary)'}}>/ {item.unit}</span></>
+          )
+        },
+        {
           key: 'minStock',
           label: 'Cảnh Báo & Tuổi Tồn',
           sortable: true,
@@ -152,22 +189,6 @@ const InventoryUI = ({
                </div>
              )
           }
-        },
-        {
-          key: 'buyPrice',
-          label: 'Giá Nhập / ĐVT Gốc',
-          sortable: true,
-          render: (val, item) => item.buyUnit ? (
-            <span>{Number((item.buyPrice || ((Number(item.cost)||0) * (Number(item.conversionRate) || 1))) || 0).toLocaleString('vi-VN')} đ <span style={{fontSize:'12px', color:'var(--text-secondary)'}}>/ {item.buyUnit}</span></span>
-          ) : <span style={{color: 'var(--text-secondary)', fontStyle: 'italic'}}>- Không có ĐVT Gốc -</span>
-        },
-        {
-          key: 'cost',
-          label: 'Giá Định Mức (Cost)',
-          sortable: true,
-          render: (val, item) => (
-             <><strong>{Number(item.cost || 0).toLocaleString('vi-VN')} đ</strong> <span style={{fontSize:'12px', color:'var(--text-secondary)'}}>/ {item.unit}</span></>
-          )
         }
       ];
 
