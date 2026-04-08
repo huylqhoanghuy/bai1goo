@@ -449,22 +449,22 @@ export default function FinancialStatements() {
                <h3 className="bctc-panel-title" style={{ margin: '0 0 8px 0', fontSize: '20px', fontWeight: 800, textAlign: 'center', color: 'var(--text-primary)', textTransform: 'uppercase' }}>CÁC CHỈ TIÊU PHÂN TÍCH BÁO CÁO TÀI CHÍNH</h3>
                <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '32px' }}>Hệ thống trích xuất và tính toán tự động dựa trên số liệu kinh doanh hiện hành</p>
                
-                                                                           <div className="table-responsive" style={{ overflowX: 'auto', paddingBottom: '16px' }}>
+                                                                                          <div className="table-responsive" style={{ overflowX: 'auto', paddingBottom: '16px' }}>
                     <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, fontSize: '13px', textAlign: 'left', minWidth: '940px', border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
                         <thead>
                             <tr style={{ background: '#f8fafc' }}>
                                <th style={{ padding: '12px 10px', width: '40px', borderBottom: '2px solid #cbd5e1', borderRight: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 800, color: '#334155' }}>STT</th>
-                               <th style={{ padding: '12px 10px', borderBottom: '2px solid #cbd5e1', borderRight: '1px solid #e2e8f0', fontWeight: 800, color: '#334155' }}>Chỉ tiêu & Cách tính</th>
+                               <th style={{ padding: '12px 10px', borderBottom: '2px solid #cbd5e1', borderRight: '1px solid #e2e8f0', fontWeight: 800, color: '#334155' }}>Chỉ tiêu phân tích</th>
                                <th style={{ padding: '12px 10px', width: '200px', borderBottom: '2px solid #cbd5e1', borderRight: '1px solid #e2e8f0', textAlign: 'right', fontWeight: 800, color: '#334155' }}>Kết Quả</th>
                                <th style={{ padding: '12px 10px', width: '100px', borderBottom: '2px solid #cbd5e1', borderRight: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 800, color: '#0284c7' }}>Khuyến Nghị</th>
-                               <th style={{ padding: '12px 10px', borderBottom: '2px solid #cbd5e1', fontWeight: 800, color: '#334155' }}>Ý Nghĩa Báo Cáo</th>
+                               <th style={{ padding: '12px 10px', borderBottom: '2px solid #cbd5e1', fontWeight: 800, color: '#334155' }}>Diễn giải chi tiết</th>
                             </tr>
                         </thead>
                         <tbody>
                             {/* NHÓM I */}
                             <tr style={{ background: '#f1f5f9' }}>
                                <td style={{ padding: '10px', textAlign: 'center', fontWeight: 800, borderBottom: '1px solid #e2e8f0' }}>I</td>
-                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Khả Năng Thanh Toán Đo Lường Rủi Ro</td>
+                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Khả Năng Thanh Toán (Đo lường rủi ro dòng tiền)</td>
                             </tr>
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
@@ -479,7 +479,7 @@ export default function FinancialStatements() {
                                    </div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt;= 1.5 lần</td>
-                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Theo dõi khả năng lấy Tài sản hiện có bán rã trả nợ tức thì.</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Đánh giá khả năng dùng toàn bộ tài sản để chi trả dự phòng cho các khoản nợ.</td>
                             </tr>
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
@@ -494,18 +494,18 @@ export default function FinancialStatements() {
                                    </div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt;= 1.0 lần</td>
-                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Mức độ thanh khoản cao nhất (chỉ dùng Tiền để trả nợ).</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Đo lường năng lực trả nợ ngay lập tức chỉ dựa vào quỹ tiền mặt đang có sẵn.</td>
                             </tr>
 
                             {/* NHÓM II */}
                             <tr style={{ background: '#f1f5f9' }}>
                                <td style={{ padding: '10px', textAlign: 'center', fontWeight: 800, borderBottom: '1px solid #e2e8f0' }}>II</td>
-                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Cơ Cấu Tài Sản Máy Móc</td>
+                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Cơ Cấu Vốn - Tình Trạng Nợ Vay</td>
                             </tr>
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Hệ số Nợ Vay (Debt Ratio)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ lệ Nợ trên Tài sản (Debt Ratio)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tổng Nợ / Tổng Tài Sản</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -515,13 +515,13 @@ export default function FinancialStatements() {
                                    </div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&lt; 50%</td>
-                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Tỷ trọng mua sắm nợ. Càng cao càng áp lực trả nợ.</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Cho biết bao nhiêu phần trăm tài sản của quán có được từ việc vay hoặc mua nợ.</td>
                             </tr>
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Hệ số Vốn Tự Cấp (Equity)</div>
-                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Vốn Chủ / Tổng Tài Sản</strong></div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ lệ Vốn Chủ Sở Hữu (Equity)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Vốn Chủ Tự Khởi / Tổng Tài Sản</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
                                    <div style={{ fontWeight: 800, fontSize: '15px' }}>{(metrics.equityRatio * 100).toFixed(2)}%</div>
@@ -530,12 +530,12 @@ export default function FinancialStatements() {
                                    </div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt;= 50%</td>
-                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Mức độ tự chủ kinh tế vững bền.</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Thể hiện mức độ tự chủ nguồn vốn, không bị áp lực lớn bởi nợ bên thứ ba.</td>
                             </tr>
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>3</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Đọng Vốn Tồn Kho</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ trọng vốn tồn kho</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tồn Kho / Tổng Tài Sản</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -545,18 +545,18 @@ export default function FinancialStatements() {
                                    </div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>15-25%</td>
-                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Tỷ lệ càng cao vốn ngâm càng hẹp.</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Lượng vốn đang bị ngưng đọng dưới dạng hàng hóa, chưa thể tái đầu tư.</td>
                             </tr>
 
                             {/* NHÓM III */}
                             <tr style={{ background: '#f1f5f9' }}>
                                <td style={{ padding: '10px', textAlign: 'center', fontWeight: 800, borderBottom: '1px solid #e2e8f0' }}>III</td>
-                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Hiệu Suất Vận Hành Tối Ưu Nguồn Thu</td>
+                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Hiệu Quả Hoạt Động (Khai thác tài sản)</td>
                             </tr>
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tốc độ đẩy hàng (Vòng quay kho)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Vòng quay hàng tồn kho</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Giá Vốn / Tồn Kho</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -566,12 +566,12 @@ export default function FinancialStatements() {
                                    </div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt; 4 lần</td>
-                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Luân chuyển hàng nhanh tránh thiu ôi.</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Đo lường số lần nhập và tiêu thụ hết nguyên liệu. Số vòng cao cho biết tốc độ quay vòng vốn khả quan.</td>
                             </tr>
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Vắt Sức Tài Sản (Asset Turnover)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Vòng quay tổng tài sản (Asset Turnover)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Doanh Thu / Tổng Tài Sản</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -581,18 +581,18 @@ export default function FinancialStatements() {
                                    </div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt; 1.5 lần</td>
-                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Năng suất ra tiền so với máy móc chi phí cố định.</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Đánh giá 1 đồng chi phí đầu tư tài sản đã tạo lập được bao nhiêu đồng doanh thu.</td>
                             </tr>
 
                             {/* NHÓM IV */}
                             <tr style={{ background: '#f1f5f9' }}>
                                <td style={{ padding: '10px', textAlign: 'center', fontWeight: 800, borderBottom: '1px solid #e2e8f0' }}>IV</td>
-                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Đo Lường Tỷ Suất Sinh Lời Cuối Năm</td>
+                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Tỷ Suất Sinh Lời (Đánh giá hiệu suất)</td>
                             </tr>
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Lợi Nhuận Ròng Thuần (ROS)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Biên Lợi Nhuận Thuần (ROS)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Lợi Nhuận Ròng / Doanh Thu</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -602,12 +602,12 @@ export default function FinancialStatements() {
                                    </div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt; 15%</td>
-                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Thực lãi cầm về ví cá nhân. Dưới ngưỡng là đuối.</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Mức lợi nhuận thực nhận về sau khi đã cấn trừ đi tất cả các loại chi phí vận hành.</td>
                             </tr>
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Sinh Lãi Của Tài Sản (ROA)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ suất sinh lời trên Tài sản (ROA)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Lợi Nhuận / Tổng Tài Sản</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -617,13 +617,13 @@ export default function FinancialStatements() {
                                    </div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt; 10%</td>
-                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Máy móc có sinh ra được lãi để bù mòn khấu hao?</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Đo lường năng lực sinh lời từ việc quy hoạch và thiết lập cơ sở vật chất (mát pha, máy tính).</td>
                             </tr>
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>3</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Lần Nữ Cổ Đông Quán (ROE)</div>
-                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Lợi Nhuận / Vốn Chủ Cổ Đông</strong></div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ suất Lợi nhuận trên Vốn chủ (ROE)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Lợi Nhuận / Vốn Chủ</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
                                    <div style={{ fontWeight: 800, fontSize: '15px', color: metrics.roe >= 0.15 ? 'var(--success)' : (metrics.roe < 0 ? 'var(--danger)' : 'var(--text-primary)') }}>{(metrics.roe * 100).toFixed(2)}%</div>
@@ -632,19 +632,19 @@ export default function FinancialStatements() {
                                    </div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&gt; 15%</td>
-                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>100đ tiền túi ném vô quán đẻ hơn hay gửi Bank hơn?</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Mức lợi nhuận ròng có được so với số vốn tự thân. Thường dùng so sánh với lãi suất tiền gửi ngân hàng.</td>
                             </tr>
 
                             {/* NHÓM V */}
                             <tr style={{ background: '#f1f5f9' }}>
                                <td style={{ padding: '10px', textAlign: 'center', fontWeight: 800, borderBottom: '1px solid #e2e8f0' }}>V</td>
-                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Kiểm Soát Các Gói Cước Chi Phí Vận Hành</td>
+                               <td colSpan="4" style={{ padding: '10px', fontWeight: 800, color: '#0f172a', borderBottom: '1px solid #e2e8f0', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.5px' }}>Kiểm Soát Tỷ Trọng Chi Phí (Phát hiện rò rỉ)</td>
                             </tr>
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>1</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Nuốt Cốt Nguyên Liệu (COGS Margin)</div>
-                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Hàng Nhập (Giá gốc) / Doanh Thu</strong></div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ trọng Giá vốn hàng bán (COGS Margin)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Giá Vốn / Doanh Thu</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
                                    <div style={{ fontWeight: 800, fontSize: '15px', color: metrics.cogsRatio > 0.4 ? 'var(--danger)' : 'var(--success)' }}>{(metrics.cogsRatio * 100).toFixed(2)}%</div>
@@ -653,12 +653,12 @@ export default function FinancialStatements() {
                                    </div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&lt; 40%</td>
-                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Tỉ lệ tiền pha chế mua cốt so với bán. Vượt là báo mộng.</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Phần trăm chi phí nguyên vật liệu, hộp ly trên doanh thu. Chỉ số quá cao ảnh hưởng nghiêm trọng biên lợi nhuận gốc.</td>
                             </tr>
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>2</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Rút Máu Vận Hành Khác (OPEX)</div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ trọng Chi phí vận hành (OPEX Margin)</div>
                                    <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tổng Chi Phí Vận Hành / Doanh Thu</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
@@ -668,13 +668,13 @@ export default function FinancialStatements() {
                                    </div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&lt; 30%</td>
-                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Kiểm tra xem Lương Lậu hay Mặt Bằng có ngốn lố tay?</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Giám sát tỷ trọng tiền nhà, tiền điện, lượng nhân viên để tránh vận hành phình to quá mức.</td>
                             </tr>
                             <tr style={{ background: '#fff', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background='#fff'}>
                                <td style={{ padding: '12px 10px', textAlign: 'center', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', color: 'var(--text-secondary)' }}>3</td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Cống Nạp Hoa Hồng Sàn Công Nghệ</div>
-                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tiền Chiết Khấu / Doanh Thu Gốc</strong></div>
+                                   <div style={{ fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>Tỷ trọng chiết khấu Nền tảng (Platform Comm.)</div>
+                                   <div style={{ fontSize: '12px', color: '#64748b' }}>Phép tính: <strong style={{ color: '#475569' }}>Tiền Hoa Hồng Sàn / Doanh Thu Gốc</strong></div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'right' }}>
                                    <div style={{ fontWeight: 800, fontSize: '15px', color: metrics.platformRatio > 0.25 ? 'var(--warning)' : 'var(--text-primary)' }}>{(metrics.platformRatio * 100).toFixed(2)}%</div>
@@ -683,7 +683,7 @@ export default function FinancialStatements() {
                                    </div>
                                </td>
                                <td style={{ padding: '12px 10px', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', textAlign: 'center', fontWeight: 700, color: '#0ea5e9', background: '#f0f9ff' }}>&lt; 25%</td>
-                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Shoppe, Grab vặt trụi nếu &gt;25%, bán ngập mặt chả dư.</td>
+                               <td style={{ padding: '12px 10px', fontSize: '12px', color: '#475569', lineHeight: '1.4', borderBottom: '1px solid #e2e8f0' }}>Phần trăm chi phí hoa hồng bị khấu trừ bởi nền tảng phân phối (GrabFood, ShopeeFood).</td>
                             </tr>
                         </tbody>
                     </table>
