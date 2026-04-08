@@ -425,7 +425,7 @@ export const processConfirmImportOrders = (state, action) => {
     id: generateId('ORD-IMP-')
   }));
 
-  mappedOrders.forEach((ord, index) => {
+  mappedOrders.forEach(ord => {
     let accId = ord.accountId;
     if (!state.accounts?.find(a => a.id === accId)) {
       accId = state.accounts && state.accounts.length > 0 ? state.accounts[0].id : 'ACC1';

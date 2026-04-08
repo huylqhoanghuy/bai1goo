@@ -8,6 +8,7 @@ import { useOrders } from '../hooks/useOrders';
 import { useInventory } from '../hooks/useInventory';
 import { useData } from '../context/DataContext';
 import CurrencyInput from '../components/CurrencyInput';
+import { generateId } from '../services/coreServices';
 
 const POS = () => {
   const { dispatch } = useData();
@@ -129,7 +130,7 @@ const POS = () => {
     const orderItems = cart.map(item => ({ product: item, quantity: item.qty }));
     const prefix = getChannelPrefix(selectedChannel.name);
     // Thay thế logic ID ngẫu nhiên không an toàn bằng logic ID duy nhất toàn cầu
-    const finalOrderCode = orderCode || StorageService.generateId(prefix + '-');
+    const finalOrderCode = orderCode || generateId(prefix + '-');
     
     try {
       await addOrder({
@@ -176,7 +177,7 @@ const POS = () => {
 
   const generateOrderCode = () => {
     const prefix = getChannelPrefix(selectedChannel?.name);
-    setOrderCode(StorageService.generateId(prefix + '-'));
+    setOrderCode(generateId(prefix + '-'));
   };
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
