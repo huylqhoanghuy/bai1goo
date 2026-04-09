@@ -71,15 +71,22 @@ Nhập rổ Hàng (Nguyên liệu) quyết định tính sống còn của Giá 
 
 ---
 
-## 5. 📥 QUY TẮC NHẬP DỮ LIỆU TỪ NGOÀI (CSV IMPORT & CLOUD SYNC)
+## 5. 📥 QUY TẮC NHẬP DỮ LIỆU BÁO CÁO TỪ NỀN TẢNG THỨ BA (CSV/XLSX EXPORT)
 
-Quá trình "Nuốt" dữ liệu từ file Excel tải về của Grab/Shopee tiềm ẩn nguy cơ phá hủy hệ thống cực cao do Trùng lặp ID.
+Quá trình "Nuốt" dữ liệu báo cáo từ file Excel tải về của GrabFood, ShopeeFood tiềm ẩn nguy cơ sai lệch dòng tiền và phá hủy hệ thống cực cao do Trùng lặp ID. Bắt buộc tuân thủ 2 nguyên tắc sau:
 
-1. **Phiên dịch File (Parser):** Module `csvParser.js` nhận diện Đơn Hàng từ file CSV. Tại thời điểm này, nó đọc được ID Gốc của Grab (Ví dụ: `GF-123456`).
-2. **Khuẩn Phân Lập (Isolation):** Khi truyền vào Trục Cột (`coreServices.js` `processConfirmImportOrders`), `GF-123456` bị ép tước quyền Khóa Chính, và được lưu trú vào trường vãng lai `orderCode`.
-3. **Sinh Khóa (Seeding ID):** Mỗi dòng lệnh trong File CSV sẽ bắt buộc phải chạy qua máy quay `generateId('ORD-IMP-')`. Lúc này, Đơn Hàng mới sở hữu mã `ORD-IMP-LT2S...`.
-4. **Móc nối Giao dịch (Link Data):** Phiếu Thu sinh ra từ CSV cũng tự động tạo `generateId('TX-IMP-')` và trường `relatedId` sẽ bám đúng vào `ORD-IMP-LT2S...` thay vì `GF-123456`.
-👉 **Kết Quả:** Nếu user Cố tình Import cùng 1 file CSV tận 2 lần, hệ thống sẽ chứa 2 dòng đơn có cùng `orderCode` = `GF-123456`, nhưng **Primary Key ID** thì hoàn toàn khác nhau. Khi Xóa Phiếu Thu nào thì Máy sẽ Hủy đúng Đơn và Hồi đúng Kho của lần nhập đó mà không bị nổ Data!
+### 5.1 Khuẩn Phân Lập (Isolation) và Sinh Khóa Chống Trùng Lặp
+1. **Phiên dịch File (Parser):** Nhận diện Đơn Hàng từ file CSV. Đọc ra ID Gốc của Sàn (Ví dụ: `GF-123456`).
+2. **Triệt tiêu Khóa Chính:** Ép tước quyền Khóa Chính của `GF-123456`, lưu vãng lai vào `orderCode`.
+3. **Sinh Khóa (Seeding ID):** Mỗi dòng nhập phải bắt buộc chạy qua máy quay `generateId('ORD-IMP-')` làm Khóa Chính mới. 
+4. **Móc nối Giao dịch:** Phiếu Thu sinh ra từ CSV cũng tự động tạo `generateId('TX-IMP-')` và trường `relatedId` bám chuẩn vào Khóa sinh ở bước 3.
+👉 **Kết Quả:** Nếu user Cố tình Import cùng 1 file CSV tận 2 lần, hệ thống sẽ chứa 2 dòng đơn có cùng `orderCode`, nhưng Primary Key thì khác biệt. Xóa lần nhập nào tự động khôi phục đúng lần nhập đó, không nổ Data!
+
+### 5.2 Xử Lý Kế Toán Bóc Tách Chi Phí Sàn (Platform Cost Isolation)
+1. **Bắt buộc dùng Giá Gốc đối chiếu Doanh thu (Gross):** Giá bán gốc chưa qua chỉnh sửa là con số duy nhất đại diện cho Doanh Thu Tổng lúc đầu của hóa đơn.
+2. **Khấu trừ Chi Phí Phân Lớp:** Liên tục săn tìm và trừ đi các luồng chi phí ẩn từ báo cáo như: Phí dịch vụ (Phí sàn), Thuế khấu trừ, GTGT (VAT), Giảm trừ trực tiếp.
+3. **Đối Chiếu Chéo Tỷ Lệ CK (Cross-check):** Phải làm phép so sánh các khoản trừ với Tỉ lệ phần trăm Chiết Khấu Kênh Bán (Commission Rate) được ấn định tại danh mục Kênh để cân đối tính toàn vẹn của chi phí (Vd đối soát xem Sàn có cắn quá 29% phí hay không). Dùng tỷ lệ này nội suy chi phí nếu file báo cáo của sàn vắng mặt thông số.
+4. **Định Tuyến Dòng Tiền Thực Nhận (Net Routing):** Tổng Gross sau trừ Phí Sàn và Thuế chính là Tiền Thực Nhận (Net Sales). CHỈ ĐƯỢC PHÉP hạch toán Số tiền Thực nhận này đẩy vào số dư Tài khoản ngân hàng, hoặc Ví nền tảng.
 
 ---
 
