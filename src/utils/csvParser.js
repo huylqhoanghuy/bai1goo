@@ -1,11 +1,30 @@
 // --- Fuzzy Matcher (5% Error Tolerance) ---
-export const inferItemsFromPrice = (targetPrice, products) => {
+export const inferItemsFromPrice = (targetPrice, products, quantityFromCSV = 1) => {
     if (!targetPrice || targetPrice <= 0 || !products || products.length === 0) return null;
     
     // Dung sai 5% giá trị
     const isMatch = (price1, price2) => Math.abs(price1 - price2) <= Math.max(price1, price2) * 0.05;
 
-    // 1. Direct Match (Tìm món gần nhất trong phạm vi 5%)
+    // 1. Dựa trên số lượng truyền vào từ CSV (Chính xác cao nhất)
+    if (quantityFromCSV && quantityFromCSV > 1) {
+        let bestTargetMatch = null;
+        let minTargetDiff = Infinity;
+        for (let p of products) {
+            if (p.price > 0) {
+                const expectedPrice = p.price * quantityFromCSV;
+                if (isMatch(expectedPrice, targetPrice)) {
+                    const diff = Math.abs(expectedPrice - targetPrice);
+                    if (diff < minTargetDiff) {
+                        minTargetDiff = diff;
+                        bestTargetMatch = p;
+                    }
+                }
+            }
+        }
+        if (bestTargetMatch) return [{ product: bestTargetMatch, quantity: quantityFromCSV, itemTotal: targetPrice }];
+    }
+
+    // 2. Direct Match (Tìm món gần nhất trong phạm vi 5%)
     let bestSingleMatch = null;
     let minSingleDiff = Infinity;
     for (const p of products) {
@@ -19,7 +38,7 @@ export const inferItemsFromPrice = (targetPrice, products) => {
     }
     if (bestSingleMatch) return [{ product: bestSingleMatch, quantity: 1, itemTotal: targetPrice }];
 
-    // 2. Multiple of same item (VD: 2 cái Chân Gà)
+    // 3. Multiple of same item (VD: 2 cái Chân Gà)
     let bestMultiMatch = null;
     let minMultiDiff = Infinity;
     for (let p of products) {
@@ -39,7 +58,7 @@ export const inferItemsFromPrice = (targetPrice, products) => {
     }
     if (bestMultiMatch) return [{ product: bestMultiMatch.p, quantity: bestMultiMatch.qty, itemTotal: targetPrice }];
 
-    // 3. Two-item combo (VD: Gà + Chân Gà)
+    // 4. Two-item combo (VD: Gà + Chân Gà)
     let bestComboMatch = null;
     let minComboDiff = Infinity;
     for (let i = 0; i < products.length; i++) {
@@ -205,18 +224,19 @@ export const parseCSVToOrders = (rawData, channelObj, productsList, targetAccoun
                 });
             } else {
                 // Tên (Grab/Shopee) là mớ hỗn độn (Combo A, Trà Chanh) KHÔNG khớp menu HOẶC ẩn tên => Nội suy từ Giá Vốn
-                const guessedItems = inferItemsFromPrice(grossValue, productsList);
-                if (guessedItems) {
+                const guessedItems = inferItemsFromPrice(grossValue, productsList, quantity);
+                if (guessedItems && guessedItems.length > 0) {
                     parsedItems = guessedItems.map(item => ({
                         ...item,
+                        product: { ...item.product, price: item.quantity > 0 ? (item.itemTotal / item.quantity) : item.itemTotal },
                         netTotal: netIdx !== -1 ? currentItemNet : item.itemTotal
                     }));
-                    isFuzzy = true; // Flage this to warn the user 
+                    isFuzzy = true; // Flag this to warn the user 
                 } else {
                     // Hết đường cứu, đành ném tên rác
                     const finalName = rawName || `Món giá ${grossValue.toLocaleString()}đ (Từ kênh: ${exactChannelName})`;
                     parsedItems.push({
-                        product: { name: finalName, price: grossValue, recipe: [] },
+                        product: { id: `UNKNOWN-${Date.now()}`, name: finalName, price: quantity > 0 ? (grossValue / quantity) : grossValue, recipe: [] },
                         quantity: quantity || 1,
                         itemTotal: grossValue,
                         netTotal: netIdx !== -1 ? currentItemNet : grossValue
@@ -249,8 +269,20 @@ export const parseCSVToOrders = (rawData, channelObj, productsList, targetAccoun
                     _duplicatedOrderFees: feeAmount + taxAmount + manualDeductions // Ghi nhận Tổng phí của cả đơn (do bị lặp lại nên lấy giá trị dòng nào cũng được)
                 };
             }
+            if (isFuzzy) tempOrdersMap[orderId].isFuzzyRecognized = true;
             
-            parsedItems.forEach(item => tempOrdersMap[orderId].items.push(item));
+            // Gộp môn: Nếu file CSV tách 1 món ra nhiều dòng lẻ (ví dụ: Chân trà 1 cái, Chân gà 1 cái), ta gom nhóm chúng lại nếu trùng Product ID
+            parsedItems.forEach(item => {
+                let existingItem = tempOrdersMap[orderId].items.find(i => i.product.id && i.product.id === item.product.id && !i.product.id.startsWith('UNKNOWN-'));
+                if (existingItem) {
+                    existingItem.quantity += item.quantity;
+                    existingItem.itemTotal += item.itemTotal;
+                    existingItem.netTotal += item.netTotal;
+                    existingItem.product.price = existingItem.quantity > 0 ? (existingItem.itemTotal / existingItem.quantity) : existingItem.itemTotal;
+                } else {
+                    tempOrdersMap[orderId].items.push(item);
+                }
+            });
             tempOrdersMap[orderId].totalAmount += grossValue;
             
             if (netIdx !== -1) {
