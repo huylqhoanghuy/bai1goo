@@ -98,7 +98,7 @@ export const parseCSVToOrders = (rawData, channelObj, productsList, targetAccoun
          const firstLine = lines[0] || '';
          const separator = firstLine.includes('\t') ? '\t' : (firstLine.includes(';') ? ';' : (firstLine.includes(',') ? ',' : '|'));
          
-         const headers = splitCSVLine(firstLine, separator).map(h => h.replace(/"/g, '').toLowerCase());
+         const headers = splitCSVLine(firstLine, separator).map(h => h.replace(/["\uFFFD\uFFFE\uFFFF]/g, '').toLowerCase());
          
          const findIdx = (keywords) => headers.findIndex(h => keywords.some(k => h.includes(k)));
 
