@@ -1,5 +1,5 @@
 ---
-description: Lưu kiến thức, quy tắc nghiệp vụ hoặc quyết định kiến trúc vừa trao đổi vào tài liệu Kỹ năng (SKILL.md) dùng chung
+description: Lưu Kiến Thức (Save to Skill)
 ---
 # Lưu Giữ Tri Thức (Save to Skill)
 
