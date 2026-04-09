@@ -152,26 +152,16 @@ export const parseCSVToOrders = (rawData, channelObj, productsList, targetAccoun
             const quantity = parseFloat(qtyStr.replace(/[^\d.-]/g, '')) || 1;
             const grossValue = parseFloat(grossStr.replace(/[^\d.-]/g, '')) || 0;
             
-            let netAmount = 0;
+            let currentItemNet = 0;
             if (netIdx !== -1) {
                 const netStr = parts[netIdx] ? parts[netIdx] : '0';
-                netAmount = parseFloat(netStr.replace(/[^\d.-]/g, '')) || 0;
-            } else {
-                // Tự tính Net nếu không có cột Thực Thu
-                const feeAmount = feeIdx !== -1 ? (parseFloat(parts[feeIdx]?.replace(/[^\d.-]/g, '')) || 0) : 0;
-                const taxAmount = taxIdx !== -1 ? (parseFloat(parts[taxIdx]?.replace(/[^\d.-]/g, '')) || 0) : 0;
-                const manualDeductions = deductionIdx !== -1 ? (parseFloat(parts[deductionIdx]?.replace(/[^\d.-]/g, '')) || 0) : 0;
-                
-                if (feeAmount > 0 || taxAmount > 0) {
-                    netAmount = grossValue - feeAmount - taxAmount - manualDeductions;
-                } else if (channelObj && (channelObj.commission || channelObj.discountRate)) {
-                    // Cứu cánh cuối cùng: Lấy phí cấu hình kênh do user cài đặt tự trừ
-                    const rate = parseFloat(channelObj.commission || channelObj.discountRate || 0);
-                    netAmount = grossValue * (100 - rate) / 100;
-                } else {
-                    netAmount = grossValue;
-                }
+                currentItemNet = parseFloat(netStr.replace(/[^\d.-]/g, '')) || 0;
             }
+            
+            // Các phí báo cáo từ ShopeeFood (Thực tế Shopee chép đè tổng Phí của cả Đơn lên Từng Dòng Sản Phẩm)
+            const feeAmount = feeIdx !== -1 ? (parseFloat(parts[feeIdx]?.replace(/[^\d.-]/g, '')) || 0) : 0;
+            const taxAmount = taxIdx !== -1 ? (parseFloat(parts[taxIdx]?.replace(/[^\d.-]/g, '')) || 0) : 0;
+            const manualDeductions = deductionIdx !== -1 ? (parseFloat(parts[deductionIdx]?.replace(/[^\d.-]/g, '')) || 0) : 0;
             
             let dateStr = dateIdx !== -1 ? parts[dateIdx] : '';
             if (dateStr) {
@@ -249,15 +239,36 @@ export const parseCSVToOrders = (rawData, channelObj, productsList, targetAccoun
                     paymentStatus: 'Paid',
                     paymentMethod: 'Imported',
                     accountId: targetAccountId || (exactChannelName.toLowerCase().includes('shopee') ? 'ACC3' : (exactChannelName.toLowerCase().includes('grab') ? 'ACC4' : 'ACC1')),
-                    isFuzzyRecognized: isFuzzy
+                    isFuzzyRecognized: isFuzzy,
+                    _hasNetColumn: netIdx !== -1,
+                    _duplicatedOrderFees: feeAmount + taxAmount + manualDeductions // Ghi nhận Tổng phí của cả đơn (do bị lặp lại nên lấy giá trị dòng nào cũng được)
                 };
             }
             
             parsedItems.forEach(item => tempOrdersMap[orderId].items.push(item));
             tempOrdersMap[orderId].totalAmount += grossValue;
-            tempOrdersMap[orderId].netAmount += netAmount; 
+            
+            if (netIdx !== -1) {
+                tempOrdersMap[orderId].netAmount += currentItemNet; // Cộng dồn net nếu có chỉ số trên từng item
+            }
          }
       }
+      
+      // Xử lý Hậu kỳ: Tính tiền Thực Thu cho các Đơn không thu được cột Net (Như ShopeeFood)
+      Object.values(tempOrdersMap).forEach(order => {
+          if (!order._hasNetColumn) {
+              if (order._duplicatedOrderFees > 0) {
+                  // Lấy Tổng Gross trừ đi Tổng Fees của nguyên đơn đó (ko bị nhân bội lần theo dòng)
+                  order.netAmount = order.totalAmount - order._duplicatedOrderFees;
+              } else if (channelObj && (channelObj.commission || channelObj.discountRate)) {
+                  // Cứu cánh cuối cùng: Tự tính % tỷ lệ CK 
+                  const rate = parseFloat(channelObj.commission || channelObj.discountRate || 0);
+                  order.netAmount = order.totalAmount * (100 - rate) / 100;
+              } else {
+                  order.netAmount = order.totalAmount;
+              }
+          }
+      });
 
       return Object.values(tempOrdersMap).sort((a,b) => new Date(b.date) - new Date(a.date));
 
