@@ -88,9 +88,9 @@ const ImportData = () => {
                                  <input type="file" accept=".csv, .txt, .tsv, .xlsx, .xls" onChange={handleFileUpload} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} />
                                  <UploadCloud size={48} color={importConfig.fileName ? 'var(--success)' : 'var(--primary)'} style={{ margin: '0 auto 16px', opacity: importConfig.fileName ? 1 : 0.8 }} />
                                  <strong style={{ display: 'block', fontSize: '15px', color: importConfig.fileName ? 'var(--success)' : 'var(--text-primary)', textAlign: 'center' }}>
-                                    {importConfig.fileName ? `Sàng Lọc Thành Công: ${importConfig.fileName}` : 'Thả file CSV/TXT vào đây hoặc Bấm tải lên'}
+                                    {importConfig.fileName ? `Sàng Lọc Thành Công: ${importConfig.fileName}` : 'Thả file Excel (.xlsx), CSV, TXT vào đây'}
                                  </strong>
-                                 <span style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '8px', display: 'block', textAlign: 'center' }}>Bắt buộc phải là định dạng chuẩn tải về từ Trang chủ Sàn</span>
+                                 <span style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '8px', display: 'block', textAlign: 'center' }}>Bắt buộc phải là tệp báo cáo chuẩn tải về từ Trang chủ Sàn</span>
                               </div>
                               
                               <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', minHeight: '120px' }}>
