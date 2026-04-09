@@ -222,7 +222,10 @@ export const useBackupSync = () => {
     const reader = new FileReader();
     reader.onload = async (event) => {
       try {
-        const importedState = JSON.parse(event.target.result);
+        let importedState = JSON.parse(event.target.result);
+        if (importedState && importedState.type === 'auto_webhook_sync' && importedState.data) {
+          importedState = importedState.data;
+        }
 
         const isConfirmed = await confirm({
           title: 'Phục hồi dữ liệu từ file',
@@ -231,9 +234,30 @@ export const useBackupSync = () => {
           type: 'danger'
         });
 
-        if (isConfirmed) {
-          await StorageService.saveAll(importedState);
-          const cloudResult = await syncToCloud(); if(cloudResult.success){showToast('Khôi phục Bản cứng và Đám Mây Mẹ thành công! Vui lòng đợi tải lại...');}else{showToast('Lỗi hệ thống: '+cloudResult.message, 'error');}
+        if (isConfirmed && isConfirmed.confirmed) {
+          // Chuẩn hóa nạp đầy đủ các key để đè toàn bộ gốc dữ liệu (Firebase setDoc sẽ xóa sạch cái cũ)
+          const targetKeys = [
+            'categories', 'salesChannels', 'ingredients', 'products', 
+            'suppliers', 'purchaseOrders', 'posOrders', 'accounts', 
+            'financeCategories', 'transactions', 'settings', 'users', 'activityLogs', 'notifications'
+          ];
+          targetKeys.forEach(key => {
+             if (importedState[key] === undefined) {
+                 importedState[key] = (key === 'settings') ? {} : [];
+             }
+          });
+
+          // Reset theo dõi mảng để tắt Anomaly Guard & Zero-Tolerance Guard
+          window.__CLOUD_LENGTHS__ = {};
+
+          await StorageService.saveAll(importedState, false); // Lưu local không trigger tự động
+          
+          const cloudResult = await syncToCloud(); 
+          if(cloudResult.success){
+              showToast('Khôi phục Bản cứng và thay thế toàn bộ Đám Mây Mẹ thành công! Vui lòng đợi...');
+          }else{
+              showToast('Lỗi Đám mây: '+cloudResult.message, 'error');
+          }
           setTimeout(() => { window.location.reload(); }, 1500);
         }
       } catch {
