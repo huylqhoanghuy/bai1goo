@@ -110,6 +110,11 @@ export const parseCSVToOrders = (rawData, channelObj, productsList, targetAccoun
          let grossIdx = findIdx(['giá trị', 'doanh thu ròng', 'số tiền', 'doanh thu', 'tổng tiền', 'gross', 'doanh số', 'tiền món', 'đơn giá', 'thnh ti_n doanh thu']);
          let netIdx = findIdx(['tổng cộng', 'thực thu', 'net', 'thu về', 'tiền nhận về', 'tiền thu', 'phải thu']);
          let dateIdx = findIdx(['thời gian hoàn thành', 'ngày tạo', 'ngày', 'thời gian', 'date', 'hoàn thành', 'ngy hon t_t', 'ngy __t']);
+         
+         // Các cột phí sàn phụ (ShopeeFood không có Thực thu mà chỉ có phí)
+         let feeIdx = findIdx(['phí dịch vụ', 'giá trị phí']);
+         let taxIdx = findIdx(['thuế khấu trừ', 'thuế']);
+         let deductionIdx = findIdx(['số tiền giảm', 'giảm trực tiếp']);
 
          if (orderIdIdx === -1) orderIdIdx = 0;
 
@@ -139,7 +144,6 @@ export const parseCSVToOrders = (rawData, channelObj, productsList, targetAccoun
             
             const qtyStr = qtyIdx !== -1 ? parts[qtyIdx] : '1';
             const grossStr = grossIdx !== -1 ? parts[grossIdx] : '0';
-            const netStr = netIdx !== -1 ? parts[netIdx] : grossStr; 
             
             if (qtyIdx !== -1 && !/\d/.test(qtyStr) && !/\d/.test(grossStr)) {
                 continue;
@@ -147,7 +151,27 @@ export const parseCSVToOrders = (rawData, channelObj, productsList, targetAccoun
 
             const quantity = parseFloat(qtyStr.replace(/[^\d.-]/g, '')) || 1;
             const grossValue = parseFloat(grossStr.replace(/[^\d.-]/g, '')) || 0;
-            const netAmount = parseFloat(netStr.replace(/[^\d.-]/g, '')) || 0;
+            
+            let netAmount = 0;
+            if (netIdx !== -1) {
+                const netStr = parts[netIdx] ? parts[netIdx] : '0';
+                netAmount = parseFloat(netStr.replace(/[^\d.-]/g, '')) || 0;
+            } else {
+                // Tự tính Net nếu không có cột Thực Thu
+                const feeAmount = feeIdx !== -1 ? (parseFloat(parts[feeIdx]?.replace(/[^\d.-]/g, '')) || 0) : 0;
+                const taxAmount = taxIdx !== -1 ? (parseFloat(parts[taxIdx]?.replace(/[^\d.-]/g, '')) || 0) : 0;
+                const manualDeductions = deductionIdx !== -1 ? (parseFloat(parts[deductionIdx]?.replace(/[^\d.-]/g, '')) || 0) : 0;
+                
+                if (feeAmount > 0 || taxAmount > 0) {
+                    netAmount = grossValue - feeAmount - taxAmount - manualDeductions;
+                } else if (channelObj && (channelObj.commission || channelObj.discountRate)) {
+                    // Cứu cánh cuối cùng: Lấy phí cấu hình kênh do user cài đặt tự trừ
+                    const rate = parseFloat(channelObj.commission || channelObj.discountRate || 0);
+                    netAmount = grossValue * (100 - rate) / 100;
+                } else {
+                    netAmount = grossValue;
+                }
+            }
             
             let dateStr = dateIdx !== -1 ? parts[dateIdx] : '';
             if (dateStr) {
